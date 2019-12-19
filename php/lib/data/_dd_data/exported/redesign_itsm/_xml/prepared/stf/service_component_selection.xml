@@ -1,0 +1,1643 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>service_component_selection</name>
+			<title>Component Selection</title>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>true</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>sc_rels</name>
+				<type>Main Details Table</type>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>OnSaveData</name>
+					<code>
+						<![CDATA[OnSaveData()
+{
+	// TODO: Add your event handler code here
+	if(!app.service.can_update(true))
+		return false;
+	_swdoc.calc_cost();
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var boolFigureChanged = false;
+var strSelected = "";
+var strPriceDiff = "";
+
+function oRel()
+{
+	return _swdoc.sc_rels;
+}
+
+function MF()
+{
+	return mainform;
+}
+
+function calc_cost()
+{
+	var strOrigCost = _swdoc.oRel().total_cost_for_item; 
+	var strWeight = "";
+	if(_swdoc.oRel().cost_weighting=="")
+	{
+		strWeight = "0";
+	}else
+		strWeight = _swdoc.oRel().cost_weighting;
+	
+	_swdoc.oRel().total_cost_for_item = app.format_float_to_decimal_str(Number(_swdoc.oRel().total_unit_cost)*Number(_swdoc.oRel().units)*( (Number(strWeight)+100)/100));
+
+	_swdoc.oRel().customise_diff = app.format_float_to_decimal_str(Number(_swdoc.oRel().customise_diff)+Number(_swdoc.oRel().total_cost_for_item)- Number(strOrigCost));
+
+	_swdoc.UpdateFormFromData();	
+}
+function setup_form_fields()
+{
+
+	if(_swdoc.GetArg("customise")=="1")
+	{
+		_swdoc.MF().Tab1.ShowTabItem(1,false);
+	}
+	if(_swdoc.oRel().pk_auto_id<1)
+	{
+		var strService = _swdoc.GetArg("fk_service");
+		_swdoc.oRel().fk_service = strService;
+	}
+
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnDataSaved</name>
+					<code>
+						<![CDATA[OnDataSaved()
+{
+	// TODO: Add your event handler code here
+
+	_swdoc.boolFigureChanged = true;
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>476</width>
+				<height>227</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>Tab1</name>
+						<type>TabControl</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>0</index>
+						<caption>Tab1</caption>
+						<backgroundColor>#ded7ce</backgroundColor>
+						<foregroundColor>#f7f3ef</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>6</top>
+							<left>13</left>
+							<right>461</right>
+							<bottom>214</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<tabStyle>Top</tabStyle>
+					<tabSize>19</tabSize>
+					<items>
+						<item>
+							<name>Offering</name>
+							<properties>56=#8aa8e4|_flags=1</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<flags>
+									<invisible>true</invisible>
+									<skipTabStop>false</skipTabStop>
+									<disabled>false</disabled>
+									<protected>false</protected>
+									<noMacroExpand>false</noMacroExpand>
+									<multiLine>false</multiLine>
+								</flags>
+								<properties>
+									<tabColor>#8aa8e4</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Customisable Options</name>
+							<properties>56=#ffdb75|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#ffdb75</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+					</items>
+					<selectedTextFont  size="8">Arial</selectedTextFont>
+					<selectedTextColor>#000000</selectedTextColor>
+					<deselectedTextColor>#000000</deselectedTextColor>
+					<tabSlopeLeft>2</tabSlopeLeft>
+					<tabSlopeRight>2</tabSlopeRight>
+					<deselectedTabHeightOffset>1</deselectedTabHeightOffset>
+					<tabSpacing>0</tabSpacing>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_view_customisable</name>
+						<type>EventButton</type>
+						<group>Tab1:1</group>
+					</general>
+					<appearance>
+						<index>1</index>
+						<caption>View</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>37</top>
+							<left>318</left>
+							<right>381</right>
+							<bottom>59</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_add_customisable</name>
+						<type>EventButton</type>
+						<group>Tab1:1</group>
+					</general>
+					<appearance>
+						<index>2</index>
+						<caption>Select</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>37</top>
+							<left>385</left>
+							<right>448</right>
+							<bottom>59</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_custom</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>true</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>Tab1:1</group>
+					</general>
+					<appearance>
+						<index>3</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>64</top>
+							<left>22</left>
+							<right>449</right>
+							<bottom>204</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>description</column>
+							</properties>
+							<name>Title</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>total_unit_cost</column>
+							</properties>
+							<name>Unit Cost</name>
+							<width>13</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_key</column>
+							</properties>
+							<name>key</name>
+							<width>10</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>pk_auto_id</column>
+							</properties>
+							<name>pk_auto_id</name>
+							<width>14</width>
+							<image>-1</image>
+							<dataColumn>3</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>units</column>
+							</properties>
+							<name>Units</name>
+							<width>72</width>
+							<image>-1</image>
+							<dataColumn>4</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>cost_weighting</column>
+							</properties>
+							<name>Mark Up (%)</name>
+							<width>20</width>
+							<image>-1</image>
+							<dataColumn>5</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>total_cost_for_item</column>
+							</properties>
+							<name>Total Cost</name>
+							<width>13</width>
+							<image>-1</image>
+							<dataColumn>6</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>price</column>
+							</properties>
+							<name>Price</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>7</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>price_diff</column>
+							</properties>
+							<name>Customisation Price</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>8</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>apply_type</column>
+							</properties>
+							<name>Apply Type</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>9</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>18</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#00008b</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<highlightStyle>0</highlightStyle>
+							<borderColor>#d3c9b6</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<table>sc_rels</table>
+							<listFilter>swc=fk_service_rels&amp;kvs=&amp;[sc_rels.pk_auto_id]</listFilter>
+							<editRecordForm>Form.service_component</editRecordForm>
+							<storedQuery>common.load_by_colname</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_description</name>
+						<type>Field</type>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>4</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>36</top>
+							<left>160</left>
+							<right>410</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sc_rels.description</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>5</index>
+						<caption>Fk Service</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>300</top>
+							<left>160</left>
+							<right>270</right>
+							<bottom>316</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sc_rels.fk_service</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>true</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>6</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>3-D Sunken</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>300</top>
+							<left>280</left>
+							<right>530</right>
+							<bottom>316</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sc_rels.fk_service</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>true</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>7</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>170</top>
+							<left>154</left>
+							<right>404</right>
+							<bottom>186</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sc_rels.flg_include</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<flagItems>Include^1|</flagItems>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>8</index>
+						<caption>Unit Cost</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>58</top>
+							<left>40</left>
+							<right>150</right>
+							<bottom>74</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sc_rels.total_unit_cost</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_total_unit_costs</name>
+						<type>Field</type>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>9</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>58</top>
+							<left>160</left>
+							<right>410</right>
+							<bottom>76</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sc_rels.total_unit_cost</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>10</index>
+						<caption>Units</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>80</top>
+							<left>40</left>
+							<right>150</right>
+							<bottom>96</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sc_rels.units</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_units</name>
+						<type>Field</type>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>11</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>80</top>
+							<left>160</left>
+							<right>410</right>
+							<bottom>98</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sc_rels.units</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label1</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>12</index>
+						<caption>Apply Type</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>102</top>
+							<left>87</left>
+							<right>150</right>
+							<bottom>118</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sc_rels.apply_type</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field1</name>
+						<type>Field</type>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>13</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>102</top>
+							<left>160</left>
+							<right>410</right>
+							<bottom>120</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sc_rels.apply_type</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<listItems>Per Unit|Service|</listItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_cost_weighting</name>
+						<type>Field</type>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>14</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>124</top>
+							<left>160</left>
+							<right>410</right>
+							<bottom>142</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sc_rels.cost_weighting</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_remove_customisable</name>
+						<type>EventButton</type>
+					</general>
+					<appearance>
+						<index>15</index>
+						<caption>Remove</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>260</top>
+							<left>320</left>
+							<right>383</right>
+							<bottom>282</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>true</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>txt_label</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>16</index>
+						<caption>Title</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>33</top>
+							<left>55</left>
+							<right>150</right>
+							<bottom>58</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_cost_weighting</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>17</index>
+						<caption>Mark Up (%)</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>118</top>
+							<left>55</left>
+							<right>150</right>
+							<bottom>143</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label2</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>18</index>
+						<caption>Total Cost For Item</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>146</top>
+							<left>53</left>
+							<right>150</right>
+							<bottom>162</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sc_rels.total_cost_for_item</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field2</name>
+						<type>Field</type>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>19</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>146</top>
+							<left>160</left>
+							<right>410</right>
+							<bottom>164</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sc_rels.total_cost_for_item</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>20</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>190</top>
+							<left>154</left>
+							<right>404</right>
+							<bottom>206</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sc_rels.flg_isoptional</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<flagItems>Optional^1|</flagItems>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded(bDataReloaded)
+{
+	// TODO: Add your event handler code here
+	_swdoc.setup_form_fields();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_total_unit_costs_OnValueChanged</name>
+						<code>
+							<![CDATA[fld_total_unit_costs_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	service_costs.total_unit_cost = app.format_float_to_decimal_str(strValue);
+	_swdoc.calc_cost();
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_add_customisable_OnPressed</name>
+						<code>
+							<![CDATA[btn_add_customisable_OnPressed()
+{
+	if(!app.service.can_update(true))
+		return false;
+	// TODO: Add your event handler code here
+	var key = app.g.sl_getprikeyvalue(sl_custom, sl_custom.curSel);
+	var priceDiff = app.g.sl_getcolvalue(sl_custom, sl_custom.curSel, 'price_diff');
+
+	_swdoc.strSelected = key;
+	_swdoc.strPriceDiff = priceDiff;
+	_swdoc.CloseForm();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_remove_customisable_OnPressed</name>
+						<code>
+							<![CDATA[btn_remove_customisable_OnPressed()
+{
+	if(!app.service.can_update(true))
+		return false;
+	// TODO: Add your event handler code here
+	app.g.sqllist_deldbrow(sl_custom, -1, "", null, "Remove the currently selected component?");
+		
+	sl_custom.Refresh();
+	if(sl_custom.rowCount()<1)
+	{
+		if(service_rels.flg_cancustomise!="0") 
+		{
+			service_rels.flg_cancustomise="0";
+			_swdoc.Save(0);
+		}
+	}
+	sl_custom_OnItemSelected(-1);
+	
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_view_customisable_OnPressed</name>
+						<code>
+							<![CDATA[btn_view_customisable_OnPressed()
+{
+	var strKeyValue = sl_custom.GetItemTextRaw(sl_custom.curSel,'pk_auto_id');
+	var varType = sl_custom.GetItemTextRaw(sl_custom.curSel,'cost_type');
+
+	app.OpenFormForEdit("service_component", strKeyValue, "customise=1&selection=1", true, function(){
+		_swdoc.MF().sl_custom.Refresh();
+	});
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_units_OnValueChanged</name>
+						<code>
+							<![CDATA[fld_units_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+
+	_swdoc.calc_cost();
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_cost_weighting_OnValueChanged</name>
+						<code>
+							<![CDATA[fld_cost_weighting_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	_swdoc.calc_cost();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_custom_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_custom_OnItemSelected(nRow)
+{
+	// TODO: Add your event handler code here
+	app._een(btn_view_customisable,(nRow>-1));
+	app._een(btn_add_customisable,(nRow>-1));
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_custom_OnItemDoubleClicked</name>
+						<code>
+							<![CDATA[sl_custom_OnItemDoubleClicked(nRow, nCol)
+{
+	// TODO: Add your event handler code here
+	var strKeyValue = app.g.sl_getprikeyvalue(sl_custom, nRow);
+	app.OpenFormForEdit("service_component", strKeyValue, "customise=1&selection=1", true, function(){
+		return false;
+	});
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

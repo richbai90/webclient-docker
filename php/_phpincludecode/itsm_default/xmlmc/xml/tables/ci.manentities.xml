@@ -1,0 +1,13 @@
+<datatable dsn="swdata" keycol="pk_auto_id" keyvar="pkid" onrowclick="" onrowdblclick="" onmouseover="return false;" onmouseout="return false;" action="" url="">
+	<columns>
+		<column id="fk_me_key" dbtable="" conversion="" hidden="1">Customer ID</column>
+		<column id="me_description" conversion="">Name</column>
+		<column id="telext" dbtable="" conversion="">Telephone</column>
+		<column id="email" dbtable="" conversion="">Email</column>
+		<column id="site" dbtable="" conversion="">Site</column>
+		<column id="location" dbtable="" conversion="">Location</column>
+	</columns>
+	<from>config_relme, userdb</from>
+	<where>fk_ci_id in (![$GLOBALS['inCI']]!) and code = 'CUSTOMER' and keysearch = fk_me_key </where>
+	<orderby>code</orderby>
+</datatable>

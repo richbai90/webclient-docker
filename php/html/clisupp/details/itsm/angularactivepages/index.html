@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"
+      ng-app="swActivePages">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Supportworks Active Pages</title>
+    <link href="libs/bootstrap/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <link href="libs/font-awesome/css/font-awesome.min.css"
+          rel="stylesheet">
+    <link href="app/directives/hb-iconpicker/hb-iconpicker.css"
+          rel="stylesheet">
+    <link href="libs/ladda/dist/ladda-themeless.min.css"
+          rel="stylesheet">
+    <link href="libs/angularjs-toaster/toaster.min.css"
+          rel="stylesheet">
+    <link href="css/grid-formatting.css"
+          rel="stylesheet">
+  </head>
+
+  <body ng-controller="activePagesCtrl">
+
+    <!--Toaster container-->
+    <toaster-container
+        toaster-options="{'close-button':{ 'toast-error': true },
+                          'body-output-type': 'trustedHtml',
+                          'position-class':'toast-top-right',
+                          'time-out': 4000 }">
+    </toaster-container>
+    <!--END OF TOASTERS-->
+
+    <div class="container-fluid">
+      <div ui-view></div>
+
+    </div>
+
+    <!-- Libraries -->
+  	<script src="libs/jquery/dist/jquery.min.js"></script>
+    <script src="libs/angular/angular.min.js"></script>
+    <script src="libs/angular-animate/angular-animate.min.js" ></script>
+    <script src="libs/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="libs/angular-bootstrap/ui-bootstrap.min.js"></script>
+    <script src="libs/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script src="libs/ladda/dist/spin.min.js" ></script>
+    <script src="libs/ladda/dist/ladda.min.js" ></script>
+    <script src="libs/angular-ladda/dist/angular-ladda.min.js" ></script>
+    <script src="libs/angularjs-toaster/toaster.min.js" ></script>
+    <script src="libs/hbSwXMLMC/xmlmc.module.js"></script>
+    <script src="libs/abdmob/x2js/xml2json.min.js"></script>
+
+    <script src="app/app.js"></script>
+
+    <!-- Directives & Dependancies -->
+    <script src="app/directives/hb-iconpicker/iconset-fontawesome-4.5.0.js" ></script>
+    <script src="app/directives/hb-iconpicker/iconset-hornbillfonts.js" ></script>
+    <script src="app/directives/hb-iconpicker/hb-iconpicker.directive.js"></script>
+    <script src="app/directives/sw-spinner/sw-spinner.dir.js"></script>
+
+    <!-- Services -->
+
+    <script src="app/services/session.service.js"></script>
+    <script src="app/services/helpers.service.js"></script>
+    <script src="app/services/iconpicker.service.js"></script>
+    <script src="app/services/wssquestions.service.js"></script>
+    <script src="app/services/wizarddata.service.js"></script>
+
+    <!-- Controllers -->
+    <script src="app/controllers/iconpicker.ctrl.js"></script>
+    <script src="app/controllers/wssquestions.ctrl.js"></script>
+    <script src="app/controllers/wizardconvert.ctrl.js"></script>
+  </body>
+</html>

@@ -1,0 +1,814 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>sys_setting</name>
+			<title>System Settings</title>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>true</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>sw_adm_settings</name>
+				<type>Related Table</type>
+				<mainDetailsColumn>setting_name</mainDetailsColumn>
+				<flags>6</flags>
+				<assignments>
+				</assignments>
+			</table>
+			<table>
+				<name>sw_sbs_settings</name>
+				<type>Main Details Table</type>
+				<mainDetailsColumn>setting_name</mainDetailsColumn>
+				<flags>4</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[function setup_form(strValue)
+{
+	var oRec = app.g.get_record("sw_adm_settings", strValue);
+	if(oRec)
+	{
+		var oEle = null;
+		if(oRec.flg_type==0)
+		{
+			oEle = mainform.fld_numeric;
+			app._evi(mainform.fld_picklist,false);
+			app._evi(mainform.fld_string,false);
+			app._evi(mainform.fld_xmlpicklist,false);
+			app._evi(mainform.fld_numpicklist,false);
+			app._evi(mainform.fld_mailbox_picklist,false);
+			app._evi(mainform.fld_kbcatalog_picklist, false);
+		}
+		else if(oRec.flg_type==1)
+		{
+			app._evi(mainform.fld_numeric,false);
+			app._evi(mainform.fld_picklist,false);
+			app._evi(mainform.fld_xmlpicklist,false);
+			app._evi(mainform.fld_numpicklist,false);
+			app._evi(mainform.fld_mailbox_picklist,false);
+			app._evi(mainform.fld_kbcatalog_picklist, false);
+			oEle =mainform.fld_string;
+		}
+		else if(oRec.flg_type==2)
+		{
+			oEle = mainform.fld_picklist;
+			app._evi(mainform.fld_numeric,false);
+			app._evi(mainform.fld_string,false);
+			app._evi(mainform.fld_xmlpicklist,false);
+			app._evi(mainform.fld_numpicklist,false);
+			app._evi(mainform.fld_mailbox_picklist,false);
+			app._evi(mainform.fld_kbcatalog_picklist, false);
+			app._slf(oEle , "setting="+strValue);
+		}
+		else if(oRec.flg_type==3)
+		{
+			oEle = mainform.fld_xmlpicklist;
+			app._evi(mainform.fld_numeric,false);
+			app._evi(mainform.fld_string,false);
+			app._evi(mainform.fld_picklist,false);
+			app._evi(mainform.fld_numpicklist,false);
+			app._evi(mainform.fld_mailbox_picklist,false);
+			app._evi(mainform.fld_kbcatalog_picklist, false);
+			//-- call php to get list
+			var strURL = "php/itsm/get_setting_options.php?option="+sw_adm_settings.source_file; 
+			var strResult = app.g.submit_php(strURL,true);
+			mainform.fld_xmlpicklist.pickList = strResult;
+		}
+		else if(oRec.flg_type==4)
+		{
+			oEle = mainform.fld_numpicklist;
+			app._evi(mainform.fld_xmlpicklist,false);
+			app._evi(mainform.fld_numeric,false);
+			app._evi(mainform.fld_string,false);
+			app._evi(mainform.fld_picklist,false);
+			app._evi(mainform.fld_mailbox_picklist,false);
+			app._evi(mainform.fld_kbcatalog_picklist, false);
+			//-- call php to get list
+			var strURL = "php/itsm/get_setting_options.php?option="+sw_adm_settings.source_file; 
+			var strResult = app.g.submit_php(strURL,true);
+			mainform.fld_numpicklist.pickList = strResult;
+		}
+		else if(oRec.flg_type==5) // Pick list of available Shared Mailboxes
+		{
+			oEle = mainform.fld_mailbox_picklist;
+			app._evi(mainform.fld_numeric,false);
+			app._evi(mainform.fld_string,false);
+			app._evi(mainform.fld_numpicklist,false);
+			app._evi(mainform.fld_kbcatalog_picklist, false);
+			
+			//-- call php to get mailbox list
+			var strURL = "php/itsm/get_mailboxlist.php?sessid=" + app.session.sessionId; 
+			var strResult = app.g.submit_php(strURL,true);
+			mainform.fld_mailbox_picklist.pickList = strResult;
+		}
+		else if(oRec.flg_type==6) // Pick list of available email templates
+		{
+			var boolLoad = true;
+			oEle = mainform.fld_mailbox_picklist;
+			app._evi(mainform.fld_numeric,false);
+			app._evi(mainform.fld_string,false);
+			app._evi(mainform.fld_numpicklist,false);
+			app._evi(mainform.fld_kbcatalog_picklist, false);
+			
+			//-- can work out name of mailbox setting (setting name)
+			var strMailboxSetting = strValue.replace('.EMAILTEMPLATE', '.MAILBOX');
+			//-- get mailbox name (setting value)
+			var strMailboxName = "";
+			var oParams = {};
+			oParams.mailbox = strMailboxSetting;
+			oParams.dataset = _swdoc.GetArg("dataset");
+			var oMailbox = app.g.get_sqrecordset("form/sys_settings/get_mailbox_value.select",oParams);
+			if(oMailbox.Fetch())
+			{
+				strMailboxName = app.g.get_field(oMailbox,"setting_value");
+			}
+			else
+			{
+				MessageBox('The setting value of '+	strMailboxSetting +' could not be loaded.');
+				boolLoad = false;
+			}
+			if(strMailboxName=="")
+			{
+				MessageBox('The setting value of '+	strMailboxSetting +' is not set.');			
+				boolLoad = false;
+			}
+			
+			if(boolLoad)
+			{
+				//-- call php to get mailbox list
+				var strURL = "php/itsm/get_templatelist.php?mailboxname=" + strMailboxName; 
+				var strResult = app.g.submit_php(strURL,true);
+				mainform.fld_mailbox_picklist.pickList = strResult;
+			}
+		}
+		else if(oRec.flg_type==7) // Pick list of available knowledgebase catalogs
+		{
+			oEle = mainform.fld_kbcatalog_picklist;
+			app._evi(mainform.fld_numeric,false);
+			app._evi(mainform.fld_string,false);
+			app._evi(mainform.fld_numpicklist,false);
+			
+			//-- call php to get mailbox list
+			var strURL = "php/itsm/get_kbcataloglist.php?sessid=" + app.session.sessionId; 
+			var strResult = app.g.submit_php(strURL,true);
+			mainform.fld_kbcatalog_picklist.pickList = strResult;
+		}
+		
+		app._evi(oEle,true);
+		if(oRec.flg_mandatory)
+		{
+			app._ema(oEle,true);
+		}
+		else
+		{
+			app._ema(oEle,false);
+		}
+
+	}
+	else
+	{
+		MessageBox('Failed to load settings value');
+	}
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>387</width>
+				<height>131</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>0</index>
+						<caption>Setting Name</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>14</top>
+							<left>39</left>
+							<right>120</right>
+							<bottom>32</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sw_sbs_settings.setting_name</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_pk_setting</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>1</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>14</top>
+							<left>130</left>
+							<right>380</right>
+							<bottom>32</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sw_sbs_settings.setting_name</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<listItems>WSSM.MAX_LOGIN_ATTEMPTS|WSSM.LOCKOUT_LENGTH_MINS|</listItems>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>sw_adm_settings</distinctTable>
+							<distinctColumn>pk_settings</distinctColumn>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>2</index>
+						<caption>Setting Value</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>36</top>
+							<left>38</left>
+							<right>120</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sw_sbs_settings.setting_value</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_numeric</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>3</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>36</top>
+							<left>130</left>
+							<right>380</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sw_sbs_settings.setting_value</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Numeric</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<inputMask>###</inputMask>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_picklist</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>4</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>36</top>
+							<left>130</left>
+							<right>380</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sw_sbs_settings.setting_value</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Numeric</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<storedQuery>setting.load_value</storedQuery>
+							<listFilter>setting=</listFilter>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_xmlpicklist</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>5</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>36</top>
+							<left>130</left>
+							<right>380</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sw_sbs_settings.setting_value</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Numeric</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<url>&amp;[app.webroot]/clisupp/php/itsm/get_setting_options.php?option=&amp;[sw_adm_settings.source_file]</url>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_numpicklist</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>6</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>36</top>
+							<left>130</left>
+							<right>380</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sw_sbs_settings.setting_value</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List (Numeric Mode)</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Numeric</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<url>&amp;[app.webroot]/clisupp/php/itsm/get_setting_options.php?option=remotetools</url>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_string</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>7</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>36</top>
+							<left>130</left>
+							<right>380</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sw_sbs_settings.setting_value</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label1</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>8</index>
+						<caption>Description</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>58</top>
+							<left>58</left>
+							<right>120</right>
+							<bottom>74</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sw_sbs_settings.description</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field1</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>9</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>58</top>
+							<left>130</left>
+							<right>380</right>
+							<bottom>124</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sw_sbs_settings.description</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_mailbox_picklist</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>10</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>36</top>
+							<left>130</left>
+							<right>380</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sw_sbs_settings.setting_value</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Numeric</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<sqlSource>swdata</sqlSource>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_kbcatalog_picklist</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>11</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>36</top>
+							<left>130</left>
+							<right>380</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>sw_sbs_settings.setting_value</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Numeric</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<sqlSource>swdata</sqlSource>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>fld_pk_setting_OnValueChanged</name>
+						<code>
+							<![CDATA[fld_pk_setting_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	_swdoc.setup_form(strValue);
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded(bDataReloaded)
+{
+	// TODO: Add your event handler code here
+	if(sw_sbs_settings.setting_name!="")
+		_swdoc.setup_form(sw_sbs_settings.setting_name);
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_xmlpicklist_OnLeftClick</name>
+						<code>
+							<![CDATA[fld_xmlpicklist_OnLeftClick()
+{
+	// TODO: Add your event handler code here
+		//-- call php to get mailbox list
+		var strURL = "php/itsm/get_setting_options.php?option="+sw_adm_settings.source_file; 
+		var strResult = app.g.submit_php(strURL,true);
+		fld_xmlpicklist.pickList = strResult;
+
+	return true;
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

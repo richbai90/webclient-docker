@@ -1,0 +1,1016 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>_wc_treebrowserform</name>
+			<title>Find</title>
+			<description>webclient picklist form for lcf</description>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>false</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var _selected_treeformkey = "";]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>559</width>
+				<height>429</height>
+				<backgroundColor>#f8f8f8</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>sl_picklist</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>false</verticalGridLines>
+							<horizontalGridLines>false</horizontalGridLines>
+							<autoLoad>false</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>TabSearch:0</group>
+					</general>
+					<appearance>
+						<index>0</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>283</top>
+							<left>15</left>
+							<right>544</right>
+							<bottom>386</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>18</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#cae1ee</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<highlightStyle>0</highlightStyle>
+							<borderColor>#777777</borderColor>
+							<sqlSource>swdata</sqlSource>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_prop</name>
+						<type>EventButton</type>
+					</general>
+					<appearance>
+						<index>1</index>
+						<caption>Properties</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>399</top>
+							<left>15</left>
+							<right>76</right>
+							<bottom>426</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>true</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_new</name>
+						<type>EventButton</type>
+					</general>
+					<appearance>
+						<index>2</index>
+						<caption>New</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>399</top>
+							<left>84</left>
+							<right>145</right>
+							<bottom>426</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>true</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_select</name>
+						<type>EventButton</type>
+					</general>
+					<appearance>
+						<index>3</index>
+						<caption>Ok</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>399</top>
+							<left>413</left>
+							<right>474</right>
+							<bottom>426</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_cancel</name>
+						<type>EventButton</type>
+					</general>
+					<appearance>
+						<index>4</index>
+						<caption>Cancel</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>399</top>
+							<left>482</left>
+							<right>543</right>
+							<bottom>426</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>TabSearch</name>
+						<type>TabControl</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>5</index>
+						<caption>Tab1</caption>
+						<backgroundColor>#ded7ce</backgroundColor>
+						<foregroundColor>#ffffff</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>10</top>
+							<left>8</left>
+							<right>552</right>
+							<bottom>394</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<tabStyle>Top</tabStyle>
+					<tabSize>19</tabSize>
+					<items>
+						<item>
+							<name>Search</name>
+							<properties>56=#8aa8e4|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#8aa8e4</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Browse</name>
+							<properties>56=#ffdb75|_flags=1</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<flags>
+									<invisible>true</invisible>
+									<skipTabStop>false</skipTabStop>
+									<disabled>false</disabled>
+									<protected>false</protected>
+									<noMacroExpand>false</noMacroExpand>
+									<multiLine>false</multiLine>
+								</flags>
+								<properties>
+									<tabColor>#ffdb75</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+					</items>
+					<selectedTextFont  size="8">Arial</selectedTextFont>
+					<selectedTextColor>#000000</selectedTextColor>
+					<deselectedTextColor>#000000</deselectedTextColor>
+					<tabSlopeLeft>2</tabSlopeLeft>
+					<tabSlopeRight>2</tabSlopeRight>
+					<deselectedTabHeightOffset>1</deselectedTabHeightOffset>
+					<tabSpacing>0</tabSpacing>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text1</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabSearch:0</group>
+					</general>
+					<appearance>
+						<index>6</index>
+						<caption>Search Results</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>263</top>
+							<left>11</left>
+							<right>97</right>
+							<bottom>280</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Line1</name>
+						<type>Line</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabSearch:0</group>
+					</general>
+					<appearance>
+						<index>7</index>
+						<caption>Line 1</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#808080</foregroundColor>
+						<font  size="0"/>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>254</top>
+							<left>15</left>
+							<right>544</right>
+							<bottom>262</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Line2</name>
+						<type>Line</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabSearch:0</group>
+					</general>
+					<appearance>
+						<index>8</index>
+						<caption>Line 1</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#808080</foregroundColor>
+						<font  size="0"/>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>187</top>
+							<left>15</left>
+							<right>544</right>
+							<bottom>195</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnFind</name>
+						<type>EventButton</type>
+						<group>TabSearch:0</group>
+					</general>
+					<appearance>
+						<index>9</index>
+						<caption>Find Now</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>196</top>
+							<left>482</left>
+							<right>543</right>
+							<bottom>223</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnReset</name>
+						<type>EventButton</type>
+						<group>TabSearch:0</group>
+					</general>
+					<appearance>
+						<index>10</index>
+						<caption>Reset</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>227</top>
+							<left>482</left>
+							<right>543</right>
+							<bottom>254</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_option</name>
+						<type>Field</type>
+						<group>TabSearch:0</group>
+					</general>
+					<appearance>
+						<index>11</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>230</top>
+							<left>296</left>
+							<right>466</right>
+							<bottom>250</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List (Numeric Mode)</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#d3c9b6</borderColor>
+							<image>#eeeeee</image>
+							<listItems>All of the above match^1|Any of the above match^0|</listItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text2</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabSearch:0</group>
+					</general>
+					<appearance>
+						<index>12</index>
+						<caption>Search Mode :</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>230</top>
+							<left>214</left>
+							<right>291</right>
+							<bottom>250</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_limit</name>
+						<type>Field</type>
+						<group>TabSearch:0</group>
+					</general>
+					<appearance>
+						<index>13</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>205</top>
+							<left>296</left>
+							<right>378</right>
+							<bottom>225</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Numeric</textInputFormat>
+						<properties>
+							<borderColor>#d3c9b6</borderColor>
+							<image>#eeeeee</image>
+							<defaultValue>100</defaultValue>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text3</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabSearch:0</group>
+					</general>
+					<appearance>
+						<index>14</index>
+						<caption>Max Results :</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>205</top>
+							<left>214</left>
+							<right>291</right>
+							<bottom>225</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>srch_fields_one</name>
+						<type>Rectange</type>
+						<group>TabSearch:0</group>
+					</general>
+					<appearance>
+						<index>15</index>
+						<backgroundColor>#f8f8f8</backgroundColor>
+						<foregroundColor>#969696</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>41</top>
+							<left>16</left>
+							<right>273</right>
+							<bottom>183</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>srch_fields_two</name>
+						<type>Rectange</type>
+						<group>TabSearch:0</group>
+					</general>
+					<appearance>
+						<index>16</index>
+						<backgroundColor>#f8f8f8</backgroundColor>
+						<foregroundColor>#969696</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>41</top>
+							<left>284</left>
+							<right>541</right>
+							<bottom>183</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded(bDataReloaded)
+{
+	if(IsObjectDefined("app._xmlSearchForms")==false)return;
+
+	//-- set search opion to all must match and limit to 100
+	app._eva(tb_limit,100)
+	app._eva(lb_option,1);
+
+	//-- get picklist details from xml
+	if(app._xmlSearchForms==null)
+	{
+		MessageBox("The search form definition ("+ top._primary_key +") does not exist. Please contact your Administrator");
+		_swdoc.CloseForm();
+		return;
+	}
+
+	var xmlForm = null;
+	var arrSearchForms = app._xmlSearchForms.getElementsByTagName('sqlTbForm');
+	for(var x=0;x < arrSearchForms.length;x++)
+	{
+		var strName = app.xmlNodeTextByTag(arrSearchForms[x],"name");
+		if(strName==top._primary_key)
+		{
+			xmlForm = arrSearchForms[x];
+			break;
+		}
+	}
+
+	//-- set sqllist (sl_picklist)
+	if(xmlForm!=null)
+	{
+		//-- 
+		_swdoc.SetTitle(app.xmlNodeTextByTag(xmlForm,"title"));
+
+		//-- set sqltable properties
+		sl_picklist.table = app.xmlNodeTextByTag(xmlForm,"table");
+		//sl_picklist.editRecordForm = app.xmlNodeTextByTag(xmlPL,"propertiesForm");
+		//sl_picklist.addRecordForm = app.xmlNodeTextByTag(xmlPL,"newRecordForm");	
+		
+		//-- get columns and draw out
+		var arrColumns = new Array();
+		var arrXmlColumns = xmlForm.getElementsByTagName("resultColumn");
+		for(var x=0;x<arrXmlColumns.length;x++)
+		{
+			arrColumns[arrColumns.length++] = app.xmlText(arrXmlColumns[x]);
+		}
+		sl_picklist._create_bespoke_xmlcols(arrColumns);		
+
+
+		//-- get search areas and add tables to innerhtml
+		var eDivOne = srch_fields_one.element;
+	
+		//eDivOne.style.overflow='auto';
+		var eDivTwo = srch_fields_two.element;
+		//eDivTwo.style.overflow='auto';
+		
+		//-- sf one fields
+		var strTableHtml = "<table border='0' cellspacing='0' cellpadding='0' width='100%'>";
+		var arrSearchColumns= xmlForm.getElementsByTagName("col1SearchField");	
+		for(var x=0;x<arrSearchColumns.length;x++)
+		{
+			var strBinding = sl_picklist.table + "." + app.xmlText(arrSearchColumns[x]);
+
+			strTableHtml += "<tr>";	
+				
+				//-- label
+				strTableHtml += "<td class='sf-label' width='50%'>";	
+				strTableHtml += "<div class='sf-label-div'>" + app._application_labels[strBinding] + "</div>";	
+				strTableHtml += "</td>";	
+			
+				//-- input
+				strTableHtml += "<td class='sf-input' width='50%'>";
+				strTableHtml += "<input type='text' class='sf-input-box' binding='"+strBinding+"'>";
+				strTableHtml += "</td>";	
+				
+			strTableHtml += "</tr>";	
+	
+		}
+		strTableHtml += "</table>";	
+		eDivOne.innerHTML = strTableHtml;
+
+		//-- sf two fields
+		var strTableHtml = "<table border='0' cellspacing='0' cellpadding='0' width='100%'>";
+		var arrSearchColumns = xmlForm.getElementsByTagName("col2SearchField");	
+		for(var x=0;x<arrSearchColumns.length;x++)
+		{
+			var strBinding = sl_picklist.table + "." + app.xmlText(arrSearchColumns[x]);
+
+			strTableHtml += "<tr>";	
+				
+				//-- label
+				strTableHtml += "<td class='sf-label' width='50%'>";	
+				strTableHtml += "<div class='sf-label-div'>" + app._application_labels[strBinding] + "</div>";	
+				strTableHtml += "</td>";	
+			
+				//-- input
+				strTableHtml += "<td class='sf-input' width='50%'>";
+				strTableHtml += "<input type='text' class='sf-input-box' binding='"+strBinding+"'>";
+				strTableHtml += "</td>";	
+				
+			strTableHtml += "</tr>";	
+	
+		}
+		strTableHtml += "</table>";	
+		eDivTwo.innerHTML = strTableHtml;
+
+	}
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_select_OnPressed</name>
+						<code>
+							<![CDATA[btn_select_OnPressed()
+{
+    var sCol = dd.tables[sl_picklist.table].PrimaryKey;
+	var keyValue = sl_picklist.GetItemTextRaw(sl_picklist.curSel, sCol)
+	
+	if(keyValue!="")
+	{
+		_swdoc._selected_treeformkey = keyValue;
+		_swdoc.CloseForm();
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_prop_OnPressed</name>
+						<code>
+							<![CDATA[btn_prop_OnPressed()
+{
+	sl_picklist.EditRecord(sl_picklist.curSel);
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_cancel_OnPressed</name>
+						<code>
+							<![CDATA[btn_cancel_OnPressed()
+{
+	_swdoc._selected_treeformkey = "";
+	_swdoc.CloseForm()
+	
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_picklist_OnItemDoubleClicked</name>
+						<code>
+							<![CDATA[sl_picklist_OnItemDoubleClicked(nRow, nCol)
+{
+	var sCol = dd.tables[sl_picklist.table].PrimaryKey;
+	var keyValue = sl_picklist.GetItemTextRaw(nRow, sCol)
+	
+	if(keyValue!="")
+	{
+		_swdoc._selected_treeformkey = keyValue;
+		_swdoc.CloseForm();
+	}
+	
+	return false;
+
+
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

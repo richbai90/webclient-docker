@@ -1,0 +1,18 @@
+<?php
+if ( !function_exists( "get_approver_licenses" ) )
+{
+    function get_approver_licenses( )
+    {
+        $licenses = 0;
+        $fileList = get_included_files( );
+        if ( 2 == count( $fileList ) && "approver_license_file.swp" == strtolower( basename( __FILE__ ) ) && "license_check.php" == strtolower( basename( $fileList[0] ) ) )
+        {
+            return $licenses;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+}
+?>

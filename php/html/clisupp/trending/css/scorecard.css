@@ -1,0 +1,208 @@
+
+.arrow-n,
+.arrow-e,
+.arrow-s,
+.arrow-w {
+  /*
+   * In Internet Explorer, The"border-style: dashed" will never be
+   * rendered unless "(width * 5) >= border-width" is true.
+   * Since "width" is set to "0", the "dashed-border" remains
+   * invisible to the user, which renders the border just like how
+   * "border-color: transparent" renders.
+   */
+  border-style: dashed;
+  border-color: transparent;
+  border-width: 0.53em;
+  display: -moz-inline-box;
+  display: inline-block;
+  /* Use font-size to control the size of the arrow. */
+  font-size: 10px;
+  height: 0;
+  line-height: 0;
+  position: relative;
+  vertical-align: middle;
+  width: 0;
+}
+
+.arrow-n {
+  border-bottom-width: 1em;
+  border-bottom-style: solid;
+  border-bottom-color: #ffffff;
+  bottom: 0.25em;
+}
+.arrow-n.up
+{
+	 border-bottom-color: green;
+}
+.arrow-n.up-below
+{
+	 border-bottom-color: blue;
+}
+.arrow-n.up-above
+{
+	 border-bottom-color: green;
+}
+
+.arrow-e {
+
+  border-left-width: 1em;
+  border-left-style: solid;
+  border-left-color: #ffffff;
+  left: 0.15em;
+}
+.arrow-e.l-nudge
+{
+ left: 3px;
+}
+.arrow-e.static
+{
+	 border-left-color: orange;
+}
+                    
+.arrow-s {
+  border-top-width: 1em;
+  border-top-style: solid;
+  border-top-color: #ffffff;
+  top: 0.25em;
+}
+.arrow-s.down-above
+{
+	 border-top-color: orange;
+}
+
+.arrow-s.down-below
+{
+	 border-top-color: red;
+}
+
+.arrow-w 
+{
+
+  border-right-width: 1em;
+  border-right-style: solid;
+  border-right-color: #ffffff;
+  right: 0.25em;
+
+}
+
+.ico-arr-right
+{
+	background:url('images/arr-right.ico') center center no-repeat;
+}
+
+.ico-arr-up
+{
+	background:url('images/arr-up.ico') center center no-repeat;
+}
+
+.ico-arr-down
+{
+	background:url('images/arr-down.ico') center center no-repeat;
+}
+
+.bold
+{
+	font-weight:bold;
+}
+
+.kpi-red
+{
+	padding-right:2px;
+	width:16px;
+	height:16px;
+	background-color:red;
+	color:white;
+}
+
+.kpi-green
+{
+	padding-right:2px;
+	width:16px;
+	height:16px;
+	background-color:green;
+	color:white;
+}
+
+.kpi-amber
+{
+	padding-right:2px;
+	width:16px;
+	height:16px;
+	background-color:orange;
+	color:white;
+}
+
+
+.kpi-font-red
+{
+	color:red;
+}
+
+.kpi-font-green
+{
+	color:green;
+}
+
+.kpi-font-amber
+{
+	color:orange;
+}
+
+
+.kpi-red-small
+{
+	padding:1px;
+	background-color:red;
+	color:white;
+	display:inline-block;
+}
+
+.kpi-green-small
+{
+	padding:1px;
+	background-color:green;
+	color:white;
+	display:inline-block;
+}
+
+.kpi-amber-small
+{
+	padding:1px;
+	background-color:orange;
+	color:white;
+	display:inline-block;
+}
+
+
+.kpi-red-large
+{
+
+	background-color:red;
+	color:white;
+	display:inline-block;
+	font-size:28px;
+}
+
+.kpi-green-large
+{
+
+	background-color:green;
+	color:white;
+	display:inline-block;
+	font-size:28px;
+}
+
+.kpi-amber-large
+{
+
+	background-color:orange;
+	color:white;
+	display:inline-block;
+	font-size:28px;
+}
+
+
+div.sparkline
+{
+	margin-right:10px;
+}

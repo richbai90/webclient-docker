@@ -1,0 +1,6287 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>bpm_condition</name>
+			<title>Process Condition</title>
+			<description>Stage Condition</description>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>true</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>bpm_cond</name>
+				<type>Main Details Table</type>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[//-- pointers
+function COND()
+{
+	return _swdoc.bpm_cond;
+}
+
+function MF()
+{
+	return _swdoc.mainform;
+}
+
+function calc_onholdduration()
+{
+	var intMinutes = _swdoc.COND().onhold_durationhrs * 60;
+	intMinutes = intMinutes + _swdoc.COND().onhold_durationmins;
+	_swdoc.COND().onhold_duration = intMinutes + "";
+}
+
+function displayProfileCode(strStatusValue)
+{
+	var boolVisible = false; 
+	if (strStatusValue=="6" || strStatusValue=="16" || strStatusValue=="18")
+	{
+		boolVisible = true;
+	}
+	app._evi(_swdoc.MF().fld_res_profile_value,boolVisible);
+	app._evi(_swdoc.MF().lbl_res_profile_value,boolVisible);
+	app._evi(_swdoc.MF().fld_profile_value,!boolVisible);
+	app._evi(_swdoc.MF().lbl_profile_value,!boolVisible);
+	if (boolVisible && _swdoc.COND().set_profile == 1)
+	{
+		app._een(_swdoc.MF().fld_res_profile_value, true);
+		app._een(_swdoc.MF().lbl_res_profile_value, true);
+	}else if (!boolVisible && _swdoc.COND().set_profile == 1)
+	{
+		app._een(_swdoc.MF().fld_profile_value, true);
+	}
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnSaveData</name>
+					<code>
+						<![CDATA[OnSaveData()
+{
+	//-- cacl onhold duration in minutes
+	_swdoc.calc_onholdduration();
+
+
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnDataSaved</name>
+					<code>
+						<![CDATA[OnDataSaved()
+{
+
+
+	//-- nwj - 16.05.2013 set globallar so bmpui knows if ok to reload
+	app.g.SavedWorkflowRecord = true;
+
+
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>590</width>
+				<height>582</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<type>Field</type>
+						<group>TabCond:0</group>
+					</general>
+					<appearance>
+						<index>0</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>31</top>
+							<left>90</left>
+							<right>565</right>
+							<bottom>49</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.title</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_test</name>
+						<type>Field</type>
+						<group>TabCond:0</group>
+					</general>
+					<appearance>
+						<index>1</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>136</top>
+							<left>90</left>
+							<right>292</right>
+							<bottom>154</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<listItems>BPM Status|Opencall Status|Customer ID|Customer Name|Support Group|Support Analyst|PRE - BPM Status|PRE - Opencall Status|PRE - Customer ID|PRE - Customer Name|PRE - Support Group|PRE - Support Analyst|</listItems>
+							<defaultValue>BPM Status</defaultValue>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_op</name>
+						<type>Field</type>
+						<group>TabCond:0</group>
+					</general>
+					<appearance>
+						<index>2</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>136</top>
+							<left>301</left>
+							<right>355</right>
+							<bottom>154</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<listItems>=|!=|&lt;|&gt;|&gt;=|&lt;=|</listItems>
+							<defaultValue>=</defaultValue>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_cond</name>
+						<type>Field</type>
+						<group>TabCond:0</group>
+					</general>
+					<appearance>
+						<index>3</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>158</top>
+							<left>90</left>
+							<right>565</right>
+							<bottom>559</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.test_condition</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>true</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>TabCond</name>
+						<type>TabControl</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>4</index>
+						<caption>Tab1</caption>
+						<backgroundColor>#ded7ce</backgroundColor>
+						<foregroundColor>#ffffff</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>0</top>
+							<left>0</left>
+							<right>578</right>
+							<bottom>569</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<tabStyle>Top</tabStyle>
+					<tabSize>19</tabSize>
+					<items>
+						<item>
+							<name>Condition</name>
+							<properties>56=#eaeaea|59=#5f5f5f|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#eaeaea</tabColor>
+									<inactiveTextColor>#5f5f5f</inactiveTextColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Standard Actions</name>
+							<properties>56=#eaeaea|59=#5f5f5f|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#eaeaea</tabColor>
+									<inactiveTextColor>#5f5f5f</inactiveTextColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>VPME Script Execution</name>
+							<properties>56=#f09e9f|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#f09e9f</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Automatic Diary Update</name>
+							<properties>56=#eaeaea|59=#808080|_flags=1</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<flags>
+									<invisible>true</invisible>
+									<skipTabStop>false</skipTabStop>
+									<disabled>false</disabled>
+									<protected>false</protected>
+									<noMacroExpand>false</noMacroExpand>
+									<multiLine>false</multiLine>
+								</flags>
+								<properties>
+									<tabColor>#eaeaea</tabColor>
+									<inactiveTextColor>#808080</inactiveTextColor>
+								</properties>
+							</controlInfo>
+						</item>
+					</items>
+					<selectedTextFont  size="8">Arial</selectedTextFont>
+					<selectedTextColor>#000000</selectedTextColor>
+					<deselectedTextColor>#000000</deselectedTextColor>
+					<tabSlopeLeft>2</tabSlopeLeft>
+					<tabSlopeRight>2</tabSlopeRight>
+					<deselectedTabHeightOffset>1</deselectedTabHeightOffset>
+					<tabSpacing>0</tabSpacing>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<tabStyle>0</tabStyle>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_status</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>5</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>44</top>
+							<left>124</left>
+							<right>286</right>
+							<bottom>62</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_call_status</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List (Numeric Mode)</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<listItems>Cancelled^17|Closed^16|Closed(Chg)^18|On Hold^4|Off Hold^5|Resolved^6|Escalated(O)^9|Escalated(G)^10|Escalated(A)^11|[No Change]^0|</listItems>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field1</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>6</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>90</top>
+							<left>124</left>
+							<right>286</right>
+							<bottom>108</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_call_condition</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List (Numeric Mode)</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>0</defaultValue>
+							<listItems>A - None^1|A - Green^2|A - Amber^3|A - Blue^4|A - Magenta^5|A - Red^6|B - None^7|B - Green^8|B - Amber^9|B - Blue^10|B - Magenta^11|B - Red^12|C - None^13|C - Green^14|C - Amber^15|C - Blue^16|C - Magenta^17|C - Red^18|D - None^19|D - Green^20|D - Amber^21|D - Blue^22|D - Magenta^23|D - Red^24|[No Change]^0|</listItems>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_call_priority</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>7</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>90</top>
+							<left>396</left>
+							<right>558</right>
+							<bottom>108</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_call_sla</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>itsmsp_slad_priority</distinctTable>
+							<distinctColumn>fk_priority</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<listFilter>_swc_flg_sla=1&amp;_swc_fk_slad=&amp;[bpm_cond.set_call_sla_new]</listFilter>
+							<storedQuery>common.filterByTableValues</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_process</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>8</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>276</top>
+							<left>125</left>
+							<right>287</right>
+							<bottom>294</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_workflow</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>bpm_workflow</distinctTable>
+							<distinctColumn>pk_workflow_id</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<storedQuery>requests.filter_bpm_selection</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field4</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>9</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>299</top>
+							<left>125</left>
+							<right>287</right>
+							<bottom>317</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_stage</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<displayColumnValue>Change Classification</displayColumnValue>
+						<properties>
+							<content>#eeeeee</content>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>bpm_stage</distinctTable>
+							<distinctColumn>pk_stage_id</distinctColumn>
+							<displayColumn>title</displayColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<listFilter>_swc_fk_workflow_id=&amp;[bpm_cond.set_workflow]</listFilter>
+							<borderColor>#c0c0c0</borderColor>
+							<storedQuery>common.filterByTableValues</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field2</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>10</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>322</top>
+							<left>125</left>
+							<right>287</right>
+							<bottom>340</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_status</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>bpm_stage_sts</distinctTable>
+							<distinctColumn>status</distinctColumn>
+							<listFilter>_swc_fk_workflow_id=&amp;[bpm_cond.set_workflow]</listFilter>
+							<borderColor>#c0c0c0</borderColor>
+							<storedQuery>common.filterByTableValues</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_group</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>11</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>368</top>
+							<left>112</left>
+							<right>274</right>
+							<bottom>386</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.assignto_group</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<sqlSource>syscache</sqlSource>
+							<distinctTable>swgroups</distinctTable>
+							<distinctColumn>id</distinctColumn>
+							<displayColumn>name</displayColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<storedQuery>common.getSupGroups</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_analyst</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>12</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>390</top>
+							<left>112</left>
+							<right>274</right>
+							<bottom>408</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.assignto_analyst</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<sqlSource>syscache</sqlSource>
+							<distinctTable>swanalysts</distinctTable>
+							<distinctColumn>AnalystID</distinctColumn>
+							<displayColumn>Name</displayColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<dropdownButtonType>1</dropdownButtonType>
+							<storedQuery>common.filterByTableValues</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_mailbox</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>13</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>368</top>
+							<left>396</left>
+							<right>558</right>
+							<bottom>386</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.email_mailbox</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_template</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>14</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>390</top>
+							<left>396</left>
+							<right>558</right>
+							<bottom>408</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.email_template</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<sqlSource>syscache</sqlSource>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field3</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>15</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>438</top>
+							<left>120</left>
+							<right>245</right>
+							<bottom>456</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.email_owner</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>0</defaultValue>
+							<content>#eeeeee</content>
+							<flagItems>Email request owner^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field5</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>16</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>438</top>
+							<left>274</left>
+							<right>399</right>
+							<bottom>456</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.email_owners_group</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>0</defaultValue>
+							<content>#eeeeee</content>
+							<flagItems>Email owners group^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_customers</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>17</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>485</top>
+							<left>124</left>
+							<right>542</right>
+							<bottom>503</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.email_customers</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>2</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_analysts</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>18</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>507</top>
+							<left>124</left>
+							<right>542</right>
+							<bottom>525</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.email_analysts</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>2</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field13</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>19</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>529</top>
+							<left>124</left>
+							<right>558</right>
+							<bottom>547</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.email_others</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<textLineCount>2</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<hintText>&lt;Enter email address as someone@somewhere.com; aperson@somewhere.com&gt;</hintText>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:0</group>
+					</general>
+					<appearance>
+						<index>20</index>
+						<caption>Test Condition</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>158</top>
+							<left>5</left>
+							<right>86</right>
+							<bottom>176</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.test_condition</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:0</group>
+					</general>
+					<appearance>
+						<index>21</index>
+						<caption>Title</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>5</left>
+							<right>86</right>
+							<bottom>50</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.title</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label1</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>22</index>
+						<caption>Status</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>44</top>
+							<left>35</left>
+							<right>120</right>
+							<bottom>62</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_call_status</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label2</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>23</index>
+						<caption>Status</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>322</top>
+							<left>36</left>
+							<right>121</right>
+							<bottom>340</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_status</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label3</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>24</index>
+						<caption>Condition</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>90</top>
+							<left>35</left>
+							<right>120</right>
+							<bottom>108</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_call_condition</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label4</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>25</index>
+						<caption>Stage</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>299</top>
+							<left>36</left>
+							<right>121</right>
+							<bottom>317</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_stage</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label5</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>26</index>
+						<caption>Workflow</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>276</top>
+							<left>36</left>
+							<right>121</right>
+							<bottom>294</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_workflow</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label6</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>27</index>
+						<caption>Priority</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>90</top>
+							<left>307</left>
+							<right>392</right>
+							<bottom>108</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_call_sla</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label9</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>28</index>
+						<caption>Group</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>368</top>
+							<left>23</left>
+							<right>108</right>
+							<bottom>386</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.assignto_group</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label10</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>29</index>
+						<caption>Analyst</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>390</top>
+							<left>23</left>
+							<right>108</right>
+							<bottom>408</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.assignto_analyst</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect1</name>
+						<type>Rectange</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>30</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#c0c0c0</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>358</top>
+							<left>18</left>
+							<right>295</right>
+							<bottom>419</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#c0c0c0</backgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text1</name>
+						<type>Text</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>31</index>
+						<caption>Move To</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>349</top>
+							<left>23</left>
+							<right>71</right>
+							<bottom>368</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<borderColor>#eaeaea</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect1</name>
+						<type>Rectange</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>32</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#c0c0c0</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>34</top>
+							<left>18</left>
+							<right>562</right>
+							<bottom>157</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#c0c0c0</backgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text1</name>
+						<type>Text</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>33</index>
+						<caption>Request Settings</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>25</top>
+							<left>23</left>
+							<right>116</right>
+							<bottom>44</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<borderColor>#eaeaea</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect1</name>
+						<type>Rectange</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>34</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#c0c0c0</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>268</top>
+							<left>18</left>
+							<right>562</right>
+							<bottom>348</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#c0c0c0</backgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text1</name>
+						<type>Text</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>35</index>
+						<caption>Set Process</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>259</top>
+							<left>25</left>
+							<right>94</right>
+							<bottom>278</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<borderColor>#eaeaea</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect1</name>
+						<type>Rectange</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>36</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#c0c0c0</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>358</top>
+							<left>304</left>
+							<right>562</right>
+							<bottom>419</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#c0c0c0</backgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text1</name>
+						<type>Text</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>37</index>
+						<caption>Email Settings</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>349</top>
+							<left>307</left>
+							<right>381</right>
+							<bottom>368</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<borderColor>#eaeaea</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect1</name>
+						<type>Rectange</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>38</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#c0c0c0</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>432</top>
+							<left>18</left>
+							<right>562</right>
+							<bottom>561</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#c0c0c0</backgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text1</name>
+						<type>Text</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>39</index>
+						<caption>Email Recipients</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>423</top>
+							<left>23</left>
+							<right>107</right>
+							<bottom>442</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<borderColor>#eaeaea</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label11</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>40</index>
+						<caption>Mailbox</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>368</top>
+							<left>307</left>
+							<right>392</right>
+							<bottom>386</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.email_mailbox</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label12</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>41</index>
+						<caption>Customers</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>485</top>
+							<left>35</left>
+							<right>120</right>
+							<bottom>503</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.email_customers</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label13</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>42</index>
+						<caption>Analysts</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>507</top>
+							<left>35</left>
+							<right>120</right>
+							<bottom>525</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.email_analysts</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label14</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>43</index>
+						<caption>Others</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>529</top>
+							<left>35</left>
+							<right>120</right>
+							<bottom>547</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.email_others</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label11</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>44</index>
+						<caption>Template</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>390</top>
+							<left>307</left>
+							<right>392</right>
+							<bottom>408</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.email_template</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text2</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:0</group>
+					</general>
+					<appearance>
+						<index>45</index>
+						<caption>Enter an expression that will be evaluated. If the condition is met then the assigned actions for this condition will be processed. You can use new_opencall.field and old_opencall.fieldname. Treat it like doing a sql where clause. Alternatively just add simple conditions using the below controls.</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>53</top>
+							<left>90</left>
+							<right>565</right>
+							<bottom>108</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>true</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field5</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>46</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>459</top>
+							<left>120</left>
+							<right>260</right>
+							<bottom>477</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.email_callcust</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>0</defaultValue>
+							<content>#eeeeee</content>
+							<flagItems>Email request customer ^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_hours</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>47</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>67</top>
+							<left>124</left>
+							<right>174</right>
+							<bottom>85</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>25</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.onhold_durationhrs</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Numeric</textInputFormat>
+						<properties>
+							<defaultValue>7</defaultValue>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_mins</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>48</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>67</top>
+							<left>236</left>
+							<right>286</right>
+							<bottom>85</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>25</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.onhold_durationmins</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Numeric</textInputFormat>
+						<properties>
+							<defaultValue>30</defaultValue>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_hours</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>49</index>
+						<caption>OnHold Hours</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>67</top>
+							<left>35</left>
+							<right>120</right>
+							<bottom>85</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_mins</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>50</index>
+						<caption>Minutes</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>67</top>
+							<left>179</left>
+							<right>232</right>
+							<bottom>85</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>25</left>
+							<right>25</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label7</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:3</group>
+					</general>
+					<appearance>
+						<index>51</index>
+						<caption>Description</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>87</top>
+							<left>1</left>
+							<right>86</right>
+							<bottom>105</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.updatetxt</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field7</name>
+						<type>Field</type>
+						<group>TabCond:3</group>
+					</general>
+					<appearance>
+						<index>52</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>87</top>
+							<left>90</left>
+							<right>565</right>
+							<bottom>554</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.updatetxt</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>2</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label8</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:3</group>
+					</general>
+					<appearance>
+						<index>53</index>
+						<caption>Code</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>65</top>
+							<left>286</left>
+							<right>371</right>
+							<bottom>83</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.updatecode</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field8</name>
+						<type>Field</type>
+						<group>TabCond:3</group>
+					</general>
+					<appearance>
+						<index>54</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>65</top>
+							<left>375</left>
+							<right>565</right>
+							<bottom>83</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.updatecode</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>Stage Actions</defaultValue>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label15</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:3</group>
+					</general>
+					<appearance>
+						<index>55</index>
+						<caption>Source</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>65</top>
+							<left>1</left>
+							<right>86</right>
+							<bottom>83</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.updatesource</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field9</name>
+						<type>Field</type>
+						<group>TabCond:3</group>
+					</general>
+					<appearance>
+						<index>56</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>65</top>
+							<left>90</left>
+							<right>280</right>
+							<bottom>83</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.updatesource</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>Business Process Manager</defaultValue>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_diary</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>57</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>44</top>
+							<left>390</left>
+							<right>552</right>
+							<bottom>62</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.flg_diaryupdate</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<flagItems>Perform a diary update^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field5</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>58</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>459</top>
+							<left>274</left>
+							<right>468</right>
+							<bottom>477</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.email_custmanager</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>0</defaultValue>
+							<content>#eeeeee</content>
+							<flagItems>Email request customer&apos;s manager^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field10</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:3</group>
+					</general>
+					<appearance>
+						<index>59</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>369</left>
+							<right>559</right>
+							<bottom>58</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.updatepublic</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<flagItems>Make this a public update^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text3</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:0</group>
+					</general>
+					<appearance>
+						<index>60</index>
+						<caption>Test Column</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>119</top>
+							<left>85</left>
+							<right>156</right>
+							<bottom>132</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_value</name>
+						<type>Field</type>
+						<group>TabCond:0</group>
+					</general>
+					<appearance>
+						<index>61</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>136</top>
+							<left>363</left>
+							<right>565</right>
+							<bottom>154</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>true</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text3</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:0</group>
+					</general>
+					<appearance>
+						<index>62</index>
+						<caption>Test Value</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>119</top>
+							<left>358</left>
+							<right>421</right>
+							<bottom>132</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text3</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:0</group>
+					</general>
+					<appearance>
+						<index>63</index>
+						<caption>Test</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>119</top>
+							<left>295</left>
+							<right>349</right>
+							<bottom>132</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_apply_test</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:0</group>
+					</general>
+					<appearance>
+						<index>64</index>
+						<caption>Add</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>115</top>
+							<left>517</left>
+							<right>565</right>
+							<bottom>131</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_and</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:0</group>
+					</general>
+					<appearance>
+						<index>65</index>
+						<caption>and</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>180</top>
+							<left>49</left>
+							<right>86</right>
+							<bottom>196</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_or</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:0</group>
+					</general>
+					<appearance>
+						<index>66</index>
+						<caption>or</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>200</top>
+							<left>49</left>
+							<right>86</right>
+							<bottom>216</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_teststatus</name>
+						<type>Field</type>
+						<group>TabCond:0</group>
+					</general>
+					<appearance>
+						<index>67</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>136</top>
+							<left>363</left>
+							<right>565</right>
+							<bottom>154</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List (Numeric Mode)</type>
+						<flags>
+							<invisible>true</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<listItems>Pending^1|Unassigned^2|Unaccepted^3|On Hold^4|Off Hold^5|Resolved^6|Defered^7|Incoming^8|Escalated(O)^9|Escalated(G)^10|Escalated(A)^11|Closed^16|Cancelled^17|Closed(Chg)^18|</listItems>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_testwfstatus</name>
+						<type>Field</type>
+						<group>TabCond:0</group>
+					</general>
+					<appearance>
+						<index>68</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>136</top>
+							<left>363</left>
+							<right>565</right>
+							<bottom>154</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<listItems>Pending^1|Unassigned^2|Unaccepted^3|On Hold^4|Off Hold^5|Resolved^6|Defered^7|Incoming^8|Escalated(O)^9|Escalated(G)^10|Escalated(A)^11|Closed^16|Cancelled^17|Closed(Chg)^18|</listItems>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>bpm_stage_sts</distinctTable>
+							<distinctColumn>status</distinctColumn>
+							<listFilter>fk_workflow_id = &apos;&amp;[bpm_cond.fk_workflow_id]&apos;</listFilter>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_vpme</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>true</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>TabCond:2</group>
+					</general>
+					<appearance>
+						<index>69</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>54</top>
+							<left>11</left>
+							<right>567</right>
+							<bottom>537</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>pk_auto_id</column>
+							</properties>
+							<name>ID</name>
+							<width>3</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>false</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>execorder</column>
+							</properties>
+							<name>Execute Order</name>
+							<width>101</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>vpmescript</column>
+							</properties>
+							<name>Execute VPME Script (system sub processes only)</name>
+							<width>459</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>18</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#0033cc</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<highlightStyle>0</highlightStyle>
+							<borderColor>#d3c9b6</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<table>bpm_cond_vpme</table>
+							<listFilter>swc=fk_cond_id&amp;kvs=&amp;[bpm_cond.pk_condition_id]</listFilter>
+							<storedQuery>common.load_by_colname</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_add_vpme</name>
+						<type>EventButton</type>
+						<group>TabCond:2</group>
+					</general>
+					<appearance>
+						<index>70</index>
+						<caption>Add</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>28</top>
+							<left>450</left>
+							<right>505</right>
+							<bottom>49</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_del_vpme</name>
+						<type>EventButton</type>
+						<group>TabCond:2</group>
+					</general>
+					<appearance>
+						<index>71</index>
+						<caption>Delete</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>28</top>
+							<left>511</left>
+							<right>566</right>
+							<bottom>49</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_scripts</name>
+						<type>Field</type>
+						<group>TabCond:2</group>
+					</general>
+					<appearance>
+						<index>72</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>30</top>
+							<left>190</left>
+							<right>443</right>
+							<bottom>48</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#d3c9b6</borderColor>
+							<dateFormatMode>#eeeeee</dateFormatMode>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_up_pos</name>
+						<type>EventButton</type>
+						<group>TabCond:2</group>
+					</general>
+					<appearance>
+						<index>73</index>
+						<caption>Up</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>28</top>
+							<left>11</left>
+							<right>49</right>
+							<bottom>49</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_down_pos</name>
+						<type>EventButton</type>
+						<group>TabCond:2</group>
+					</general>
+					<appearance>
+						<index>74</index>
+						<caption>Down</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>28</top>
+							<left>55</left>
+							<right>93</right>
+							<bottom>49</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text4</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:2</group>
+					</general>
+					<appearance>
+						<index>75</index>
+						<caption>Run VPME Script</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>30</top>
+							<left>99</left>
+							<right>189</right>
+							<bottom>48</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field11</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:2</group>
+					</general>
+					<appearance>
+						<index>76</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>545</top>
+							<left>5</left>
+							<right>310</right>
+							<bottom>563</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.flg_contvpmeonfail</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>0</defaultValue>
+							<dateFormatMode>#eeeeee</dateFormatMode>
+							<flagItems>When script execution fails continue onto the next script^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field12</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>77</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>276</top>
+							<left>395</left>
+							<right>557</right>
+							<bottom>294</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_progress</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>bpm_progress</distinctTable>
+							<distinctColumn>pk_progid</distinctColumn>
+							<listFilter>_swc_fk_workflow_id=&amp;[bpm_cond.fk_workflow_id]</listFilter>
+							<borderColor>#c0c0c0</borderColor>
+							<displayColumn>title</displayColumn>
+							<storedQuery>common.filterByTableValues</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label16</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>78</index>
+						<caption>Set Progress</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>276</top>
+							<left>306</left>
+							<right>391</right>
+							<bottom>294</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_progress</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field14</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>79</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#cc0000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>297</top>
+							<left>390</left>
+							<right>552</right>
+							<bottom>315</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_progress_fail</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<flagItems>Progress failure^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>elipsis_cust</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>80</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>485</top>
+							<left>541</left>
+							<right>557</right>
+							<bottom>503</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#d3c9b6</borderColor>
+							<image>#eeeeee</image>
+							<dropdownButtonType>1</dropdownButtonType>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<sqlSource>swdata</sqlSource>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>elipsis_analysts</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>81</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>507</top>
+							<left>541</left>
+							<right>557</right>
+							<bottom>525</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#d3c9b6</borderColor>
+							<image>#eeeeee</image>
+							<dropdownButtonType>1</dropdownButtonType>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<sqlSource>swdata</sqlSource>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label17</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>82</index>
+						<caption>SLA</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>67</top>
+							<left>353</left>
+							<right>392</right>
+							<bottom>83</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_call_sla_new</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_new_sla</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>83</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>67</top>
+							<left>396</left>
+							<right>558</right>
+							<bottom>85</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_call_sla_new</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>itsmsp_slad</distinctTable>
+							<distinctColumn>pk_slad_id</distinctColumn>
+							<displayColumn>slad_id</displayColumn>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<storedQuery>bpm.filter_itsm_sla</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_set_profile</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>84</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>112</top>
+							<left>119</left>
+							<right>339</right>
+							<bottom>128</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_profile</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<flagItems>Set request category to category below^1|</flagItems>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_profile_value</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>85</index>
+						<caption>Category</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>133</top>
+							<left>33</left>
+							<right>120</right>
+							<bottom>151</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_profile_value</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_profile_value</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>86</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>133</top>
+							<left>124</left>
+							<right>558</right>
+							<bottom>151</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_profile_value</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<hintText>Leave blank to clear the request category</hintText>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>pcdesc</distinctTable>
+							<distinctColumn>code</distinctColumn>
+							<displayColumn>info</displayColumn>
+							<dropdownButtonType>1</dropdownButtonType>
+							<storedQuery>common.filterByTableValues</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_addwatch</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>87</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>175</top>
+							<left>118</left>
+							<right>363</right>
+							<bottom>191</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.flg_addwatch</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<flagItems>Add request to Watched Calls list^1|</flagItems>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_remwatch</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>88</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>216</top>
+							<left>118</left>
+							<right>363</right>
+							<bottom>232</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.flg_remwatch</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<flagItems>Remove request from Watched Calls list^1|</flagItems>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect2</name>
+						<type>Rectange</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>89</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#c0c0c0</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>167</top>
+							<left>19</left>
+							<right>563</right>
+							<bottom>258</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#c0c0c0</backgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text5</name>
+						<type>Text</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>90</index>
+						<caption>Watch Call Settings</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>158</top>
+							<left>26</left>
+							<right>126</right>
+							<bottom>177</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<borderColor>#eaeaea</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>elipsis_addwatchlist</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>91</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>194</top>
+							<left>541</left>
+							<right>557</right>
+							<bottom>212</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#d3c9b6</borderColor>
+							<image>#eeeeee</image>
+							<dropdownButtonType>1</dropdownButtonType>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<sqlSource>swdata</sqlSource>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_addwatchlist</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>92</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>194</top>
+							<left>124</left>
+							<right>542</right>
+							<bottom>212</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.addwatchlist</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>2</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label18</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>93</index>
+						<caption>Analysts</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>194</top>
+							<left>35</left>
+							<right>120</right>
+							<bottom>212</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.email_analysts</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label19</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>94</index>
+						<caption>Analysts</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>234</top>
+							<left>35</left>
+							<right>120</right>
+							<bottom>252</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.email_analysts</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_remwatchlist</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>95</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>234</top>
+							<left>124</left>
+							<right>542</right>
+							<bottom>252</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.remwatchlist</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>2</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>elipsis_remwatchlist</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>96</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>234</top>
+							<left>541</left>
+							<right>557</right>
+							<bottom>252</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#d3c9b6</borderColor>
+							<image>#eeeeee</image>
+							<dropdownButtonType>1</dropdownButtonType>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<sqlSource>swdata</sqlSource>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_res_profile_value</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>97</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>133</top>
+							<left>124</left>
+							<right>558</right>
+							<bottom>151</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_res_profile_value</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<hintText>Leave blank to clear the request category</hintText>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>rcdesc</distinctTable>
+							<distinctColumn>code</distinctColumn>
+							<displayColumn>info</displayColumn>
+							<dropdownButtonType>1</dropdownButtonType>
+							<storedQuery>common.filterByTableValues</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_res_profile_value</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>98</index>
+						<caption>Resolution Category</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>133</top>
+							<left>22</left>
+							<right>120</right>
+							<bottom>151</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.set_res_profile_value</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field15</name>
+						<type>Field</type>
+						<group>TabCond:1</group>
+					</general>
+					<appearance>
+						<index>99</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>317</top>
+							<left>390</left>
+							<right>552</right>
+							<bottom>335</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_cond.flg_releaseready</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<flagItems>Mark as Ready for Release^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>lb_mailbox_OnLeftClick</name>
+						<code>
+							<![CDATA[lb_mailbox_OnLeftClick()
+{
+	//-- get mailbox list
+	
+	if(lb_mailbox.pickList=="")
+	{
+		//-- call php to get mailbox list
+		var strURL = "php/itsm/get_mailboxlist.php"; 
+		var strResult = app.g.submit_php(strURL,true);
+		lb_mailbox.pickList = strResult;
+	}
+
+
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_template_OnLeftClick</name>
+						<code>
+							<![CDATA[lb_template_OnLeftClick()
+{
+	//-- get template list
+	
+	if(lb_template.pickList=="")
+	{
+		//-- call php to get mailbox list
+		//MessageBox(lb_mailbox.text)
+		var strURL = "php/itsm/get_templatelist.php?mailboxname=" + lb_mailbox.text; 
+		var strResult = app.g.submit_php(strURL,true);
+		lb_template.pickList = strResult;
+	}
+
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded()
+{
+	var boolUpdate = (_swdoc.COND().pk_condition_id!=0);
+	if(boolUpdate)
+	{
+		//-- updating - for now disable bpme vpme actions - as not supported in vpme call node?
+		TabCond.ShowTabItem(2,true);
+		if(_swdoc.COND().set_profile==1)
+		{
+			app._een(fld_profile_value,true);
+			app._een(lbl_profile_value,true);
+		}
+	}
+	else
+	{
+		_swdoc.COND().fk_workflow_id = _swdoc.GetArg("fk_workflow_id");
+		_swdoc.COND().fk_stage_id = _swdoc.GetArg("fk_stage_id");
+		_swdoc.COND().fk_timer_id = _swdoc.GetArg("fk_timer_id");		
+		_swdoc.COND().flg_runatstart= _swdoc.GetArg("flg_onstart");
+		TabCond.ShowTabItem(2,false);		
+	}
+	
+	//-- nwj set title to reflect type of condition
+	if(_swdoc.COND().flg_runatstart==1)
+	{
+		_swdoc.SetTitle("Process Stage On Start Condition");
+	}
+	else
+	{
+		_swdoc.SetTitle("Process Stage Status Change Condition");	
+	}
+	
+	
+	var boolNoCond = (_swdoc.COND().test_condition=="");
+	app._een(btn_apply_test, boolNoCond);
+	app._een(btn_and,(!boolNoCond));
+	app._een(btn_or,(!boolNoCond));
+
+	if(_swdoc.COND().set_call_sla_new!="")
+	{
+		app._ema(_swdoc.MF().fld_call_priority, true);
+	}
+
+	//-- show diary update
+	TabCond.ShowTabItem(3,_swdoc.COND().flg_diaryupdate=="1");
+	app._etab(TabCond,0);
+		
+	//-- set form modified to false as users complain about closing forms and getting prompted to save / cancel when they
+	//-- havent done anything.
+	_swdoc.ResetModiedFlag("bpm_cond");
+	
+	var strStatusValue = _swdoc.MF().lb_status.value;
+	_swdoc.displayProfileCode(strStatusValue);
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>tb_mins_OnValueChanged</name>
+						<code>
+							<![CDATA[tb_mins_OnValueChanged(strValue)
+{
+	//--
+	if(strValue>59)
+	{
+		_swdoc.COND().onhold_durationmins="0";
+		_swdoc.UpdateFormFromData();
+	}
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>TabCond_OnTabSelected</name>
+						<code>
+							<![CDATA[TabCond_OnTabSelected(nTab)
+{
+	var tAction = 1;
+	var tVPME = 2;
+	if(nTab==tAction)
+	{
+		app._een(lbl_hours,(_swdoc.COND().set_call_status=="4"));
+		app._een(lbl_mins,(_swdoc.COND().set_call_status=="4"));	
+		app._een(tb_hours,(_swdoc.COND().set_call_status=="4"));
+		app._een(tb_mins,(_swdoc.COND().set_call_status=="4"));
+	}
+	else if (nTab==tVPME)
+	{
+		app._een(btn_del_vpme, (sl_vpme.rowCount()>0));
+		app._een(btn_up_pos,(sl_vpme.curSel>0));
+		app._een(btn_down_pos, ( ((sl_vpme.curSel+1) < sl_vpme.rowCount()) && (sl_vpme.curSel>0)));
+		
+		
+		//-- get list of vpme scripts
+		var strURL = "php/itsm/get_vpmescripts.php?in_ddname=" + dd.Name; 
+		var strResult = app.g.submit_php(strURL,true);
+		lb_scripts.pickList = strResult;
+	}
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_diary_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_diary_OnValueChanged(strValue)
+{
+	//-- show diary update
+	TabCond.ShowTabItem(3,strValue=="1");
+	
+	if(strValue=="0")app._etab(TabCond,1);
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_apply_test_OnPressed</name>
+						<code>
+							<![CDATA[btn_apply_test_OnPressed()
+{
+	
+	if((lb_op.text=="")||(lb_test.text ==""))
+	{
+		MessageBox("Please specify some test criteria");
+		return;
+	}
+	
+	var boolString=false;
+	var strOp = lb_op.text;
+	var strTest = "";
+	switch(lb_test.text.toLowerCase())
+	{
+		case "bpm status":
+			strTest = "&[new_opencall.bpm_status_id]";		
+			boolString = true;
+			break;
+		case "opencall status":
+			strTest = "&[new_opencall.status]";				
+			break;
+		case "customer id":
+			strTest = "&[new_opencall.cust_id]";				
+			boolString = true;		
+			break;						
+		case "customer name":
+			strTest = "&[new_opencall.cust_name]";				
+			boolString = true;		
+			break;			
+		case "support group":
+			strTest = "&[new_opencall.suppgroup]";				
+			boolString = true;		
+			break;			
+		case "support analyst":
+			strTest = "&[new_opencall.owner]";				
+			boolString = true;		
+			break;			
+			//-- old values to test
+		case "pre - bpm status":
+			strTest = "&[old_opencall.bpm_status_id]";		
+			boolString = true;
+			break;
+		case "pre - opencall status":
+			strTest = "&[old_opencall.status]";		
+			break;
+		case "pre - customer id":
+			strTest = "&[old_opencall.cust_id]";				
+			boolString = true;		
+			break;						
+		case "pre - customer name":
+			strTest = "&[old_opencall.cust_name]";				
+			boolString = true;		
+			break;			
+		case "pre - support group":
+			strTest = "&[old_opencall.suppgroup]";				
+			boolString = true;		
+			break;			
+		case "pre - support analyst":
+			strTest = "&[old_opencall.owner]";				
+			boolString = true;		
+			break;			
+
+	}
+	
+	//--
+	//-- get appropriate value
+	var strValue = tb_value.text;	
+	if(lb_teststatus.visible)strValue=lb_teststatus.value;
+	if(lb_testwfstatus.visible)strValue=lb_testwfstatus.value;	
+	
+	if(boolString)
+	{
+		strTest = "'" + strTest + "'";
+		strValue = "'" + strValue + "'";
+	}
+
+	var strFullTest = strTest + strOp + strValue;
+	_swdoc.COND().test_condition = _swdoc.COND().test_condition + " " + strFullTest;
+	_swdoc.UpdateFormFromData();
+	
+	app._een(btn_apply_test,false);
+	app._een(btn_and,true);
+	app._een(btn_or,true);
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_and_OnPressed</name>
+						<code>
+							<![CDATA[btn_and_OnPressed()
+{
+	_swdoc.COND().test_condition = _swdoc.COND().test_condition + " " + " AND " + " ";
+	_swdoc.UpdateFormFromData();
+
+	app._een(btn_apply_test,true);
+	app._een(btn_and,false);
+	app._een(btn_or,false);	
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_or_OnPressed</name>
+						<code>
+							<![CDATA[btn_or_OnPressed()
+{
+
+	_swdoc.COND().test_condition = _swdoc.COND().test_condition + " " + " OR " + " ";
+	_swdoc.UpdateFormFromData();
+
+	app._een(btn_apply_test,true);
+	app._een(btn_and,false);
+	app._een(btn_or,false);	
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_status_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_status_OnValueChanged(strValue)
+{
+	
+	app._een(lbl_hours,(strValue=="4"));
+	app._een(lbl_mins,(strValue=="4"));	
+	app._een(tb_hours,(strValue=="4"));
+	app._een(tb_mins,(strValue=="4"));	
+
+	_swdoc.displayProfileCode(strValue);
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_test_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_test_OnValueChanged(strValue)
+{
+	//- -show inputs for user based on the test they are doing
+	if(strValue.toLowerCase().indexOf("opencall status")!=-1)
+	{
+		app._evi(lb_teststatus,true);
+		app._evi(tb_value,false);
+		app._evi(lb_testwfstatus,false);
+	}
+	else if(strValue.toLowerCase().indexOf("bpm status")!=-1)
+	{
+		app._evi(lb_teststatus,false);
+		app._evi(lb_testwfstatus,true);
+		app._evi(tb_value,false);
+	}
+	else
+	{
+		app._evi(lb_teststatus,false);
+		app._evi(lb_testwfstatus,false);
+		app._evi(tb_value,true);
+		
+	}
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>tb_cond_OnValueChanged</name>
+						<code>
+							<![CDATA[tb_cond_OnValueChanged(strValue)
+{
+	var boolNoCond = (strValue=="");
+	app._een(btn_apply_test, boolNoCond);
+	app._een(btn_and, (!boolNoCond));
+	app._een(btn_or, (!boolNoCond));
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_add_vpme_OnPressed</name>
+						<code>
+							<![CDATA[btn_add_vpme_OnPressed()
+{
+	//-- insert relation
+	var strScript = lb_scripts.text;
+	if(strScript!="")
+	{
+		var nextPos = sl_vpme.rowCount();
+		nextPos++;
+		
+		var strParams = "cid="+app.pfu(_swdoc.COND().pk_condition_id)+"&script="+app.pfu(strScript)+"&nid="+app.pfu(nextPos)+"&sid="+app.pfu(_swdoc.COND().fk_stage_id)+"&wf="+app.pfu(_swdoc.COND().fk_workflow_id)
+		app.g.submitsqs("form/bpm_condition/add_vpme_cond", strParams);
+
+		sl_vpme.Refresh();
+		app._een(btn_del_vpme,(sl_vpme.rowCount()>0));
+		sl_vpme.SetRowSelected(sl_vpme.rowCount()-1, true,false);
+	}
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_del_vpme_OnPressed</name>
+						<code>
+							<![CDATA[btn_del_vpme_OnPressed()
+{
+	var strConfirm = "Are you sure you want to remove this vpme script execution?";
+	var intSequence = sl_vpme.GetItemTextRaw(sl_vpme.curSel, "execorder");
+	if(app.g.sl_deldbrow(sl_vpme,sl_vpme.curSel,'pk_auto_id',null,strConfirm))
+	{
+
+		var strUpdate="";
+		//-- loop through list and set seq for each - 1 to #
+		var intID=0;
+		var nextSeq=0;
+		for(var x=0; x < sl_vpme.rowCount();x++)
+		{
+			var thisSeq = sl_vpme.GetItemTextRaw(x, "execorder");
+			if(thisSeq>intSequence)
+			{
+				intID = sl_vpme.GetItemTextRaw(x, "pk_auto_id");
+				var strParams = "vid="+app.pfu(intID);
+				app.g.submitsqs("form/bpm_condition/dec_vpme_seq", strParams);
+			}
+		}
+	
+		sl_vpme.Refresh();
+		sl_vpme.SetRowSelected(0);	
+		sl_vpme_OnItemSelected(0);
+
+		app._een(btn_del_vpme,(sl_vpme.rowCount()>0));
+		
+	}
+
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_up_pos_OnPressed</name>
+						<code>
+							<![CDATA[btn_up_pos_OnPressed()
+{
+	//-- NWJ : move vpme seq up 
+	//-- get selected vpme id to move up
+	var currRow = sl_vpme.curSel;
+	var intUpID = sl_vpme.GetItemTextRaw(sl_vpme.curSel, 'pk_auto_id');
+	var intUpSeq = sl_vpme.GetItemTextRaw(sl_vpme.curSel, 'execorder');	
+	
+	//-- get stage id to move down
+	var intDownID = sl_vpme.GetItemTextRaw(sl_vpme.curSel-1, 'pk_auto_id');
+	var intDownSeq = sl_vpme.GetItemTextRaw(sl_vpme.curSel-1, 'execorder');
+	
+	var strParams = "vid="+app.pfu(intUpID);
+	if(app.g.submitsqs("form/bpm_condition/dec_vpme_seq", strParams))
+	{
+		var strParams = "vid="+app.pfu(intDownID);
+		if(app.g.submitsqs("form/bpm_condition/inc_vpme_seq", strParams))
+		{
+			//-- refresh list
+			sl_vpme.Refresh();
+			sl_vpme.SetRowSelected(currRow-1, true, false);
+		}
+	}
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_down_pos_OnPressed</name>
+						<code>
+							<![CDATA[btn_down_pos_OnPressed()
+{
+	//-- NWJ : move vpme seq down 
+	//-- get selected vpme id to move down
+	var currRow = sl_vpme.curSel;
+	var intUpID = sl_vpme.GetItemTextRaw(sl_vpme.curSel+1, 'pk_auto_id');
+	var intUpSeq = sl_vpme.GetItemTextRaw(sl_vpme.curSel+1, 'execorder');	
+	
+	//-- get id to move down
+	var intDownID = sl_vpme.GetItemTextRaw(sl_vpme.curSel, 'pk_auto_id');
+	var intDownSeq = sl_vpme.GetItemTextRaw(sl_vpme.curSel, 'execorder');
+	
+	//-- update seq id for both 
+	var strParams = "vid="+app.pfu(intUpID);
+	if(app.g.submitsqs("form/bpm_condition/dec_vpme_seq", strParams))
+	{
+		var strParams = "vid="+app.pfu(intDownID);
+		if(app.g.submitsqs("form/bpm_condition/inc_vpme_seq", strParams))
+		{
+			//-- refresh list
+			sl_vpme.Refresh();
+			sl_vpme.SetRowSelected(currRow+1, true, false);
+		}
+	}
+
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_vpme_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_vpme_OnItemSelected(nRow)
+{
+	
+	app._een(btn_up_pos,(nRow>0));
+	app._een(btn_down_pos,(nRow < (sl_vpme.rowCount()-1)));
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>elipsis_cust_OnLeftClick</name>
+						<code>
+							<![CDATA[elipsis_cust_OnLeftClick()
+{
+
+  	//-- NWJ 
+    //-- open customer search form in select mode
+	app.g.search_for("customers",true,"",function(sResults)
+	{
+		if (sResults.selectedkeys=="") return;
+	
+		//-- 27.08.2008 - make sure we are not adding duplicates
+		var arrResults = sResults.selectedkeys.split(",");
+		sResults.selectedkeys = "";
+		for(var x=0;x<arrResults.length;x++)
+		{
+			var strTest = "'" + arrResults[x] + "'";
+			if (_swdoc.COND().email_customers.indexOf(strTest)!=-1)
+			{
+				//-- exists in list already
+			}
+			else
+			{
+				if(sResults.selectedkeys!="")sResults.selectedkeys += ",";
+				sResults.selectedkeys += app.g.pfs(arrResults[x]);
+			}
+		}
+		//-- recheck after rebuilt
+		if (sResults.selectedkeys=="") return;
+		sResults.selectedkeys = app.g.string_replace(sResults.selectedkeys,",","','",true);
+		
+		if(_swdoc.COND().email_customers!="")_swdoc.COND().email_customers += ",";
+		_swdoc.COND().email_customers += "'" + sResults.selectedkeys + "'";
+		_swdoc.UpdateFormFromData()
+	
+		return false;
+	});
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>elipsis_cust_OnRightClick</name>
+						<code>
+							<![CDATA[elipsis_cust_OnRightClick()
+{
+	//-- clear
+	_swdoc.COND().email_customers = "";
+	_swdoc.UpdateFormFromData();
+	
+	return false;
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>elipsis_analysts_OnRightClick</name>
+						<code>
+							<![CDATA[elipsis_analysts_OnRightClick()
+{
+	//-- clear
+	_swdoc.COND().email_analysts = "";
+	_swdoc.UpdateFormFromData();
+	return false;
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>elipsis_analysts_OnLeftClick</name>
+						<code>
+							<![CDATA[elipsis_analysts_OnLeftClick()
+{
+	//-- NWJ - let user select analysts to email
+	//-- popup standard analyst popup 
+	
+	var strAnalysts = "";
+	var strNewList = "";
+	var strCurrAnalysts = _swdoc.COND().email_analysts;
+	
+	var dlg = new PickAnalystDialog;
+	dlg.Open("Transfer to Analyst/Group", function(dlg)
+	{
+		if(!dlg)
+			return "";
+
+		if(dlg.analystid != "")
+    	{
+    		//-- set single analystid
+    		if(strAnalysts!="")strAnalysts+=",";
+    		strAnalysts += "'" + app.g.pfs(dlg.analystid) + "'";
+    	}
+    	else
+    	{
+    		//-- get all analysts in group
+    		strAnalysts = app.g.get_group_analystids(dlg.groupid);
+    		var arrGrpAnalysts = strAnalysts.split(",");
+    		strAnalysts="";
+    		for(var x=0;x<arrGrpAnalysts.length;x++)
+    		{
+    			//-- set all analyst ids in group	
+				if(strAnalysts!="")strAnalysts+=",";    			
+				strAnalysts += "'" + app.g.pfs(arrGrpAnalysts[x]) + "'";		
+    		}
+    	}
+    
+    	//-- 27.08.2008 - make sure we are not adding duplicates
+		var arrResults = strAnalysts.split(",");
+		for(var x=0;x<arrResults.length;x++)
+		{
+			var strTest = arrResults[x];
+			if (strCurrAnalysts.indexOf(strTest)!=-1)
+			{
+				//-- exists in list already
+			}
+			else
+			{
+				if(strNewList!="")strNewList += ",";
+				strNewList += arrResults[x];
+			}
+		}
+		
+		//-- recheck after rebuilt
+		if (strNewList=="") return;
+
+		if(strCurrAnalysts!="")strCurrAnalysts+=",";
+		strCurrAnalysts += strNewList;
+
+    	_swdoc.COND().email_analysts = strCurrAnalysts;
+		_swdoc.UpdateFormFromData();
+	});
+	
+	return false;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_analyst_OnLeftClick</name>
+						<code>
+							<![CDATA[lb_analyst_OnLeftClick()
+{
+    app.g.pick_analystorgroup("Transfer to Analyst/Group",function(dlg){
+    	
+    	_swdoc.COND().assignto_group = dlg.oGroup.id;
+		_swdoc.COND().assignto_analyst = dlg.oAnalyst.id;
+		_swdoc.UpdateFormFromData();    
+    });
+
+	return false;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_analyst_OnRightClick</name>
+						<code>
+							<![CDATA[lb_analyst_OnRightClick()
+{
+	_swdoc.COND().assignto_group = "";
+	_swdoc.COND().assignto_analyst = "";
+	app._ete(lb_analyst,"");
+	app._ete(lb_group,"");
+	_swdoc.UpdateFormFromData();
+	return false;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_new_sla_OnValueChanged</name>
+						<code>
+							<![CDATA[fld_new_sla_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	bpm_cond.set_call_sla="";
+	_swdoc.UpdateFormFromData();
+	if(strValue!="")
+	{
+		app._ema(fld_call_priority,true);
+	}
+	else
+	{
+		app._ema(fld_call_priority,false);
+	}
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_set_profile_OnValueChanged</name>
+						<code>
+							<![CDATA[fld_set_profile_OnValueChanged(strValue)
+{
+	var boolEnable = strValue==1;
+	app._een(lbl_profile_value,boolEnable);
+	app._een(fld_profile_value,boolEnable);
+	app._een(lbl_res_profile_value,boolEnable);
+	app._een(fld_res_profile_value,boolEnable);
+	if(!boolEnable)
+	{
+		bpm_cond.set_profile_value = "";
+		app._ete(fld_profile_value,"");
+		bpm_cond.set_res_profile_value = "";
+		app._ete(fld_res_profile_value,"");
+		_swdoc.UpdateFormFromData();
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_profile_value_OnLeftClick</name>
+						<code>
+							<![CDATA[fld_profile_value_OnLeftClick()
+{
+	//--
+	app.g.pick_problemprofile(_swdoc.COND().set_profile_value,"", false, function(strCode)
+	{
+		if(strCode)
+		{
+			_swdoc.COND().set_profile_value = strCode;
+			_swdoc.UpdateFormFromData();
+		}
+		else if(strCode=="")
+		{
+			_swdoc.COND().set_profile_value = "";
+			app._ete(fld_profile_value,"");
+			_swdoc.UpdateFormFromData();
+		}
+	});
+	return false;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_profile_value_OnRightClick</name>
+						<code>
+							<![CDATA[fld_profile_value_OnRightClick()
+{
+	// TODO: Add your event handler code here
+
+	bpm_cond.set_profile_value = "";
+	app._ete(fld_profile_value,"");
+	_swdoc.UpdateFormFromData();
+
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>elipsis_addwatchlist_OnLeftClick</name>
+						<code>
+							<![CDATA[elipsis_addwatchlist_OnLeftClick()
+{
+	//-- NWJ - let user select analysts to email
+	//-- popup standard analyst popup 
+	
+	var strAnalysts = "";
+	var strNewList = "";
+	var strCurrAnalysts = _swdoc.COND().addwatchlist;
+	
+	var dlg = new PickAnalystDialog;
+	dlg.Open("Transfer to Analyst/Group",function(dlg)
+	{
+		if(!dlg)
+			return;
+			
+		if(dlg.analystid != "")
+    	{
+    		//-- set single analystid
+    		if(strAnalysts!="")strAnalysts+=",";
+    		strAnalysts += "'" + app.g.pfs(dlg.analystid) + "'";
+    	}
+    	else
+    	{
+    		//-- get all analysts in group
+    		strAnalysts = app.g.get_group_analystids(dlg.groupid);
+    		var arrGrpAnalysts = strAnalysts.split(",");
+    		strAnalysts="";
+    		for(var x=0;x<arrGrpAnalysts.length;x++)
+    		{
+    			//-- set all analyst ids in group	
+				if(strAnalysts!="")strAnalysts+=",";    			
+				strAnalysts += "'" + app.g.pfs(arrGrpAnalysts[x]) + "'";		
+    		}
+    	}
+	
+    	//-- 27.08.2008 - make sure we are not adding duplicates
+		var arrResults = strAnalysts.split(",");
+		for(var x=0;x<arrResults.length;x++)
+		{
+			var strTest = arrResults[x];
+			if (strCurrAnalysts.indexOf(strTest)!=-1)
+			{
+				//-- exists in list already
+			}
+			else
+			{
+				if(strNewList!="")strNewList += ",";
+				strNewList += arrResults[x];
+			}
+		}
+		
+		//-- recheck after rebuilt
+		if (strNewList=="") return;
+	
+		if(strCurrAnalysts!="")strCurrAnalysts+=",";
+		strCurrAnalysts += strNewList;
+	
+    	_swdoc.COND().addwatchlist = strCurrAnalysts;
+		_swdoc.UpdateFormFromData();
+	});
+	   
+   	return false;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>elipsis_addwatchlist_OnRightClick</name>
+						<code>
+							<![CDATA[elipsis_addwatchlist_OnRightClick()
+{
+	//-- clear
+	_swdoc.COND().addwatchlist = "";
+	_swdoc.UpdateFormFromData();
+	return false;
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>elipsis_remwatchlist_OnLeftClick</name>
+						<code>
+							<![CDATA[elipsis_remwatchlist_OnLeftClick()
+{
+	//-- NWJ - let user select analysts to email
+	//-- popup standard analyst popup 
+	
+	var strAnalysts = "";
+	var strNewList = "";
+	var strCurrAnalysts = _swdoc.COND().remwatchlist;
+	
+	var dlg = new PickAnalystDialog;
+	dlg.Open("Transfer to Analyst/Group",function(dlg)
+	{
+		if(!dlg)
+			return;
+			
+		if(dlg.analystid != "")
+    	{
+    		//-- set single analystid
+    		if(strAnalysts!="")strAnalysts+=",";
+    		strAnalysts += "'" + app.g.pfs(dlg.analystid) + "'";
+    	}
+    	else
+    	{
+    		//-- get all analysts in group
+    		strAnalysts = app.g.get_group_analystids(dlg.groupid);
+    		var arrGrpAnalysts = strAnalysts.split(",");
+    		strAnalysts="";
+    		for(var x=0;x<arrGrpAnalysts.length;x++)
+    		{
+    			//-- set all analyst ids in group	
+				if(strAnalysts!="")strAnalysts+=",";    			
+				strAnalysts += "'" + app.g.pfs(arrGrpAnalysts[x]) + "'";		
+    		}
+    	}
+    
+    	//-- 27.08.2008 - make sure we are not adding duplicates
+		var arrResults = strAnalysts.split(",");
+		for(var x=0;x<arrResults.length;x++)
+		{
+			var strTest = arrResults[x];
+			if (strCurrAnalysts.indexOf(strTest)!=-1)
+			{
+				//-- exists in list already
+			}
+			else
+			{
+				if(strNewList!="")strNewList += ",";
+				strNewList += arrResults[x];
+			}
+		}
+		
+		//-- recheck after rebuilt
+		if (strNewList=="") return;
+
+		if(strCurrAnalysts!="")strCurrAnalysts+=",";
+		strCurrAnalysts += strNewList;
+
+    	_swdoc.COND().remwatchlist = strCurrAnalysts;
+		_swdoc.UpdateFormFromData();		
+	});
+    
+	return false;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>elipsis_remwatchlist_OnRightClick</name>
+						<code>
+							<![CDATA[elipsis_remwatchlist_OnRightClick()
+{
+	//-- clear
+	_swdoc.COND().remwatchlist = "";
+	_swdoc.UpdateFormFromData();
+	return false;
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_process_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_process_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+
+	bpm_cond.set_stage = 0;
+	_swdoc.UpdateFormFromData();
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_addwatchlist_OnRightClick</name>
+						<code>
+							<![CDATA[fld_addwatchlist_OnRightClick()
+{
+	// TODO: Add your event handler code here
+	_swdoc.COND().fld_addwatchlist ="";
+	_swdoc.UpdateFormFromData();
+	return false;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_remwatchlist_OnRightClick</name>
+						<code>
+							<![CDATA[fld_remwatchlist_OnRightClick()
+{
+	// TODO: Add your event handler code here
+	_swdoc.COND().fld_remwatchlist ="";
+	_swdoc.UpdateFormFromData();
+	return false;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_res_profile_value_OnRightClick</name>
+						<code>
+							<![CDATA[fld_res_profile_value_OnRightClick()
+{
+	bpm_cond.set_res_profile_value = "";
+	app._ete(fld_res_profile_value,"");
+	_swdoc.UpdateFormFromData();
+
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_res_profile_value_OnLeftClick</name>
+						<code>
+							<![CDATA[fld_res_profile_value_OnLeftClick()
+{
+	app.g.pick_resolutionprofile(_swdoc.COND().set_res_profile_value,"", function(strCode){
+		if(strCode){
+			_swdoc.COND().set_res_profile_value = strCode;
+			_swdoc.UpdateFormFromData();
+		}
+		
+		else if(strCode==""){
+			_swdoc.COND().set_res_profile_value = "";
+			app._ete(fld_res_profile_value,"");
+			_swdoc.UpdateFormFromData();
+		}
+	});
+	
+	return false;	
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

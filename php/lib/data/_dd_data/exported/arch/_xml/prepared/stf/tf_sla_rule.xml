@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>tf_sla_rule</name>
+			<title>SLA Rule</title>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>true</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>itsm_sla_rules</name>
+				<type>Main Details Table</type>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>OnSaveData</name>
+					<code>
+						<![CDATA[OnSaveData()
+{
+	var arrParams ={};
+	arrParams.callclass=_swdoc.oRule().callclass;
+	arrParams.rulename=_swdoc.oRule().rulename;
+	if(app.g.sqs_rowcountbycol("ITSM_SLA_RULES",arrParams)==0)
+	{
+		return true;
+	}
+	else
+	{
+		MessageBox("A rule for '" + _swdoc.oRule().callclass + "' and '" + _swdoc.oRule().rulename + "' already exists.");
+		return false;
+	}
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var _swdoc = (IsObjectDefined("_bHtmlWebClient"))?top:_swdoc;
+
+function oRule()
+{
+	return _swdoc.itsm_sla_rules;
+}
+
+function MF()
+{
+	return _swdoc.mainform;
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>390</width>
+				<height>150</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>lbl_callclass</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>0</index>
+						<caption>Callclass</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>10</top>
+							<left>10</left>
+							<right>120</right>
+							<bottom>26</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>itsm_sla_rules.callclass</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_callclass</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>1</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>10</top>
+							<left>130</left>
+							<right>380</right>
+							<bottom>26</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>itsm_sla_rules.callclass</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_sla</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>2</index>
+						<caption>Longest Sla</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>54</top>
+							<left>10</left>
+							<right>120</right>
+							<bottom>70</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>itsm_sla_rules.longest_sla</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>true</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_sla</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>3</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>54</top>
+							<left>130</left>
+							<right>380</right>
+							<bottom>70</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>itsm_sla_rules.longest_sla</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>true</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<listItems>Longest|Shortest|</listItems>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_rule</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>4</index>
+						<caption>Rule</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>10</left>
+							<right>120</right>
+							<bottom>48</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>itsm_sla_rules.sla_rule</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>gld_rule</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>5</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>130</left>
+							<right>380</right>
+							<bottom>48</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>itsm_sla_rules.sla_rule</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>swlists</distinctTable>
+							<distinctColumn>value</distinctColumn>
+							<displayColumn>display_name</displayColumn>
+							<listFilter>list_id = &apos;SLA-RULETYPES&apos;</listFilter>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>gld_rule_OnValueChanged</name>
+						<code>
+							<![CDATA[gld_rule_OnValueChanged(strValue)
+{
+	if(((strValue == "SERV" || strValue == "SUBS" || strValue == "CITM") && itsm_sla_rules.callclass != "Service Request") || (strValue == "CITM"  && itsm_sla_rules.callclass == "Service Request"))
+	{
+		app._ema(mainform.fld_sla, true);	
+		app._evi(mainform.fld_sla, true);	
+		app._evi(mainform.lbl_sla, true);	
+	}
+	else
+	{
+		app._ema(mainform.fld_sla, false);	
+		app._evi(mainform.fld_sla, false);	
+		app._evi(mainform.lbl_sla, false);	
+	}
+		
+	if(strValue != "CITM" && strValue != "SERV" && strValue != "SUBS")
+	{
+		itsm_sla_rules.longest_sla = ""
+		_swdoc.UpdateFormFromData();
+	}
+	
+	var aParams = {};
+    aParams.list_id = "SLA-RULETYPES";
+    app._eva(aParams , strValue);
+	var o = app.g.submitsqp(strStoredQuery, strParams)
+    var oRS = app.g.get_tablerecordset_bycol("swlists",aParams,false,"display_name");
+    while(oRS.Fetch())
+    {
+		itsm_sla_rules.rulename = app.g.get_field(oRS,"display_name");
+		_swdoc.UpdateFormFromData();
+    }
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded(bDataReloaded)
+{
+	_swdoc.boolInserting = (itsm_sla_rules.pk_auto_id=="");
+	if(_swdoc.boolInserting)
+	{
+		itsm_sla_rules.seq = _swdoc.GetArg("seq");
+		itsm_sla_rules.callclass = _swdoc.GetArg("callclass");
+		itsm_sla_rules.appcode = app.itsm.get_session_param("dataset");
+		mainform.UpdateFormFromData();
+	}
+		
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

@@ -1,0 +1,20 @@
+<html>
+<style>
+body
+{
+	padding:5px;
+	margin:0px;
+	background-color:#8CB1E5;
+	overflow:hidden;
+}
+#div_title
+{
+	background-color:#8CB1E5;
+	color:#ffffff;
+	font-weight:bold;
+	font-size:16px;
+	font-family:tahoma;
+}
+</style>
+<body onload='top._set_hib_view_title(document.getElementById("div_title"));'><div id="div_title"></div></body>
+</html>

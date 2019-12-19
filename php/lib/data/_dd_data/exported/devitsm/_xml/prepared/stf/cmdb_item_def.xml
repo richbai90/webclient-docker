@@ -1,0 +1,5810 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>cmdb_item_def</name>
+			<title>Configuration Type</title>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>true</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>config_typei</name>
+				<type>Main Details Table</type>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var _swdoc = (IsObjectDefined("_bHtmlWebClient"))?top:_swdoc;
+
+var boolInsertingType = false;
+var orig_cost = "";
+var orig_price = "";
+var strConfigType = "";
+var strDisplayType = "";
+var strTable = "";
+var strForm = "";
+//--pointers
+
+function oType()
+{
+	return _swdoc.config_typei;
+}
+
+function MF()
+{
+	return _swdoc.mainform;
+}
+
+//-- init form fields
+function setup_form_fields(boolInsert)
+{
+	_swdoc.boolInsertingType = boolInsert;
+
+	_een(_swdoc.MF().tb_code, boolInsert); //-- enable code change when inserting
+	_een(_swdoc.MF().btn_add_ci2, (!boolInsert));
+	_een(_swdoc.MF().btn_new_status1, (!boolInsert));	
+	_een(_swdoc.MF().btn_new_status, (!boolInsert));
+	_een(_swdoc.MF().btn_new_reltype, (!boolInsert));	
+	_een(_swdoc.MF().btn_new_att, (!boolInsert));
+	_een(_swdoc.MF().mbtn_ola_actions3, (!boolInsert));
+	
+	//-- Merope - FR6.1.3, remove service request definitions
+	//MF().tabType.ShowTabItem(3,!boolInsert);
+	_swdoc.MF().tabType.ShowTabItem(3,_swdoc.oType().flg_comps==1);
+	_etab(_swdoc.MF().tabType, 0);
+	
+	_swdoc.orig_cost = _swdoc.oType().bus_cost;
+	_swdoc.orig_price = _swdoc.oType().bus_price;
+	_etab(_swdoc.MF().tabother, 0);
+	
+	_swdoc.strConfigType = _swdoc.oType().pk_config_type;
+	_swdoc.strDisplayType = _swdoc.oType().type_display;
+	
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnDataSaved</name>
+					<code>
+						<![CDATA[OnDataSaved()
+{
+	//-- saved data no longer inserting - setup fields for update
+	if (_swdoc.boolInsertingType) 
+	{
+		app.cmdb.copy_parenttype_statuslevels(_swdoc.oType().pk_config_type, _swdoc.oType().fk_config_type);
+		app.cmdb.copy_parenttype_relationtypes(_swdoc.oType().pk_config_type, _swdoc.oType().fk_config_type);		
+		_swdoc.MF().sl_status.Refresh();
+		_swdoc.MF().sl_reltypes.Refresh();
+	}
+	
+	_swdoc.setup_form_fields(false);
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnFormClosing</name>
+					<code>
+						<![CDATA[OnFormClosing()
+{
+	// TODO: Add your event handler code here
+   var pDoc = app.g.get_me_document("CMDB_ENTITY",1);
+    if(pDoc)
+    {
+    	var intCurSel = pDoc.mainform.sl_types.curSel;
+    	pDoc.mainform.sl_types.Refresh();
+    	pDoc.mainform.sl_types.SetRowSelected(intCurSel,true);
+    }
+
+
+	return true;
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>500</width>
+				<height>515</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>tb_code</name>
+						<type>Field</type>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>0</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>38</top>
+							<left>112</left>
+							<right>488</right>
+							<bottom>56</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.type_display</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_parent</name>
+						<type>Field</type>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>1</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>60</top>
+							<left>112</left>
+							<right>488</right>
+							<bottom>78</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.fk_config_type</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<displayColumnValue>Hardware</displayColumnValue>
+						<properties>
+							<content>#eeeeee</content>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>config_typei</distinctTable>
+							<distinctColumn>pk_config_type</distinctColumn>
+							<displayColumn>pk_config_type</displayColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field3</name>
+						<type>Field</type>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>2</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>82</top>
+							<left>112</left>
+							<right>488</right>
+							<bottom>109</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.notes</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_profile</name>
+						<type>Field</type>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>3</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>114</top>
+							<left>112</left>
+							<right>488</right>
+							<bottom>132</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.fk_profile_code</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>pcdesc</distinctTable>
+							<distinctColumn>code</distinctColumn>
+							<displayColumn>info</displayColumn>
+							<dropdownButtonType>1</dropdownButtonType>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field1</name>
+						<type>Field</type>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>4</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>183</top>
+							<left>112</left>
+							<right>488</right>
+							<bottom>201</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.extended_form</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_tables</name>
+						<type>Field</type>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>5</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>205</top>
+							<left>112</left>
+							<right>488</right>
+							<bottom>223</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.extended_table</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_monitor</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>6</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>227</top>
+							<left>112</left>
+							<right>417</right>
+							<bottom>245</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.flg_canmonitor</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<flagItems>Items of this type can be monitored for availability^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_dml</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>7</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>245</top>
+							<left>112</left>
+							<right>405</right>
+							<bottom>263</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.flg_dml</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<flagItems>Items of this type can be associated to Media records^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_comp</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>8</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>263</top>
+							<left>112</left>
+							<right>415</right>
+							<bottom>281</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.flg_comps</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<flagItems>Items of this type can be added as a Service Component^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tabother</name>
+						<type>TabControl</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>9</index>
+						<caption>Tab1</caption>
+						<backgroundColor>#ded7ce</backgroundColor>
+						<foregroundColor>#f2eedd</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>302</top>
+							<left>110</left>
+							<right>488</right>
+							<bottom>506</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<tabStyle>Top</tabStyle>
+					<tabSize>19</tabSize>
+					<items>
+						<item>
+							<name>Status Definitions</name>
+							<properties>56=#dddddd|59=#5f5f5f|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#dddddd</tabColor>
+									<inactiveTextColor>#5f5f5f</inactiveTextColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Relationship Types</name>
+							<properties>56=#dddddd|59=#5f5f5f|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#dddddd</tabColor>
+									<inactiveTextColor>#5f5f5f</inactiveTextColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>VCM</name>
+							<properties>56=#dddddd|59=#5f5f5f|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#dddddd</tabColor>
+									<inactiveTextColor>#5f5f5f</inactiveTextColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Form Field Management</name>
+							<properties>56=#9abfb4|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#9abfb4</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+					</items>
+					<selectedTextFont  size="8">Arial</selectedTextFont>
+					<selectedTextColor>#000000</selectedTextColor>
+					<deselectedTextColor>#000000</deselectedTextColor>
+					<tabSlopeLeft>2</tabSlopeLeft>
+					<tabSlopeRight>2</tabSlopeRight>
+					<deselectedTabHeightOffset>1</deselectedTabHeightOffset>
+					<tabSpacing>0</tabSpacing>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<tabStyle>0</tabStyle>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_status</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>false</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>tabother:0</group>
+					</general>
+					<appearance>
+						<index>10</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>349</top>
+							<left>120</left>
+							<right>479</right>
+							<bottom>497</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>pk_auto_id</column>
+							</properties>
+							<name>Auto ID</name>
+							<width>14</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>status_level</column>
+							</properties>
+							<name>Status</name>
+							<width>145</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>cmdb_status</column>
+							</properties>
+							<name>CMDB Status</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>16</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#00008b</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<newRecordForm>Form.cmdb_configtype_status</newRecordForm>
+							<editRecordForm>Form.cmdb_configtype_status</editRecordForm>
+							<sqlSource>swdata</sqlSource>
+							<table>ct_statusl</table>
+							<listFilter>swc=fk_config_type&amp;kvs=&amp;[config_typei.pk_config_type]</listFilter>
+							<storedQuery>common.load_by_colname</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_view_status</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabother:0</group>
+					</general>
+					<appearance>
+						<index>11</index>
+						<caption>Properties</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>327</top>
+							<left>288</left>
+							<right>349</right>
+							<bottom>345</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_del_status</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabother:0</group>
+					</general>
+					<appearance>
+						<index>12</index>
+						<caption>Delete</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>327</top>
+							<left>353</left>
+							<right>414</right>
+							<bottom>345</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_new_status</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabother:0</group>
+					</general>
+					<appearance>
+						<index>13</index>
+						<caption>Add New</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>327</top>
+							<left>418</left>
+							<right>479</right>
+							<bottom>345</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_reltypes</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>false</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>tabother:1</group>
+					</general>
+					<appearance>
+						<index>14</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>349</top>
+							<left>120</left>
+							<right>479</right>
+							<bottom>497</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>pk_ctrel_id</column>
+							</properties>
+							<name>Auto ID</name>
+							<width>13</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_reltype</column>
+							</properties>
+							<name>Relationship</name>
+							<width>257</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>0</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>16</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#00008b</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<sqlSource>swdata</sqlSource>
+							<table>ct_reltypes</table>
+							<listFilter>swc=fk_config_type&amp;kvs=&amp;[config_typei.pk_config_type]&amp;sf=citypes_flg_src</listFilter>
+							<editRecordForm>Form.cmdb_relationtype</editRecordForm>
+							<storedQuery>common.load_by_colname</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_del_reltype</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabother:1</group>
+					</general>
+					<appearance>
+						<index>15</index>
+						<caption>Delete</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>327</top>
+							<left>353</left>
+							<right>414</right>
+							<bottom>345</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_new_reltype</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabother:1</group>
+					</general>
+					<appearance>
+						<index>16</index>
+						<caption>Add New</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>327</top>
+							<left>418</left>
+							<right>479</right>
+							<bottom>345</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_type</name>
+						<type>Field</type>
+						<group>tabother:2</group>
+					</general>
+					<appearance>
+						<index>17</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>336</top>
+							<left>176</left>
+							<right>480</right>
+							<bottom>354</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.www_image_path</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List (XML Source)</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>true</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>&amp;[app.webroot]/clisupp/VCMImages/default.gif</defaultValue>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<url>&amp;[app.webroot]/clisupp/VCMImages/get_list.php</url>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_inherit_autodiary</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabother:3</group>
+					</general>
+					<appearance>
+						<index>18</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>328</top>
+							<left>118</left>
+							<right>393</right>
+							<bottom>347</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.flg_inherit_autodiary</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>1</defaultValue>
+							<content>#eeeeee</content>
+							<flagItems>Inherits parent diary fields.^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_inherit_regex</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabother:3</group>
+					</general>
+					<appearance>
+						<index>19</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>348</top>
+							<left>118</left>
+							<right>393</right>
+							<bottom>367</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.flg_inherit_regex</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>1</defaultValue>
+							<content>#eeeeee</content>
+							<flagItems>Inherits parent regular expressions.^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_inherit_protected</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabother:3</group>
+					</general>
+					<appearance>
+						<index>20</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>368</top>
+							<left>118</left>
+							<right>393</right>
+							<bottom>387</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.flg_inherit_protected</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>1</defaultValue>
+							<content>#eeeeee</content>
+							<flagItems>Inherits parent protected fields.^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_atts</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>false</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>tabother:3</group>
+					</general>
+					<appearance>
+						<index>21</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>389</top>
+							<left>119</left>
+							<right>480</right>
+							<bottom>498</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>databinding</column>
+							</properties>
+							<name>Data Binding</name>
+							<width>177</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>regexcheck</column>
+							</properties>
+							<name>Expression</name>
+							<width>194</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>false</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>flg_ctrl_flag</column>
+								<image>Yes^1|</image>
+							</properties>
+							<name>Protected?</name>
+							<width>73</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>flg_autodiary</column>
+							</properties>
+							<name>Prompt Diary?</name>
+							<width>88</width>
+							<image>-1</image>
+							<dataColumn>3</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>pk_att_id</column>
+							</properties>
+							<name>ID</name>
+							<width>43</width>
+							<image>-1</image>
+							<dataColumn>4</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>flg_silent_diary</column>
+							</properties>
+							<name>Automated Diary?</name>
+							<width>106</width>
+							<image>-1</image>
+							<dataColumn>5</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>18</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#000099</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<highlightStyle>0</highlightStyle>
+							<borderColor>#000000</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<table>ct_ctrl_fields</table>
+							<listFilter>swc=fk_config_type&amp;kvs=&amp;[config_typei.pk_config_type]&amp;sf=citypes_flg_src</listFilter>
+							<editRecordForm>Form.cmdb_ctrl_fields</editRecordForm>
+							<newRecordForm>Form.cmdb_ctrl_fields</newRecordForm>
+							<storedQuery>common.load_by_colname</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_view_att</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabother:3</group>
+					</general>
+					<appearance>
+						<index>22</index>
+						<caption>Properties</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>329</top>
+							<left>291</left>
+							<right>352</right>
+							<bottom>347</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_del_att</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabother:3</group>
+					</general>
+					<appearance>
+						<index>23</index>
+						<caption>Delete</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>329</top>
+							<left>356</left>
+							<right>417</right>
+							<bottom>347</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_new_att</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabother:3</group>
+					</general>
+					<appearance>
+						<index>24</index>
+						<caption>Add New</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>329</top>
+							<left>421</left>
+							<right>482</right>
+							<bottom>347</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_type</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>25</index>
+						<backgroundColor>#eaeaea</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>580</top>
+							<left>190</left>
+							<right>566</right>
+							<bottom>598</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.pk_config_type</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>true</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eaeaea</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tabType</name>
+						<type>TabControl</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>26</index>
+						<caption>Tab1</caption>
+						<backgroundColor>#ded7ce</backgroundColor>
+						<foregroundColor>#ffffff</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>6</top>
+							<left>5</left>
+							<right>496</right>
+							<bottom>511</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<tabStyle>Top</tabStyle>
+					<tabSize>19</tabSize>
+					<items>
+						<item>
+							<name>Type Details</name>
+							<properties>56=#eaeaea|59=#5f5f5f|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#eaeaea</tabColor>
+									<inactiveTextColor>#5f5f5f</inactiveTextColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Description</name>
+							<properties>56=#eaeaea|59=#5f5f5f|_flags=1</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<flags>
+									<invisible>true</invisible>
+									<skipTabStop>false</skipTabStop>
+									<disabled>false</disabled>
+									<protected>false</protected>
+									<noMacroExpand>false</noMacroExpand>
+									<multiLine>false</multiLine>
+								</flags>
+								<properties>
+									<tabColor>#eaeaea</tabColor>
+									<inactiveTextColor>#5f5f5f</inactiveTextColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>CMDB</name>
+							<properties>56=#f09e9f|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#f09e9f</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Service Catalog</name>
+							<properties>56=#baa6e1|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#baa6e1</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Knowledgebase Articles</name>
+							<properties>56=#baa6e1|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#baa6e1</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+					</items>
+					<selectedTextFont  size="8">Arial</selectedTextFont>
+					<selectedTextColor>#000000</selectedTextColor>
+					<deselectedTextColor>#000000</deselectedTextColor>
+					<tabSlopeLeft>2</tabSlopeLeft>
+					<tabSlopeRight>2</tabSlopeRight>
+					<deselectedTabHeightOffset>1</deselectedTabHeightOffset>
+					<tabSpacing>0</tabSpacing>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<tabStyle>0</tabStyle>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_cmdb_count</name>
+						<type>Field</type>
+						<group>tabType:2</group>
+					</general>
+					<appearance>
+						<index>27</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>34</top>
+							<left>154</left>
+							<right>302</right>
+							<bottom>52</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#d3c9b6</borderColor>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_add_ci2</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:2</group>
+					</general>
+					<appearance>
+						<index>28</index>
+						<caption>Create</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>34</top>
+							<left>418</left>
+							<right>483</right>
+							<bottom>52</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_items</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>false</autoLoad>
+							<allowMultiSelect>true</allowMultiSelect>
+						</flags>
+						<group>tabType:2</group>
+					</general>
+					<appearance>
+						<index>29</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>59</top>
+							<left>19</left>
+							<right>486</right>
+							<bottom>234</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>pk_auto_id</column>
+							</properties>
+							<name>Auto ID</name>
+							<width>74</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>ck_config_item</column>
+							</properties>
+							<name>Configuration Item ID</name>
+							<width>133</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>false</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>ck_config_type</column>
+							</properties>
+							<name>Type</name>
+							<width>165</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>false</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_status_level</column>
+							</properties>
+							<name>Status</name>
+							<width>129</width>
+							<image>-1</image>
+							<dataColumn>3</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>cmdb_status</column>
+							</properties>
+							<name>CMDB Status</name>
+							<width>123</width>
+							<image>-1</image>
+							<dataColumn>4</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>description</column>
+							</properties>
+							<name>Description</name>
+							<width>256</width>
+							<image>-1</image>
+							<dataColumn>5</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>false</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_impact_level</column>
+							</properties>
+							<name>Impact Level</name>
+							<width>113</width>
+							<image>-1</image>
+							<dataColumn>6</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_urgency_level</column>
+							</properties>
+							<name>Urgency Level</name>
+							<width>112</width>
+							<image>-1</image>
+							<dataColumn>7</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_sla</column>
+							</properties>
+							<name>SLA</name>
+							<width>109</width>
+							<image>-1</image>
+							<dataColumn>8</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_profilecode</column>
+							</properties>
+							<name>Profile Code</name>
+							<width>178</width>
+							<image>-1</image>
+							<dataColumn>10</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>companyname</column>
+							</properties>
+							<name>Organisation</name>
+							<width>157</width>
+							<image>-1</image>
+							<dataColumn>11</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>owner_name</column>
+							</properties>
+							<name>Owner Name</name>
+							<width>168</width>
+							<image>-1</image>
+							<dataColumn>12</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_site</column>
+							</properties>
+							<name>Site</name>
+							<width>150</width>
+							<image>-1</image>
+							<dataColumn>13</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_supplier</column>
+							</properties>
+							<name>Supplier</name>
+							<width>143</width>
+							<image>-1</image>
+							<dataColumn>14</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_manufacturer</column>
+							</properties>
+							<name>Manufacturer</name>
+							<width>128</width>
+							<image>-1</image>
+							<dataColumn>15</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_cost_center</column>
+							</properties>
+							<name>Charge Centre</name>
+							<width>134</width>
+							<image>-1</image>
+							<dataColumn>16</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>ci_support_group</column>
+							</properties>
+							<name>Support Group</name>
+							<width>109</width>
+							<image>-1</image>
+							<dataColumn>17</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>ci_support_analyst</column>
+							</properties>
+							<name>Support Analyst</name>
+							<width>130</width>
+							<image>-1</image>
+							<dataColumn>18</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>isauthorised</column>
+							</properties>
+							<name>Is authorised?</name>
+							<width>85</width>
+							<image>-1</image>
+							<dataColumn>19</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>isactive</column>
+							</properties>
+							<name>Is active?</name>
+							<width>70</width>
+							<image>-1</image>
+							<dataColumn>20</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>isunavailable</column>
+							</properties>
+							<name>Is unavailable?</name>
+							<width>97</width>
+							<image>-1</image>
+							<dataColumn>21</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>isdeactivated</column>
+							</properties>
+							<name>Is deactivated?</name>
+							<width>94</width>
+							<image>-1</image>
+							<dataColumn>22</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>isfaulty</column>
+							</properties>
+							<name>Is faulty?</name>
+							<width>60</width>
+							<image>-1</image>
+							<dataColumn>23</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>isactivebaseline</column>
+							</properties>
+							<name>Is active baseline?</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>24</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_userdb</column>
+							</properties>
+							<name>Owner id</name>
+							<width>144</width>
+							<image>-1</image>
+							<dataColumn>25</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_company_id</column>
+							</properties>
+							<name>org id</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>26</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>16</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#00008b</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<table>config_itemi</table>
+							<editRecordForm>Form.cmdb_popup_ci</editRecordForm>
+							<newRecordForm>Form.cmdb_popup_ci</newRecordForm>
+							<listFilter>swc=ck_config_type&amp;kvs=&amp;[config_typei.pk_config_type]&amp;sf=cilist_activebln</listFilter>
+							<sqlSource>swdata</sqlSource>
+							<selectionMode>1</selectionMode>
+							<storedQuery>common.load_by_colname</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_defs</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>false</autoLoad>
+							<allowMultiSelect>true</allowMultiSelect>
+						</flags>
+						<group>tabType:2</group>
+					</general>
+					<appearance>
+						<index>30</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>280</top>
+							<left>20</left>
+							<right>487</right>
+							<bottom>455</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>pk_id</column>
+							</properties>
+							<name>Auto ID</name>
+							<width>21</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>targetbinding</column>
+							</properties>
+							<name>Target Binding</name>
+							<width>170</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>defaultvalue</column>
+							</properties>
+							<name>Default Value</name>
+							<width>175</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>16</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#00008b</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<table>config_type_def</table>
+							<editRecordForm>Form.cmdb_def_value</editRecordForm>
+							<newRecordForm>Form.cmdb_def_value</newRecordForm>
+							<listFilter>swc=fk_config_type&amp;kvs=&amp;[config_typei.pk_config_type]</listFilter>
+							<sqlSource>swdata</sqlSource>
+							<selectionMode>1</selectionMode>
+							<storedQuery>common.load_by_colname</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_del_def_value</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:2</group>
+					</general>
+					<appearance>
+						<index>31</index>
+						<caption>Delete</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>258</top>
+							<left>354</left>
+							<right>415</right>
+							<bottom>276</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_new_status1</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:2</group>
+					</general>
+					<appearance>
+						<index>32</index>
+						<caption>Add New</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>258</top>
+							<left>419</left>
+							<right>480</right>
+							<bottom>276</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field5</name>
+						<type>Field</type>
+						<group>tabType:3</group>
+					</general>
+					<appearance>
+						<index>33</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>76</left>
+							<right>226</right>
+							<bottom>58</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.bus_cost</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>0.00</defaultValue>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field6</name>
+						<type>Field</type>
+						<group>tabType:3</group>
+					</general>
+					<appearance>
+						<index>34</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>311</left>
+							<right>461</right>
+							<bottom>58</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.bus_price</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>0.00</defaultValue>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field2</name>
+						<type>Field</type>
+						<group>tabType:3</group>
+					</general>
+					<appearance>
+						<index>35</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>62</top>
+							<left>76</left>
+							<right>226</right>
+							<bottom>80</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.gl_code</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_type2</name>
+						<type>Field</type>
+						<group>tabType:3</group>
+					</general>
+					<appearance>
+						<index>36</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>84</top>
+							<left>76</left>
+							<right>299</right>
+							<bottom>102</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.cat_img_path</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List (XML Source)</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>true</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>&amp;[app.webroot]/clisupp/catalog_images/default.gif</defaultValue>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<url>&amp;[app.webroot]/clisupp/catalog_images/get_list.php</url>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_kb2</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>false</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>tabType:4</group>
+					</general>
+					<appearance>
+						<index>37</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>55</top>
+							<left>10</left>
+							<right>491</right>
+							<bottom>466</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>docref</column>
+							</properties>
+							<name>Document Reference</name>
+							<width>146</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>title</column>
+							</properties>
+							<name>Title</name>
+							<width>245</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>flg_indexed</column>
+							</properties>
+							<name>PK</name>
+							<width>32</width>
+							<image>-1</image>
+							<dataColumn>5</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>docstatus</column>
+							</properties>
+							<name>Status</name>
+							<width>150</width>
+							<image>-1</image>
+							<dataColumn>3</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>18</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#000099</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<highlightStyle>0</highlightStyle>
+							<borderColor>#d3c9b6</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<table>swkb_articles</table>
+							<newRecordForm>Form.swkb_article</newRecordForm>
+							<editRecordForm>Form.swkb_article</editRecordForm>
+							<listFilter>swc=docref&amp;kvs=-1</listFilter>
+							<storedQuery>common.load_by_colname</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_view_ola4</name>
+						<type>EventButton</type>
+						<group>tabType:4</group>
+					</general>
+					<appearance>
+						<index>38</index>
+						<caption>View</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>31</top>
+							<left>363</left>
+							<right>425</right>
+							<bottom>52</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>mbtn_ola_actions3</name>
+						<type>MenuButton</type>
+						<group>tabType:4</group>
+					</general>
+					<appearance>
+						<index>39</index>
+						<caption>Actions</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>31</top>
+							<left>429</left>
+							<right>491</right>
+							<bottom>52</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+							<commands>Search &amp;&amp; Associate^1|Disassociate^2|</commands>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label1</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>40</index>
+						<caption>Profile</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>114</top>
+							<left>12</left>
+							<right>108</right>
+							<bottom>132</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.fk_profile_code</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label1</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>41</index>
+						<caption>CI Data Form</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>183</top>
+							<left>12</left>
+							<right>108</right>
+							<bottom>201</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.extended_form</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label1</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabother:2</group>
+					</general>
+					<appearance>
+						<index>42</index>
+						<caption>VCM Image</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>336</top>
+							<left>107</left>
+							<right>172</right>
+							<bottom>354</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.www_image_path</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_type_display</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>43</index>
+						<caption>Name</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>38</top>
+							<left>12</left>
+							<right>108</right>
+							<bottom>56</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.type_display</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>img_ci</name>
+						<type>Image</type>
+						<group>tabother:2</group>
+					</general>
+					<appearance>
+						<index>44</index>
+						<caption>&amp;[app.webroot]/clisupp/VCMImages/default.gif</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<alignment>Stretch</alignment>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>359</top>
+							<left>357</left>
+							<right>404</right>
+							<bottom>401</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<noImageImage>&amp;[app.webroot]/clisupp/VCMImages/default.gif</noImageImage>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect1</name>
+						<type>Rectange</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabother:2</group>
+					</general>
+					<appearance>
+						<index>45</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>359</top>
+							<left>357</left>
+							<right>404</right>
+							<bottom>401</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text1</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabother:2</group>
+					</general>
+					<appearance>
+						<index>46</index>
+						<caption>Images located in Supportworks server/ html/ clisupp/ VCMImages</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>362</top>
+							<left>117</left>
+							<right>348</right>
+							<bottom>435</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>true</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label1</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>47</index>
+						<caption>Extension Table</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>205</top>
+							<left>12</left>
+							<right>108</right>
+							<bottom>223</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.extended_table</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text4</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:2</group>
+					</general>
+					<appearance>
+						<index>48</index>
+						<caption>Number of CMDB Records</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>34</top>
+							<left>14</left>
+							<right>149</right>
+							<bottom>48</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label5</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:3</group>
+					</general>
+					<appearance>
+						<index>49</index>
+						<caption>Cost</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>36</left>
+							<right>73</right>
+							<bottom>56</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.bus_cost</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label6</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:3</group>
+					</general>
+					<appearance>
+						<index>50</index>
+						<caption>Price</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>251</left>
+							<right>305</right>
+							<bottom>56</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.bus_price</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label7</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:3</group>
+					</general>
+					<appearance>
+						<index>51</index>
+						<caption>Image Path</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>84</top>
+							<left>16</left>
+							<right>74</right>
+							<bottom>100</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.cat_img_path</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text3</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:3</group>
+					</general>
+					<appearance>
+						<index>52</index>
+						<caption>Images located in Supportworks server/ html/ clisupp/ catalog_images</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>104</top>
+							<left>76</left>
+							<right>307</right>
+							<bottom>132</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>true</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>img_cat</name>
+						<type>Image</type>
+						<group>tabType:3</group>
+					</general>
+					<appearance>
+						<index>53</index>
+						<caption>&amp;[app.webroot]/clisupp/VCMImages/default.gif</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<alignment>Stretch</alignment>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>86</top>
+							<left>312</left>
+							<right>359</right>
+							<bottom>128</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<noImageImage>&amp;[app.webroot]/clisupp/VCMImages/default.gif</noImageImage>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text2</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>54</index>
+						<caption>Category</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>62</top>
+							<left>12</left>
+							<right>108</right>
+							<bottom>76</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text5</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>55</index>
+						<caption>Description</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>85</top>
+							<left>12</left>
+							<right>108</right>
+							<bottom>99</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect2</name>
+						<type>Rectange</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:2</group>
+					</general>
+					<appearance>
+						<index>56</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#c0c0c0</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>267</top>
+							<left>14</left>
+							<right>491</right>
+							<bottom>463</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text6</name>
+						<type>Text</type>
+						<group>tabType:2</group>
+					</general>
+					<appearance>
+						<index>57</index>
+						<caption>Default Data</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>260</top>
+							<left>50</left>
+							<right>118</right>
+							<bottom>274</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label2</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:3</group>
+					</general>
+					<appearance>
+						<index>58</index>
+						<caption>GL Code</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>62</top>
+							<left>23</left>
+							<right>73</right>
+							<bottom>80</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.gl_code</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label3</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>59</index>
+						<caption>Detail Form</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>161</top>
+							<left>13</left>
+							<right>108</right>
+							<bottom>179</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.detail_form</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field4</name>
+						<type>Field</type>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>60</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>161</top>
+							<left>112</left>
+							<right>488</right>
+							<bottom>179</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.detail_form</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>cmdb_details</defaultValue>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<listItems>cmdb_details|</listItems>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label4</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>61</index>
+						<caption>Incident Process</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>136</top>
+							<left>13</left>
+							<right>108</right>
+							<bottom>154</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.fk_workflow_id</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field7</name>
+						<type>Field</type>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>62</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>137</top>
+							<left>112</left>
+							<right>488</right>
+							<bottom>155</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.fk_workflow_id</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<storedQuery>generic.select</storedQuery>
+							<distinctTable>bpm_workflow</distinctTable>
+							<distinctColumn>pk_workflow_id</distinctColumn>
+							<displayColumn>pk_workflow_id</displayColumn>
+							<listFilter>_swc_callclass=Incident&amp;_swc_flg_active=1</listFilter>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field8</name>
+						<type>Field</type>
+						<group>tabType:0</group>
+					</general>
+					<appearance>
+						<index>63</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>281</top>
+							<left>112</left>
+							<right>423</right>
+							<bottom>296</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_typei.flg_changecontrol</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<imageHSpace>#eeeeee</imageHSpace>
+							<flagItems>Items of this type can only be edited under Change Control^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded()
+{
+	//-- set defaults
+	var boolInsert = (_swdoc.oType().pk_config_type=="");
+	if(boolInsert)
+	{
+		//-- set fields from args, update doc and reste modified flag
+		app.g.popuplate_form_fromargs("config_typei", _swdoc, true, true);
+	}
+	
+	//-- hide / show tab items depending on mode
+	_swdoc.setup_form_fields(boolInsert);
+	
+	//Get CI Data Form and Extension Table CI-TYPE simpleList
+	var strID = "CI-TYPE";
+	var arrType = new Array();
+	var arrSplit  = new Array();
+	_swdoc.strForm  = "";
+	var strType = "";
+	var p = {};
+	p.id = strID;
+	var oRS = app.g.get_sqrecordset("GENERAL/get.simple_list", p);
+	var intCount=0;
+
+	while(oRS.Fetch())
+	{
+		arrType[intCount] = app.g.get_field(oRS,"value");
+		intCount++;
+	}
+	for (var i = 0; i < arrType.length; i++)
+	{
+		strType = arrType[i];
+		arrSplit = strType.split(",");
+		_swdoc.strForm += arrSplit[0];
+		_swdoc.strForm += "|";
+	}
+	//Set Field1 picklist
+	mainform.Field1.pickList = _swdoc.strForm;
+	_swdoc.MF().tabother_OnTabSelected(0);
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_new_status_OnPressed</name>
+						<code>
+							<![CDATA[btn_new_status_OnPressed()
+{
+	var strURL = "flg_sc=0&fk_config_type=" + _swdoc.oType().pk_config_type;
+	app.OpenFormForAdd("cmdb_configtype_status", "", strURL, true,function(){
+	    app.g.sl_refresh(sl_status,null,0);
+	});
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_view_status_OnPressed</name>
+						<code>
+							<![CDATA[btn_view_status_OnPressed()
+{
+	sl_status.EditRecord(sl_status.curSel);	
+	app.g.sl_refresh(sl_status,null,0);
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>tb_code_OnValueChanged</name>
+						<code>
+							<![CDATA[tb_code_OnValueChanged(strValue)
+{
+	//-- if not set set it
+	if(_swdoc.oType().fk_config_type=="")
+	{
+		_swdoc.oType().pk_config_type = strValue;
+	}
+	else
+	{
+		_swdoc.oType().pk_config_type = _swdoc.oType().fk_config_type	+ "->" + strValue;
+	}
+	
+	if(app.cmdb.ci_type_exists(_swdoc.oType().pk_config_type))
+	{
+		//-- this ci id and type already exists warn user and cancel save
+		MessageBox("The " + _swdoc.oType().pk_config_type + " type already exists in the CMDB, a duplicate cannot be created");
+		_eva(mainform.tb_code, _swdoc.strDisplayType);
+		_ete(mainform.tb_code, _swdoc.strDisplayType);
+		_swdoc.oType().pk_config_type = _swdoc.strConfigType;
+		_swdoc.oType().type_display = _swdoc.strDisplayType;
+		return false;
+	}else
+	{
+		_swdoc.strConfigType = _swdoc.oType().pk_config_type;
+		_swdoc.strDisplayType = strValue;
+	}
+
+	_swdoc.UpdateFormFromData();
+
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_status_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_status_OnItemSelected(nRow)
+{
+	var boolEnable = (sl_status.rowCount() > 0);
+	_een(btn_view_status, boolEnable);
+	_een(btn_del_status, boolEnable);	
+
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_new_reltype_OnPressed</name>
+						<code>
+							<![CDATA[btn_new_reltype_OnPressed()
+{
+	var strURL = "flg_sc=0&fk_config_type=" + _swdoc.oType().pk_config_type;
+	app.OpenFormForAdd("cmdb_assign_reltype", "", strURL, true,function(){
+		app.g.sl_refresh(sl_reltypes,null,0);
+	});
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_reltypes_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_reltypes_OnItemSelected(nRow)
+{
+	var boolEnable = (sl_reltypes.rowCount() > 0);
+	_een(btn_del_reltype, boolEnable);	
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_del_status_OnPressed</name>
+						<code>
+							<![CDATA[btn_del_status_OnPressed()
+{
+	var strConfirm = "Are you sure you want to delete the selected status level?";
+	app.g.sl_deldbrow(sl_status,sl_status.curSel,0,null,strConfirm);
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_del_reltype_OnPressed</name>
+						<code>
+							<![CDATA[btn_del_reltype_OnPressed()
+{
+	var strConfirm = "Are you sure you want to delete the selected relationship type association?";
+	app.g.sl_deldbrow(sl_reltypes,sl_reltypes.curSel,'pk_ctrel_id',null,strConfirm);
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_tables_OnLeftClick</name>
+						<code>
+							<![CDATA[lb_tables_OnLeftClick()
+{
+	//-- if not loaded load it with db tables
+	//if(lb_tables.pickList =="") app.g.dd_gettablelist(lb_tables);
+
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_type_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_type_OnValueChanged(strValue)
+{
+	//-- display image
+	_eim(img_ci, strValue);
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>tabother_OnTabSelected</name>
+						<code>
+							<![CDATA[tabother_OnTabSelected(nTab)
+{
+	//-- show vcm image
+	var tVCM=2;
+	
+	if(nTab==tVCM)
+	{
+		_eim(img_ci, config_typei.www_image_path);
+	}else if(nTab==0)
+	{
+		_swdoc.MF().sl_status.Refresh();
+	}else if(nTab==1)
+	{
+	
+		_swdoc.MF().sl_reltypes.Refresh();	
+	}else if(nTab==3)
+	{
+		_swdoc.MF().sl_atts.Refresh();
+	}
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_reltypes_OnItemDoubleClicked</name>
+						<code>
+							<![CDATA[sl_reltypes_OnItemDoubleClicked(nRow, nCol)
+{
+	return false;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_profile_OnDropDown</name>
+						<code>
+							<![CDATA[lb_profile_OnDropDown()
+{
+	//--
+	app.g.pick_problemprofile("","",true, function(strCodeInfo){
+		if(strCodeInfo!=""){
+			_swdoc.oType().fk_profile_code = strCodeInfo.split("|")[0];
+			_swdoc.UpdateFormFromData();
+		}
+	});
+	
+	return false
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_profile_OnRightClick</name>
+						<code>
+							<![CDATA[lb_profile_OnRightClick()
+{
+	//-- clear setting
+	_swdoc.oType().fk_profile_code = "";
+	_ete(lb_profile, "");
+
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_view_att_OnPressed</name>
+						<code>
+							<![CDATA[btn_view_att_OnPressed()
+{
+	var strURL = "fk_config_type=" + _swdoc.oType().pk_config_type + "&extended_table=" + _swdoc.oType().extended_table;
+	var CurRow = sl_atts.curSel;
+	var strKey = sl_atts.GetItemTextRaw(CurRow, 'pk_att_id');
+	if(strKey!="")
+	{
+		app.OpenFormForEdit("cmdb_ctrl_fields", strKey, strURL, true,function(){
+			sl_atts.Refresh();
+			sl_atts.SetRowSelected(CurRow);
+			sl_atts_OnItemSelected(CurRow);
+		});
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_del_att_OnPressed</name>
+						<code>
+							<![CDATA[btn_del_att_OnPressed()
+{
+
+	//-- delete
+	var strConfirm = "Are you sure you want to delete this field entry?";
+	if(app.g.sl_deldbrow(sl_atts,sl_atts.curSel,'pk_att_id',null,strConfirm))
+	{
+		sl_atts_OnItemSelected(0);
+	}
+	
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_new_att_OnPressed</name>
+						<code>
+							<![CDATA[btn_new_att_OnPressed()
+{
+	//-- add subtype - pass in default values based on  this parent reocrd
+	
+	var strURL = "fk_config_type=" + _swdoc.oType().pk_config_type + "&extended_table=" + _swdoc.oType().extended_table;
+	app.OpenFormForAdd("cmdb_ctrl_fields", "", strURL, true,function(){
+		sl_atts.Refresh();
+		sl_atts.SetRowSelected(0);
+		sl_atts_OnItemSelected(0);
+	});
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_atts_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_atts_OnItemSelected(nRow)
+{
+	// TODO: Add your event handler code here
+	var boolEnable = (sl_atts.rowCount() > 0);
+	_een(btn_view_att, boolEnable);
+	_een(btn_del_att, boolEnable);	
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_atts_OnItemDoubleClicked</name>
+						<code>
+							<![CDATA[sl_atts_OnItemDoubleClicked(nRow, nCol)
+{
+	// TODO: Add your event handler code here
+	btn_view_att_OnPressed();
+	return false;
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>flg_comp_OnValueChanged</name>
+						<code>
+							<![CDATA[flg_comp_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+
+	_swdoc.MF().tabType.ShowTabItem(3,strValue=="1");
+	
+	_etab(_swdoc.MF().tabType, 0);
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_add_ci2_OnPressed</name>
+						<code>
+							<![CDATA[btn_add_ci2_OnPressed()
+{
+	//-- Prompt analyst for number of clones
+	var strText = "Number of Configuration Items of type "+config_typei.pk_config_type+"?";
+	var intNumberOfCopies = prompt(strText,"1");
+	if(intNumberOfCopies==null)
+	{
+		return;
+	}
+
+	var funcRefresh = function()
+	{
+		sl_items.Refresh();
+		tabType_OnTabSelected(2);
+	}
+	
+	var funcCreateCIs = function()
+	{
+		var resultValue = app.cmdb.create_ci(config_typei.pk_config_type,intNumberOfCopies);
+		if(resultValue<0)
+		{
+			MessageBox("Failed to clone CI.");
+			funcRefresh();
+		}
+		else
+		{
+			var boolConfirm = confirm("Creation completed. View new configuration items?");
+			if(boolConfirm)
+			{
+				app.cmdb.search_ci(true, "canreset=1&isauthorised=&isactivebaseline=&ck_config_item=New "+config_typei.pk_config_type+"%",function()
+				{
+					funcRefresh();
+				});
+			}
+			else
+			{
+				funcRefresh();
+			}
+		}
+	}
+	
+	if(isNaN(intNumberOfCopies))
+	{
+		MessageBox("Invalid number of items. Please input a number.");
+		funcRefresh();
+	}
+	else
+	{
+		if(intNumberOfCopies>0)
+		{
+			if(intNumberOfCopies>100)
+			{
+				if(!confirm("You have entered a large number of items to be created, proceed?"))
+				{
+					return false;
+				}
+				else
+				{
+					// -- Create CIs
+					funcCreateCIs();
+				}
+			}
+			else
+			{
+				// -- Create CIs
+				funcCreateCIs();
+			}
+		}
+		else
+		{
+			MessageBox("Please input a value greater than 0.");
+			funcRefresh();
+		}
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>Field5_OnValueChanged</name>
+						<code>
+							<![CDATA[Field5_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+
+	if(isNaN(strValue))
+		_swdoc.oType().bus_cost = _swdoc.orig_cost;
+	else
+	{
+		_swdoc.oType().bus_cost = format_float_to_decimal_str(strValue);
+		_swdoc.orig_cost = _swdoc.oType().bus_cost;
+	}
+	_swdoc.UpdateFormFromData();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>Field6_OnValueChanged</name>
+						<code>
+							<![CDATA[Field6_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	if(isNaN(strValue))
+		_swdoc.oType().bus_price = _swdoc.orig_price;
+	else
+	{
+		_swdoc.oType().bus_price = format_float_to_decimal_str(strValue);
+		_swdoc.orig_price = _swdoc.oType().bus_price;
+	}
+	_swdoc.UpdateFormFromData();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_type2_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_type2_OnValueChanged(strValue)
+{
+	//-- display image
+	_eim(img_cat, strValue);
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>tabType_OnTabSelected</name>
+						<code>
+							<![CDATA[tabType_OnTabSelected(nTab)
+{
+	// TODO: Add your event handler code here
+	if(nTab==2)
+	{
+		var intRowCount = sl_items.rowCount();
+		_ete(_swdoc.MF().fld_cmdb_count, ""+intRowCount);
+		_swdoc.MF().sl_items.Refresh();
+		_swdoc.MF().sl_defs.Refresh();
+	}else if(nTab==3)
+	{
+			_eim(img_cat, config_typei.cat_img_path);
+	}else if(nTab==4)
+	{
+		if(mainform.sl_kb2.rowCount()<1)
+		{
+			var strDocs = app.oKB.get_ci_types_kbs(_swdoc.oType().pk_config_type);
+			if(strDocs=="")strDocs="-1";
+			_slf(_swdoc.MF().sl_kb2 ,"swc=docref&kvs="+strDocs);
+			_swdoc.MF().sl_kb2.Refresh();
+		}
+
+	}
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_new_status1_OnPressed</name>
+						<code>
+							<![CDATA[btn_new_status1_OnPressed()
+{
+	var strURL = "fk_config_type=" + _swdoc.oType().pk_config_type + "&extended_table=" + _swdoc.oType().extended_table;
+	app.OpenFormForAdd("cmdb_def_value", "", strURL, true,function(){});
+	app.g.sl_refresh(sl_defs,null,0);
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_defs_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_defs_OnItemSelected(nRow)
+{
+	// TODO: Add your event handler code here
+	var boolEnable = (sl_defs.rowCount() > 0);
+	_een(btn_del_def_value, boolEnable);
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_del_def_value_OnPressed</name>
+						<code>
+							<![CDATA[btn_del_def_value_OnPressed()
+{
+	var strConfirm = "Are you sure you want to delete the selected default value?";
+	app.g.sl_deldbrow(sl_defs,sl_defs.curSel,0,null,strConfirm);
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_view_ola4_OnPressed</name>
+						<code>
+							<![CDATA[btn_view_ola4_OnPressed()
+{
+	var strKeyValue = app.g.sl_getcolvalue(sl_kb2, sl_kb2.curSel, "docref");
+	app.oKB.open_article_form(strKeyValue);
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>mbtn_ola_actions3_OnMenuItem</name>
+						<code>
+							<![CDATA[mbtn_ola_actions3_OnMenuItem(strName, nItemID)
+{
+	var iAssignKB = 1;
+	var iRemoveKB = 2;	
+
+	
+	if(nItemID == iAssignKB)
+	{
+        app.g.search_for("swkb", true, "", function(oRes)
+        {
+        	var strKeys = oRes.selectedkeys;
+			if(strKeys=="")return;
+			var arrKeys = strKeys.split(",");
+	
+			var boolAssoc = confirm("Would you like to associate the KB Documents with the existing CI(s) of this type?");
+	
+			for (var x=0; x< arrKeys.length;x++)
+			{
+				var fk_key = arrKeys[x];
+				if(app.g.sl_findrow_byvalue(sl_kb2,fk_key,"docref")==-1)
+				{
+					app.oKB.relate_ci_type_to_kb(_swdoc.oType().pk_config_type,_swdoc.oType().type_display,fk_key);
+					app.g.sqllist_appendfilter(sl_kb2, fk_key, "docref");	
+					
+					if(boolAssoc)
+					{
+						var xmlmc = new XmlMethodCall;
+						xmlmc.SetValue("docref", fk_key);
+						xmlmc.SetValue("configType", _swdoc.oType().pk_config_type);
+						
+						//-- Invoke the method
+						if(xmlmc.Invoke("VPME", "relateKBtoCIs"))
+						{
+		
+						}
+						else
+						{
+							MessageBox(xmlmc.GetLastError());
+						}	
+					}
+				}
+			}
+			
+			sl_kb2.Refresh();
+			sl_kb2.SetRowSelected(0);
+			sl_kb2_OnItemSelected(0);
+			return;
+        });
+		
+    }
+	else if(nItemID == iRemoveKB)
+	{
+		var strConfirm = "Are you sure you want to remove the selected Knowledgebase article from the Item Definition?";
+		if(confirm(strConfirm))
+		{
+			var fk_kb_id = app.g.sl_getprikeyvalue(sl_kb2, sl_kb2.curSel);
+			app.oKB.unrelate_ci_type_from_kb(fk_kb_id,_swdoc.oType().pk_config_type);	
+		}
+		var strDocs = app.oKB.get_ci_types_kbs(_swdoc.oType().pk_config_type);
+		if(strDocs=="")strDocs="-1";
+		_slf(sl_kb2,"swc=docref&kvs="+strDocs);
+		_swdoc.MF().sl_kb2.Refresh();
+	}
+	
+
+
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_kb2_OnItemDoubleClicked</name>
+						<code>
+							<![CDATA[sl_kb2_OnItemDoubleClicked(nRow, nCol)
+{
+	// TODO: Add your event handler code here
+	var strKeyValue = app.g.sl_getcolvalue(sl_kb2, nRow, "docref");
+	app.oKB.open_article_form(strKeyValue);
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_kb2_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_kb2_OnItemSelected(nRow)
+{
+	// TODO: Add your event handler code here
+	_een(btn_view_ola4, (sl_kb2.curSel>-1));
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>Field1_OnValueChanged</name>
+						<code>
+							<![CDATA[Field1_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+
+		//Get CI Types Form and Tables from CI-TYPE List
+	var strID = "CI-TYPE";
+	var arrType = new Array();
+	var arrSplit  = new Array();
+	_swdoc.strTable  = "";
+	var strType = "";
+	var p = {};
+	p.id = strID;
+	p.where = strValue;
+	var oRS = app.g.get_sqrecordset("GENERAL/get.simple_list", p);
+	var intCount=0;
+
+	while(oRS.Fetch())
+	{
+		
+		arrType[intCount] = app.g.get_field(oRS,"value");
+		intCount++;
+	}
+	for (var i = 0; i < arrType.length; i++)
+	{
+		strType = arrType[i];
+		arrSplit = strType.split(",");
+		_swdoc.strTable = arrSplit[1];
+	}
+	
+	var strDocTable = _swdoc.strTable;
+	//Set Form Pick List
+	_eva(_swdoc.MF().lb_tables , strDocTable);
+	_eva(_swdoc.oType().extended_table , strDocTable);
+	_swdoc.oType().extended_table = strDocTable;
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>Field4_OnValueChanged</name>
+						<code>
+							<![CDATA[Field4_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+
+	config_typei.extended_form = "";
+	_ete(config_typei.extended_form , "");
+	_swdoc.MF().Feild1 = "";
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>Field7_OnValueChanged</name>
+						<code>
+							<![CDATA[Field7_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+
+		//Get CI Types Form and Tables from CI-TYPE List
+	var strID = "CI-TYPE";
+	var arrType = new Array();
+	var arrSplit  = new Array();
+	_swdoc.strTable  = "";
+	var strType = "";
+	var p = {};
+	p.id = strID;
+	p.where = strValue
+	var oRS = app.g.get_sqrecordset("GENERAL/get.simple_list", p);
+	var intCount=0;
+
+	while(oRS.Fetch())
+	{
+		
+		arrType[intCount] = app.g.get_field(oRS,"value");
+		intCount++;
+	}
+	for (var i = 0; i < arrType.length; i++)
+	{
+		strType = arrType[i];
+		arrSplit = strType.split(",");
+		_swdoc.strTable = arrSplit[1];
+	}
+	//Set Form Pick List
+	_eva(mainform.lb_tables , _swdoc.strTable);
+	_eva(config_typei.extended_table , _swdoc.strTable);
+	config_typei.extended_table = _swdoc.strTable;
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>Field8_OnLeftClick</name>
+						<code>
+							<![CDATA[Field8_OnLeftClick()
+{
+	// TODO: Add your event handler code here
+	// TODO: Add your event handler code here
+	if(!app.cmdb.is_specialist())
+	{
+		return false;
+	}
+
+	return true;
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

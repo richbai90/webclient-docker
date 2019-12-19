@@ -1,0 +1,35 @@
+<espoutlook>
+	<esptree>
+		<rootnodes>
+			<rootnode type="db" db="syscache">
+				<id>swhd</id>
+				<displaytext>Supportworks Helpdesk</displaytext>
+				<defaultimage>treeimages/helpdesk/servicedesk.png</defaultimage>
+				<openimage>treeimages/helpdesk/servicedesk.png</openimage>
+				<onselectjs>rf</onselectjs>
+				<!-- how to draw root node tree -->
+				<branch>
+					<onselectjs>rf</onselectjs>
+					<swsql>select id, name, parent_id from swgroups where id != '_SYSTEM'</swsql>
+					<key>id</key>
+					<displaytext>name</displaytext>
+					<parentbranchkey>parent_id</parentbranchkey>
+					<defaultimage>treeimages/helpdesk/suppgroup.png</defaultimage>
+					<openimage>treeimages/helpdesk/suppgroup.png</openimage>
+				</branch>
+				<node>
+					<onselectjs>rf</onselectjs>
+					<swsql>select analystid, name from swanalysts</swsql>
+					<key>analystid</key>
+					<displaytext>name</displaytext>
+					<defaultimage>treeimages/helpdesk/swanalyst.png</defaultimage>
+				</node>
+				<nodebranch>
+					<swsql>select analystid, groupid from swanalysts_groups</swsql>
+					<nodekey>analystid</nodekey>
+					<branchkey>groupid</branchkey>
+				</nodebranch>
+			</rootnode>
+		</rootnodes>
+	</esptree>
+</espoutlook>

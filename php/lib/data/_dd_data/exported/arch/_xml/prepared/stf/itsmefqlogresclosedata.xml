@@ -1,0 +1,2103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>itsmEfQLogResCloseData</name>
+			<title>Quick Log Resolution / Closure Details</title>
+			<description>Quick Log Resolution / Closure Details</description>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>true</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>qlog_resclose_details</name>
+				<type>Main Details Table</type>
+				<mainDetailsColumn>udcode</mainDetailsColumn>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>OnDataSaved</name>
+					<code>
+						<![CDATA[OnDataSaved()
+{
+	// TODO: Add your event handler code here
+	
+	_swdoc.record_id = _swdoc.qlog_resclose_details.pk_auto_id;
+
+	var contract_id = mainform.lb_supp_contract1.value;
+	//var units_contract = mainform.tb_units_assigned1.value;
+	var command_sql = "";
+	var xmlmc = new XmlMethodCall();
+	
+	//Before saving the files we are going to delete all the attachments associate to this call
+	//so in that case we don't have duplicate files
+	if (_swdoc.record_id){
+	
+		if (contract_id){
+			command_sql = "update qlog_resclose_files set fk_contract_id="+contract_id ;//+ " and support_units_avail="+units_contract;
+			/*xmlmc.SetValue("database", "swdata");		
+			xmlmc.SetValue("query",command_sql);
+			
+			if (!xmlmc.Invoke("data", "sqlQuery"))
+				MessageBox("Failed to process record addition for Quick Log Detail Files (" + xmlmc.GetLastError() + "). Please contact your Supportworks Supervisor.");*/
+		}
+		
+	
+	
+		command_sql = "delete from qlog_resclose_files where fk_qlog_resclose_details="+_swdoc.record_id;
+	
+		xmlmc.SetValue("database", "swdata");		
+		xmlmc.SetValue("query",command_sql);
+		
+		if (!xmlmc.Invoke("data", "sqlQuery"))
+			MessageBox("Failed to process record addition for Quick Log Detail Files (" + xmlmc.GetLastError() + "). Please contact your Supportworks Supervisor.");
+	}	
+	
+	
+	for(i=0; i<mainform.fl_attachments.rowCount();i++){
+ 			// -- Check for Server file (These need to use serverFileAttachment)
+			var pathFile = mainform.fl_attachments.GetItemText(i,3);
+			var size = mainform.fl_attachments.GetItemText(i,1);
+			var last_modified = mainform.fl_attachments.GetItemText(i,2);
+			var strFileName = mainform.fl_attachments.GetItemText(i,0);
+			
+			
+			
+			//Converting the date to epoch value
+			new_date = last_modified.split('-').join(',');
+			var epoch = new Date(new_date).getTime()/1000;
+
+			
+			var xmlmc = new XmlMethodCall();
+			xmlmc.SetValue("table", "qlog_resclose_files");		
+			xmlmc.SetData("filepath",pathFile);
+			xmlmc.SetData("fk_qlog_resclose_details",_swdoc.record_id);
+			xmlmc.SetData("filename",strFileName);
+			xmlmc.SetData("filesize",size);
+			xmlmc.SetData("last_modified",epoch);
+			
+				
+			if (xmlmc.Invoke("data", "addRecord")){
+			   var strXML = (app.bWebClient)? xmlmc._lastresult:xmlmc.GetReturnXml();
+			   var objRes = app.XMCResult(strXML);
+			   if (!objRes.success)
+			 	  MessageBox("Failed to process record creation for Quick Log Details (" + objRes.message + "). Please contact your Supportworks Supervisor.");
+			}	
+			
+			else
+				MessageBox("Failed to process record creation. " + xmlmc.GetLastError() + ". Please contact your Supportworks Supervisor.");
+	}		
+	
+	
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[/*function oForm()
+{
+	oForm = mainform
+}
+*/
+
+var record_id = ""; // The  auto id of the created record - populated after the record is saved (_swdoc.OnDataSaved)]]>
+					</code>
+				</method>
+				<method>
+					<name>(User Defined Functions)</name>
+					<code>
+						<![CDATA[var arrCallrefs = new Array(); //-- array - holds the callrefs we want to close or resolve
+var CallrefsCommaString = "";  //-- string - comma delimted callrefs
+var strIssueref = "";		   //-- string - has issue refs in it if we are closing an issue
+	
+var arrSurveyNameSurvIDs = new Array(); //-- array - holds list of survey ids 
+var arrContractNameIDs	 = new Array(); //-- array - holds contract ids
+var arrContractCMDBIDs	 = new Array(); //-- array - holds contract ids
+var arrCallStatuss 		 = new Array(); //-- array - holds list of the all the calls status
+var arrCallOpenTasks 	 = new Array(); //-- araray - holds list of all the calls tasks
+var boolMultipleCalls = false; //-- we are working with multiple calls
+
+function get_support_unit_decrement(strContractID, oEle, strContractTxtID)
+{
+	if((typeof strContractID !== "undefined")&&(strContractID!=""))
+	{
+		var recContract = new SqlRecord;
+		if(recContract.GetRecord("contract", strContractTxtID))
+		{
+			if(recContract.flg_support_unlimited==1)
+			{
+				app._eva(oEle, "0");
+			}
+			else
+			{
+				// --- Get value for units to decrement by, by using Support Unit Decrement Method field set on
+				// --- contract form
+				var dec_method = recContract.support_unit_dec_method;
+				//Nothing Selected
+				if (dec_method == "0")
+				{				
+					//Do nothing, units should default to 0 and not mandatory!
+				}
+				
+				//Use Default Support Unit Decrement Value selected
+				else if (dec_method == "1")
+				{
+					//opencall.support_unit_cost = Math.round(recContract.support_unit_dec_amount);
+					_swdoc.qlog_resclose_details.units_spend_call=recContract.support_unit_dec_amount;
+					app._eva(oEle, recContract.support_unit_dec_amount);
+				}				
+				//Prompt Analyst on Ticket Resolution/Closure selected
+				else if (dec_method == "2")
+				{
+					app._eva(oEle, "");
+				}			
+				//Take from Contract/Service Association selected
+				else if (dec_method == "3")
+				{
+					// only dealing with the one contract and no services when storing a quick log definition
+					_swdoc.qlog_resclose_details.units_spend_call=recContract.support_unit_dec_amount;
+					app._eva(oEle, recContract.support_unit_dec_amount);
+			
+				}
+				//Something else. Should never get here...
+				else{
+					MessageBox("Defaulted! " + recContract.support_unit_dec_method);	
+				}
+			}
+		}
+	}
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>610</width>
+				<height>496</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>0</index>
+						<caption>Time Spent</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>14</top>
+							<left>10</left>
+							<right>120</right>
+							<bottom>30</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>qlog_resclose_details.timespent</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>1</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>14</top>
+							<left>130</left>
+							<right>380</right>
+							<bottom>30</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>qlog_resclose_details.timespent</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Minute Time Period</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<defaultValue>5</defaultValue>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>2</index>
+						<caption>Action Type</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>34</top>
+							<left>10</left>
+							<right>120</right>
+							<bottom>50</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>qlog_resclose_details.udcode</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>3</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>34</top>
+							<left>130</left>
+							<right>380</right>
+							<bottom>50</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>qlog_resclose_details.udcode</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<displayColumnValue>General Update</displayColumnValue>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<defaultValue>General Update</defaultValue>
+							<borderColor>#c0c0c0</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<storedQuery>common.getSwLists</storedQuery>
+							<distinctTable>swlists</distinctTable>
+							<distinctColumn>value</distinctColumn>
+							<displayColumn>display_name</displayColumn>
+							<listFilter>lid=CALL-ACTION-TYPE,CALL-ACTION-TYPE-RESOLVE&apos;,&apos;CALL-ACTION-TYPE-CLOSE</listFilter>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>4</index>
+						<caption>Action Source</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>54</top>
+							<left>10</left>
+							<right>120</right>
+							<bottom>70</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>qlog_resclose_details.udsource</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>5</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>54</top>
+							<left>130</left>
+							<right>380</right>
+							<bottom>70</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>qlog_resclose_details.udsource</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<displayColumnValue>Telephone</displayColumnValue>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<defaultValue>Telephone</defaultValue>
+							<sqlSource>swdata</sqlSource>
+							<storedQuery>common.getSwLists</storedQuery>
+							<distinctTable>swlists</distinctTable>
+							<distinctColumn>value</distinctColumn>
+							<displayColumn>display_name</displayColumn>
+							<listFilter>lid=CALL-ACTION-SOURCE,CALL-ACTION-SOURCE-RESOLVE&apos;,&apos;CALL-ACTION-SOURCE-CLOSE</listFilter>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>6</index>
+						<caption>Description</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>76</top>
+							<left>10</left>
+							<right>120</right>
+							<bottom>92</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>qlog_resclose_details.updatetxt</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>7</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>76</top>
+							<left>130</left>
+							<right>380</right>
+							<bottom>234</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>qlog_resclose_details.updatetxt</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_ftf</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>8</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>100</top>
+							<left>410</left>
+							<right>552</right>
+							<bottom>119</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>qlog_resclose_details.flg_first_time_fix</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>true</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<flagItems>First time fix achieved^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_addKBase</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>9</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>80</top>
+							<left>410</left>
+							<right>552</right>
+							<bottom>99</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>qlog_resclose_details.flg_add_to_kb</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<flagItems>Add to KnowledgeBase^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_chargeable</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>10</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>60</top>
+							<left>410</left>
+							<right>551</right>
+							<bottom>78</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>qlog_resclose_details.flg_chargeable</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<flagItems>Call to be chargeable^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<defaultValue>0</defaultValue>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_emailcustomer</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>11</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>410</left>
+							<right>526</right>
+							<bottom>59</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>qlog_resclose_details.flg_email</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<flagItems>E-mail customer^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_updatepublic</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>12</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>20</top>
+							<left>410</left>
+							<right>539</right>
+							<bottom>38</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>qlog_resclose_details.flg_public</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<flagItems>Update to be public^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label1</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>13</index>
+						<caption>Resolution Code</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>240</top>
+							<left>4</left>
+							<right>120</right>
+							<bottom>256</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>qlog_resclose_details.fixcode</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_fixcodedescription</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>14</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>240</top>
+							<left>130</left>
+							<right>357</right>
+							<bottom>256</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>qlog_resclose_details.fixcode</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<imageHSpace>#eeeeee</imageHSpace>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#ffffff</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnBrowseProfile</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>15</index>
+						<caption>...</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>238</top>
+							<left>359</left>
+							<right>385</right>
+							<bottom>259</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<commands>-1</commands>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnGetProfileText</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>16</index>
+						<caption>Add Profile Text</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#0000ff</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>238</top>
+							<left>390</left>
+							<right>482</right>
+							<bottom>259</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fl_attachments</name>
+						<type>FileListTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>true</autoLoad>
+							<allowMultiSelect>true</allowMultiSelect>
+						</flags>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>17</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>340</top>
+							<left>40</left>
+							<right>511</right>
+							<bottom>457</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+							</properties>
+							<name>File Name</name>
+							<width>160</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+							</properties>
+							<name>Size</name>
+							<width>80</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+							</properties>
+							<name>Last Modified</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+							</properties>
+							<name>Full Local Path</name>
+							<width>124</width>
+							<image>-1</image>
+							<dataColumn>3</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>16</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#00008b</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<content>NAME=css-bug-raising.gif;PATH=C:\Documents and Settings\NeilWJ\My Documents\css\css-bug-raising.gif;SIZE=18746;LASTMODIFIED=1091525370</content>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnAddFile</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>18</index>
+						<caption>Add</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>346</top>
+							<left>521</left>
+							<right>585</right>
+							<bottom>370</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<commands>74</commands>
+							<eventButtonIcon>74</eventButtonIcon>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnRemove</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>19</index>
+						<caption>Remove</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>378</top>
+							<left>521</left>
+							<right>585</right>
+							<bottom>402</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>cp_summary1</name>
+						<type>CaptionBar</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>true</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>20</index>
+						<caption>Other Information</caption>
+						<backgroundColor>#f1f1f1</backgroundColor>
+						<foregroundColor>#003366</foregroundColor>
+						<font  size="10" bold="1">Trebuchet (MS)</font>
+						<alignment>Left</alignment>
+						<fillStyle>Vertical Gradient</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>280</top>
+							<left>20</left>
+							<right>602</right>
+							<bottom>474</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#d8d8d8</backgroundColor2>
+							<imageHSpace>10</imageHSpace>
+							<slope>12</slope>
+							<borderColor>#d3c9b6</borderColor>
+							<headerHeight>23</headerHeight>
+							<hasBorder>1</hasBorder>
+							<panelBorderColor>#d3c9b6</panelBorderColor>
+							<fillStyle>0</fillStyle>
+							<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+							<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Tab1</name>
+						<type>TabControl</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>21</index>
+						<caption>Tab1</caption>
+						<backgroundColor>#ded7ce</backgroundColor>
+						<foregroundColor>#ffffff</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>311</top>
+							<left>30</left>
+							<right>594</right>
+							<bottom>463</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<tabStyle>Top</tabStyle>
+					<tabSize>19</tabSize>
+					<items>
+						<item>
+							<name>File Attachment</name>
+							<properties>56=#ffcc66|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#ffcc66</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Support Units</name>
+							<properties>56=#bdcd9f|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#bdcd9f</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+					</items>
+					<selectedTextFont  size="8">Arial</selectedTextFont>
+					<selectedTextColor>#000000</selectedTextColor>
+					<deselectedTextColor>#000000</deselectedTextColor>
+					<tabSlopeLeft>2</tabSlopeLeft>
+					<tabSlopeRight>2</tabSlopeRight>
+					<deselectedTabHeightOffset>1</deselectedTabHeightOffset>
+					<tabSpacing>0</tabSpacing>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<tabStyle>0</tabStyle>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text3</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:1</group>
+					</general>
+					<appearance>
+						<index>22</index>
+						<caption>Associated Support Contract</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>350</top>
+							<left>60</left>
+							<right>211</right>
+							<bottom>366</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_supp_contract1</name>
+						<type>Field</type>
+						<group>Tab1:1</group>
+					</general>
+					<appearance>
+						<index>23</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>350</top>
+							<left>218</left>
+							<right>468</right>
+							<bottom>366</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>qlog_resclose_details.fk_contract_id</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>contract</distinctTable>
+							<distinctColumn>pk_contract_id</distinctColumn>
+							<displayColumn>title</displayColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text4</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:1</group>
+					</general>
+					<appearance>
+						<index>24</index>
+						<caption>Units To Spend On Call</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>373</top>
+							<left>70</left>
+							<right>209</right>
+							<bottom>389</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_units_assigned1</name>
+						<type>Field</type>
+						<group>Tab1:1</group>
+					</general>
+					<appearance>
+						<index>25</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>373</top>
+							<left>218</left>
+							<right>468</right>
+							<bottom>389</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>qlog_resclose_details.units_spend_call</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Numeric</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<precision>15</precision>
+							<scale>10</scale>
+							<inputMask>#########</inputMask>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>btnBrowseProfile_OnPressed</name>
+						<code>
+							<![CDATA[btnBrowseProfile_OnPressed()
+{
+	//-- get resolution profile filter
+	
+	//-- NWJ - 29.06.2006 - get close filter or resolve filter depending on call closure option (requested by Dan 47766)
+/*	if (cb_callaction.text == "Resolve Call")
+	{
+		var Filter = dd.GetGlobalParamAsString("Close Call Form/ResolveProfileFilter");
+	}
+	else if (cb_callaction.text == "Close Call")
+	{
+		var Filter = dd.GetGlobalParamAsString("Close Call Form/CloseProfileFilter");
+	}
+	else
+	{*/
+		var Filter = dd.GetGlobalParamAsString("Close Call Form/ProfileCodeFilter");
+	//}
+	
+	var pc = new ChooseProfileCodeDialog;
+	//-- default analyst permission to auto fill the resolution text on resolve/close call is set
+
+    pc.useDescriptionText =  app.session.IsDefaultOption(ANALYST_DEFAULT_AUTOFILLRESOLUTIONTEXT); 
+    
+    pc.Open(true, true, _swdoc.qlog_resclose_details.fixcode, Filter, function(pc)
+    {
+    	//-- Get the fix code and split it into an array
+        var strCodeDesc = pc.codeDescription;
+        var strCode = pc.code;
+        	
+       	//-- If no codes are found then stop or same as current code
+        if(strCode==_swdoc.qlog_resclose_details.fixcode) return;
+        
+        //-- F0092364
+        if(strCode=="")
+        {
+ 			_swdoc.qlog_resclose_details.fixcode = "";       
+        	app._ete(tb_fixcodedescription,"");
+        	_swdoc.bUserSelectedFixCode = true;
+        	app._een(btnGetProfileText,false);
+        	return;
+        }
+                
+        
+        //-- required for modeless message box
+        var funcUpdate = function()
+        {
+        	//-- add back to update record
+        	_swdoc.qlog_resclose_details.updatetxt = strCurrentUpdateText;
+        	_swdoc.UpdateFormFromData();
+        }
+        
+        //-- required for modeless message box
+        var funcFinalProcessing = function()
+		{
+			//-- if we are working with webclient
+			if(app.bWebClient)
+			{
+				app._een(btnGetProfileText,false);
+			}
+			else
+			{
+	    		//-- enable / disable button if it has text
+	    		app._een(btnGetProfileText,(pc.description!=""));
+			}
+		}
+        
+        
+        //-- Set the text in the resolution profile text box
+        //-- 08.02.2007 - NWJ - set the opencall record value instead of the element name 
+		_swdoc.qlog_resclose_details.fixcode = strCode;  
+	//	MessageBox("document.opencall.fixcode = " + _swdoc.qlog_resclose_details.fixcode);    
+		app._ete(tb_fixcodedescription,strCodeDesc); 
+                
+        //-- Attempt to add the resolution profile description to the Action Description box if the
+        //-- default analyst permission to auto fill the resolution text on resolve/close call is set
+        if(pc.useDescriptionText)
+        {
+        	//-- 08.02.2007 - NWJ - set the opencall record value instead of the element name 
+        	var strCurrentUpdateText = _swdoc.qlog_resclose_details.updatetxt;
+           	
+        	if(pc.description.length)
+        	{
+        		//if(tb_updatetext.text.length)
+        		if(strCurrentUpdateText.length)
+				{
+					var Message = "You have chosen to transfer the default profile text into the description field of the close call form. However, you have already entered some text into this field. Do you want to append the text you have typed?\n\nTo append the default text to the text you have already typed, click Yes\nTo transfer the default text and overwrite what you have already typed, click No\nTo ignore the default text and leave the text you have typed alone, click Cancel";
+					
+					MessageBox(Message, MB_ICONQUESTION | MB_YESNOCANCEL, function(intDecision)
+					{
+						switch(intDecision)
+						{
+							case IDYES:
+								if(_swdoc.qlog_resclose_details.updatetxt.length)
+								{
+									//-- add a line feed
+									strCurrentUpdateText += "\r\n";
+									//tempText = _swdoc.updatedb.updatetxt + "\r\n"; 
+								}
+								strCurrentUpdateText += pc.description;
+								break;
+							case IDNO:
+								strCurrentUpdateText = pc.description;
+								break;
+							case IDCANCEL:
+								break;
+						}
+						funcUpdate();
+						funcFinalProcessing();
+					});
+					
+				}
+				else
+				{
+					strCurrentUpdateText = pc.description;
+					funcUpdate();
+					funcFinalProcessing();
+				}
+        	}
+        	else
+        	{
+        		funcUpdate();
+        		funcFinalProcessing();
+        	}
+        }
+        else
+        {
+        	funcFinalProcessing();
+        }
+    });
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnGetProfileText_OnPressed</name>
+						<code>
+							<![CDATA[btnGetProfileText_OnPressed()
+{
+	var funcUpdateResText = function()
+	{
+		//-- get resolution profile description	
+		var currentResProfileDesc = app.global.GetResolutionProfileDescription(_swdoc.qlog_resclose_details.fixcode);
+		_swdoc.qlog_resclose_details.updatetxt = currentResProfileDesc.strDescription;
+		_swdoc.UpdateFormFromData();
+	}
+	
+	if(_swdoc.qlog_resclose_details.updatetxt.length)
+	{
+		MessageBox("If you retrieve the default text description from the profile database you will overwrite the current Action Description text.\n\nDo you wish to continue?", MB_ICONQUESTION | MB_YESNO, function(intDecision)
+		{
+			if (intDecision != IDYES)
+			{
+				return;
+			}
+			else
+			{
+				funcUpdateResText();
+			}
+		});
+	}
+	else
+	{
+		funcUpdateResText();
+	}
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnAddFile_OnPressed</name>
+						<code>
+							<![CDATA[btnAddFile_OnPressed()
+{
+	//-- add files
+	//fl_attachments1.newFile = InvokeCallAttachmentFileDialog();
+	fl_attachments.AddFiles();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnRemove_OnPressed</name>
+						<code>
+							<![CDATA[btnRemove_OnPressed()
+{
+	// -- remove selected files
+	for(i=fl_attachments.rowCount()-1; i>=0;i--)
+    {
+    	if(fl_attachments.IsRowSelected(i))
+    	{
+    		//-- remove
+    		fl_attachments.RemoveRow(i);
+    	}
+    }
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded(bDataReloaded)
+{
+	// TODO: Add your event handler code here");
+	var strCompanyCode = _swdoc.GetArg("company_code");
+	if (strCompanyCode != "")
+	{
+		var strFilter = "fk_company_id='" + encodeURIComponent(strCompanyCode)+"' and type = 'organisation'";
+		// The received arg may contain HTML characters which need to be reverted to their equivalent ASCII text
+		strFilter = app.g.string_replace(strFilter,"%20"," ",true); // replace all occurrances of %20 with space - caters for Org IDs with spaces
+	}
+	else
+	{
+		strFilter = "type = 'organisation'";
+	}
+	app._slf(mainform.lb_supp_contract1,strFilter);
+	
+	//We are going to load the information in case we got a number passed to this form
+	if (_swdoc.qlog_resclose_details.pk_auto_id){
+		var objFilesAssociate = app.g.get_qlog_resclose_files(_swdoc.qlog_resclose_details.pk_auto_id);
+
+    	for (i=0 ; i<objFilesAssociate.length;i++){
+            	
+            	var objectStep = objFilesAssociate[i];
+            	var url = "attach;"+"displayname="+objectStep.filename +"; path="+objectStep.filepath+"; size="+objectStep.filesize+"; lastmodified="+objectStep.last_modified;
+            	
+            	mainform.fl_attachments.AddAttachment(url);
+            	mainform.fl_attachments.Refresh();
+    	}
+    	
+    	app._een(mainform.tb_units_assigned1,true); // allow entry of support decrement units
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_supp_contract1_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_supp_contract1_OnValueChanged(strValue)
+{
+	//qlog_resclose_details.updatetxt += "";
+	// TODO: Add your event handler code here
+	//-- Lookup units available for selected contract
+	if(strValue!="")
+	{
+		/*var recContract = new SqlRecord;
+		if(recContract.GetRecord("contract", strValue)
+		{
+			var contNumID = _swdoc.arrContractCMDBIDs[strValue];
+		}*/	
+		
+		//_swdoc.get_support_units_available(strValue, mainform.tb_avail_units1);
+		_swdoc.get_support_unit_decrement(strValue, mainform.tb_units_assigned1, strValue);
+		
+		
+		//###20120731 app._ero(mainform.tb_units_assigned1,false);
+		app._een(mainform.tb_units_assigned1, true);
+	}
+	else
+	{
+		//_eva(mainform.tb_avail_units1,0);
+		app._eva(mainform.tb_units_assigned1,0);
+		app._een(mainform.tb_units_assigned1,false);
+		//_evi(mainform.lbl_con_ser_assoc, false);
+		//_evi(mainform.lbl_no_con_ser_assoc, false);
+		//_evi(mainform.lbl_multi_services, false);
+
+	/*###		app._eva(mainform.tb_avail_units,0);
+		app._eva(mainform.tb_units_assigned,0);
+		app._ero(mainform.tb_units_assigned,true);
+		mainform.elements['lbl_con_ser_assoc'].visible = false;
+		mainform.elements['lbl_no_con_ser_assoc'].visible = false;
+*/
+	}
+	//qlog_resclose_details.fk_contract_id = strValue;
+
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

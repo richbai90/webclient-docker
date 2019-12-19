@@ -1,0 +1,75 @@
+<searchOptions>
+		<field type="select" dsn="" table="" keycol="" txtcol= "" additemstop="0" targetcol="opencall.status">
+			<additems>
+				<item>
+					<key>1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20</key>
+					<txt>Any Call Status</txt>
+				</item>
+				<item>
+					<key>1,2,3,4,5,9,10,11</key>
+					<txt>All Open Calls</txt>
+				</item>
+				<item>
+					<key>16,18</key>
+					<txt>Closed Calls</txt>
+				</item>
+				<item>
+					<key>6</key>
+					<txt>Resolved Calls</txt>
+				</item>
+				<item>
+					<key>18</key>
+					<txt>Closed Calls (chargeable)</txt>
+				</item>
+				<item>
+					<key>16</key>
+					<txt>Closed Calls (not chargeable)</txt>
+				</item>
+				<item>
+					<key>17</key>
+					<txt>Cancelled Calls</txt>
+				</item>
+				<item>
+					<key>1,2,3,4,5,9,10,11,6</key>
+					<txt>Open and Resolved Calls</txt>
+				</item>
+				<item>
+					<key>16,18,6</key>
+					<txt>Resolved and Closed Calls</txt>
+				</item>
+				<item>
+					<key>2</key>
+					<txt>Unassigned</txt>
+				</item>
+				<item>
+					<key>3</key>
+					<txt>Unaccepted</txt>
+				</item>
+				<item>
+					<key>2,3</key>
+					<txt>Unassigned or Unaccepted</txt>
+				</item>
+				<item>
+					<key>4</key>
+					<txt>On Hold</txt>
+				</item>
+				<item>
+					<key>5</key>
+					<txt>Off Hold</txt>
+				</item>
+				<item>
+					<key>1</key>
+					<txt>Pending</txt>
+				</item>
+				<item>
+					<key>9,10,11</key>
+					<txt>All Escalated Calls</txt>
+				</item>
+			</additems>
+			<default>1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20</default>
+		</field>
+
+		<field type="daterange" datatype="epoch" targetcol="opencall.logdatex"><label>Logged Between</label></field>
+		<field type="daterange" datatype="epoch" targetcol="opencall.closedatex"><label>Resolved Between</label></field>
+		<field type="profilecode" datatype="alphanum" targetcol="opencall.probcode"></field>
+</searchOptions>

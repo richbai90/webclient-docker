@@ -1,0 +1,39 @@
+<report title="SLA Fix Performance by Call Class" reportstyle="list" dsn="swdata" uid="" pwd="">
+	<columns>
+		<column dbname="callclass" dbtable="opencall" level="1" >Call Class</column>
+		<aggregate dbname="callref" dbtable="opencall" aggregate="1" aggFunction="Count" level="1">Number Of Calls</aggregate>
+		<freetext dbname="Met" graph='1' level="1">cast(left(1.0*100*sum(opencall.withinfix)/Count(opencall.callref), 5) as char(5))</freetext>
+		<freetext dbname="Missed" level="1">cast(left(1.0*100-(100*sum(opencall.withinfix)/Count(opencall.callref)), 5) as char(5))</freetext>
+		<column dbname="callref" dbtable="opencall" conversion="callref" level="2">Call Reference</column>
+		<column dbname="callclass" dbtable="opencall" conversion="callclass" level="2">Type</column>
+		<column dbname="logdatex" dbtable="opencall" conversion="customerdate" level="2">Log Date</column>
+		<column dbname="fixbyx" dbtable="opencall" conversion="customerdate" level="2">Fix By Date</column>
+		<column dbname="slafix" dbtable="opencall" conversion="customerdate" level="2">Fix Date</column>
+		<column dbname="withinfix" dbtable="opencall" conversion="1_0_TO_Y_N" level="2">Met Fix</column>
+		<column dbname="status" dbtable="opencall" conversion="callstatus" level="2">Status</column>
+	</columns>
+	<tables>
+		<table name="opencall" type="master"/>
+	</tables>
+	<criteria>
+		<userinput type="daterange" binding="opencall.logdatex" int="1" op="=">
+			<prompt>Please Specify a Date Range</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.fk_company_id" dsn="swdata" dbtable="opencall" keycol="fk_company_id" txtcol="companyname" filter=" where fk_company_id IS NOT NULL  and fk_company_id &lt;&gt;'' group by opencall.fk_company_id,opencall.companyname" int="0" op="=">
+			<prompt>Organisation</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.site" dsn="swdata" dbtable="site" keycol="site_name" txtcol="site_name" filter="" int="0" op="=">
+			<prompt>Site</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.suppgroup" dsn="swdata" dbtable="opencall" keycol="suppgroup" txtcol="suppgroup" filter=" group by opencall.suppgroup" int="0" op="=">
+			<prompt>Support Group</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.owner" dsn="swdata" dbtable="opencall" keycol="owner" txtcol="owner" filter=" where opencall.owner IS NOT NULL and opencall.owner &lt;&gt;''  group by opencall.owner   " int="0" op="=">
+			<prompt>Analyst</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.probcode" dsn="swdata" dbtable="pcdesc" keycol="code" txtcol="info" filter="" int="0" op="=">
+			<prompt>Problem Profile Code</prompt>
+		</userinput>
+		<static>opencall.status in (6,16,18)  AND opencall.appcode IN (![$GLOBALS['datasetfilterlist']]!)</static>
+	</criteria>
+</report>

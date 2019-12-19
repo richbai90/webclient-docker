@@ -1,0 +1,1043 @@
+<?xml version="1.0"?>
+<workflow>
+  <Recordset table="bpm_workflow">
+    <Record>
+      <ext_db_table></ext_db_table>
+      <ext_sw_form></ext_sw_form>
+      <fk_default_sla></fk_default_sla>
+      <title></title>
+      <fk_firststage_id>938</fk_firststage_id>
+      <flg_active>1</flg_active>
+      <description>Why is the description box SSSSSSSSOOOOOOOOOOOOOOOOOO big? I mean we're creating a short description, not a rewrite of Don Quixote.</description>
+      <pk_workflow_id>AWS Account Request</pk_workflow_id>
+      <callclass>Service Request</callclass>
+      <fk_default_sla_name></fk_default_sla_name>
+      <fk_default_sla_new>0</fk_default_sla_new>
+      <flg_sla_apply>0</flg_sla_apply>
+      <flg_sla_enforce>0</flg_sla_enforce>
+      <flg_requireci>0</flg_requireci>
+      <appcode>itsm_default</appcode>
+      <graphxml></graphxml>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_progress"/>
+  <Recordset table="bpm_stage">
+    <Record>
+      <rej_weighting>100</rej_weighting>
+      <auth_weighting>100</auth_weighting>
+      <flg_addcalltasks>0</flg_addcalltasks>
+      <flg_addcallauths>0</flg_addcallauths>
+      <swauthreq_email></swauthreq_email>
+      <authreq_mbox></authreq_mbox>
+      <custauthreq_email></custauthreq_email>
+      <set_tasksok_status>TASKSOK</set_tasksok_status>
+      <set_tasksfail_status>TASKSFAIL</set_tasksfail_status>
+      <set_taskfail_status></set_taskfail_status>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <swdataform></swdataform>
+      <swwordtemplate></swwordtemplate>
+      <flg_seqtasks>0</flg_seqtasks>
+      <flg_hastasks>0</flg_hastasks>
+      <flg_authorisation>0</flg_authorisation>
+      <pk_stage_id>938</pk_stage_id>
+      <title>Submitted</title>
+      <description>Again with the HUUUUUGE description box.</description>
+      <flg_update_access>0</flg_update_access>
+      <flg_visible_access>0</flg_visible_access>
+      <set_allauth_status></set_allauth_status>
+      <set_allmixed_status></set_allmixed_status>
+      <set_allrej_status></set_allrej_status>
+      <flg_custmanagerauth>0</flg_custmanagerauth>
+      <set_onrej_status></set_onrej_status>
+      <swdataform_table></swdataform_table>
+      <set_onauth_status></set_onauth_status>
+      <seq>1</seq>
+      <flg_unanimous_auth>0</flg_unanimous_auth>
+      <flg_disable_manual>0</flg_disable_manual>
+      <flg_auth_via_email>0</flg_auth_via_email>
+      <flg_requireci>0</flg_requireci>
+      <aba_authreq_email></aba_authreq_email>
+      <notif_template></notif_template>
+      <notif_mailbox></notif_mailbox>
+      <notif_email></notif_email>
+      <notif_days>0</notif_days>
+      <edit_level_reqd>0</edit_level_reqd>
+      <flg_releaseready>0</flg_releaseready>
+      <servownauthreq_email></servownauthreq_email>
+      <techownauthreq_email></techownauthreq_email>
+      <ciownauthreq_email></ciownauthreq_email>
+      <flg_enable_change_control>0</flg_enable_change_control>
+    </Record>
+    <Record>
+      <rej_weighting>100</rej_weighting>
+      <auth_weighting>100</auth_weighting>
+      <flg_addcalltasks>0</flg_addcalltasks>
+      <flg_addcallauths>0</flg_addcallauths>
+      <swauthreq_email></swauthreq_email>
+      <authreq_mbox>_helpdesk</authreq_mbox>
+      <custauthreq_email></custauthreq_email>
+      <set_tasksok_status>TASKSOK</set_tasksok_status>
+      <set_tasksfail_status>TASKSFAIL</set_tasksfail_status>
+      <set_taskfail_status></set_taskfail_status>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <swdataform></swdataform>
+      <swwordtemplate></swwordtemplate>
+      <flg_seqtasks>0</flg_seqtasks>
+      <flg_hastasks>0</flg_hastasks>
+      <flg_authorisation>1</flg_authorisation>
+      <pk_stage_id>939</pk_stage_id>
+      <title>Business Authorization</title>
+      <description></description>
+      <flg_update_access>0</flg_update_access>
+      <flg_visible_access>0</flg_visible_access>
+      <set_allauth_status></set_allauth_status>
+      <set_allmixed_status></set_allmixed_status>
+      <set_allrej_status></set_allrej_status>
+      <flg_custmanagerauth>0</flg_custmanagerauth>
+      <set_onrej_status>Business Unauthorized</set_onrej_status>
+      <swdataform_table></swdataform_table>
+      <set_onauth_status>Business Authorized</set_onauth_status>
+      <seq>2</seq>
+      <flg_unanimous_auth>0</flg_unanimous_auth>
+      <flg_disable_manual>0</flg_disable_manual>
+      <flg_auth_via_email>1</flg_auth_via_email>
+      <flg_requireci>0</flg_requireci>
+      <aba_authreq_email></aba_authreq_email>
+      <notif_template></notif_template>
+      <notif_mailbox></notif_mailbox>
+      <notif_email></notif_email>
+      <notif_days>0</notif_days>
+      <edit_level_reqd>0</edit_level_reqd>
+      <flg_releaseready>0</flg_releaseready>
+      <servownauthreq_email></servownauthreq_email>
+      <techownauthreq_email></techownauthreq_email>
+      <ciownauthreq_email></ciownauthreq_email>
+      <flg_enable_change_control>0</flg_enable_change_control>
+    </Record>
+    <Record>
+      <rej_weighting>100</rej_weighting>
+      <auth_weighting>100</auth_weighting>
+      <flg_addcalltasks>0</flg_addcalltasks>
+      <flg_addcallauths>0</flg_addcallauths>
+      <swauthreq_email></swauthreq_email>
+      <authreq_mbox></authreq_mbox>
+      <custauthreq_email></custauthreq_email>
+      <set_tasksok_status>TASKSOK</set_tasksok_status>
+      <set_tasksfail_status>TASKSFAIL</set_tasksfail_status>
+      <set_taskfail_status></set_taskfail_status>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <swdataform></swdataform>
+      <swwordtemplate></swwordtemplate>
+      <flg_seqtasks>0</flg_seqtasks>
+      <flg_hastasks>0</flg_hastasks>
+      <flg_authorisation>1</flg_authorisation>
+      <pk_stage_id>940</pk_stage_id>
+      <title>COTR Authorization</title>
+      <description></description>
+      <flg_update_access>0</flg_update_access>
+      <flg_visible_access>0</flg_visible_access>
+      <set_allauth_status></set_allauth_status>
+      <set_allmixed_status></set_allmixed_status>
+      <set_allrej_status></set_allrej_status>
+      <flg_custmanagerauth>0</flg_custmanagerauth>
+      <set_onrej_status>COTR Unauthorized</set_onrej_status>
+      <swdataform_table></swdataform_table>
+      <set_onauth_status>COTR Authorized</set_onauth_status>
+      <seq>3</seq>
+      <flg_unanimous_auth>0</flg_unanimous_auth>
+      <flg_disable_manual>0</flg_disable_manual>
+      <flg_auth_via_email>1</flg_auth_via_email>
+      <flg_requireci>0</flg_requireci>
+      <aba_authreq_email></aba_authreq_email>
+      <notif_template></notif_template>
+      <notif_mailbox></notif_mailbox>
+      <notif_email></notif_email>
+      <notif_days>0</notif_days>
+      <edit_level_reqd>0</edit_level_reqd>
+      <flg_releaseready>0</flg_releaseready>
+      <servownauthreq_email></servownauthreq_email>
+      <techownauthreq_email></techownauthreq_email>
+      <ciownauthreq_email></ciownauthreq_email>
+      <flg_enable_change_control>0</flg_enable_change_control>
+    </Record>
+    <Record>
+      <rej_weighting>100</rej_weighting>
+      <auth_weighting>100</auth_weighting>
+      <flg_addcalltasks>0</flg_addcalltasks>
+      <flg_addcallauths>0</flg_addcallauths>
+      <swauthreq_email></swauthreq_email>
+      <authreq_mbox></authreq_mbox>
+      <custauthreq_email></custauthreq_email>
+      <set_tasksok_status>TASKSOK</set_tasksok_status>
+      <set_tasksfail_status>TASKSFAIL</set_tasksfail_status>
+      <set_taskfail_status></set_taskfail_status>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <swdataform></swdataform>
+      <swwordtemplate></swwordtemplate>
+      <flg_seqtasks>0</flg_seqtasks>
+      <flg_hastasks>0</flg_hastasks>
+      <flg_authorisation>1</flg_authorisation>
+      <pk_stage_id>941</pk_stage_id>
+      <title>ISSM Authorization</title>
+      <description></description>
+      <flg_update_access>0</flg_update_access>
+      <flg_visible_access>0</flg_visible_access>
+      <set_allauth_status></set_allauth_status>
+      <set_allmixed_status></set_allmixed_status>
+      <set_allrej_status></set_allrej_status>
+      <flg_custmanagerauth>0</flg_custmanagerauth>
+      <set_onrej_status>ISSM Unauthorized</set_onrej_status>
+      <swdataform_table></swdataform_table>
+      <set_onauth_status>ISSM Authorized</set_onauth_status>
+      <seq>4</seq>
+      <flg_unanimous_auth>0</flg_unanimous_auth>
+      <flg_disable_manual>0</flg_disable_manual>
+      <flg_auth_via_email>1</flg_auth_via_email>
+      <flg_requireci>0</flg_requireci>
+      <aba_authreq_email></aba_authreq_email>
+      <notif_template></notif_template>
+      <notif_mailbox></notif_mailbox>
+      <notif_email></notif_email>
+      <notif_days>0</notif_days>
+      <edit_level_reqd>0</edit_level_reqd>
+      <flg_releaseready>0</flg_releaseready>
+      <servownauthreq_email></servownauthreq_email>
+      <techownauthreq_email></techownauthreq_email>
+      <ciownauthreq_email></ciownauthreq_email>
+      <flg_enable_change_control>0</flg_enable_change_control>
+    </Record>
+    <Record>
+      <rej_weighting>100</rej_weighting>
+      <auth_weighting>100</auth_weighting>
+      <flg_addcalltasks>0</flg_addcalltasks>
+      <flg_addcallauths>0</flg_addcallauths>
+      <swauthreq_email></swauthreq_email>
+      <authreq_mbox></authreq_mbox>
+      <custauthreq_email></custauthreq_email>
+      <set_tasksok_status>TASKSOK</set_tasksok_status>
+      <set_tasksfail_status>TASKSFAIL</set_tasksfail_status>
+      <set_taskfail_status></set_taskfail_status>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <swdataform></swdataform>
+      <swwordtemplate></swwordtemplate>
+      <flg_seqtasks>0</flg_seqtasks>
+      <flg_hastasks>0</flg_hastasks>
+      <flg_authorisation>0</flg_authorisation>
+      <pk_stage_id>942</pk_stage_id>
+      <title>Deliver To Cloud For Processing</title>
+      <description></description>
+      <flg_update_access>0</flg_update_access>
+      <flg_visible_access>0</flg_visible_access>
+      <set_allauth_status></set_allauth_status>
+      <set_allmixed_status></set_allmixed_status>
+      <set_allrej_status></set_allrej_status>
+      <flg_custmanagerauth>0</flg_custmanagerauth>
+      <set_onrej_status></set_onrej_status>
+      <swdataform_table></swdataform_table>
+      <set_onauth_status></set_onauth_status>
+      <seq>5</seq>
+      <flg_unanimous_auth>0</flg_unanimous_auth>
+      <flg_disable_manual>0</flg_disable_manual>
+      <flg_auth_via_email>0</flg_auth_via_email>
+      <flg_requireci>0</flg_requireci>
+      <aba_authreq_email></aba_authreq_email>
+      <notif_template></notif_template>
+      <notif_mailbox></notif_mailbox>
+      <notif_email></notif_email>
+      <notif_days>0</notif_days>
+      <edit_level_reqd>0</edit_level_reqd>
+      <flg_releaseready>0</flg_releaseready>
+      <servownauthreq_email></servownauthreq_email>
+      <techownauthreq_email></techownauthreq_email>
+      <ciownauthreq_email></ciownauthreq_email>
+      <flg_enable_change_control>0</flg_enable_change_control>
+    </Record>
+    <Record>
+      <rej_weighting>100</rej_weighting>
+      <auth_weighting>100</auth_weighting>
+      <flg_addcalltasks>0</flg_addcalltasks>
+      <flg_addcallauths>0</flg_addcallauths>
+      <swauthreq_email></swauthreq_email>
+      <authreq_mbox></authreq_mbox>
+      <custauthreq_email></custauthreq_email>
+      <set_tasksok_status>TASKSOK</set_tasksok_status>
+      <set_tasksfail_status>TASKSFAIL</set_tasksfail_status>
+      <set_taskfail_status></set_taskfail_status>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <swdataform></swdataform>
+      <swwordtemplate></swwordtemplate>
+      <flg_seqtasks>0</flg_seqtasks>
+      <flg_hastasks>0</flg_hastasks>
+      <flg_authorisation>0</flg_authorisation>
+      <pk_stage_id>943</pk_stage_id>
+      <title>Business Approver - Unauthorized</title>
+      <description></description>
+      <flg_update_access>0</flg_update_access>
+      <flg_visible_access>0</flg_visible_access>
+      <set_allauth_status></set_allauth_status>
+      <set_allmixed_status></set_allmixed_status>
+      <set_allrej_status></set_allrej_status>
+      <flg_custmanagerauth>0</flg_custmanagerauth>
+      <set_onrej_status></set_onrej_status>
+      <swdataform_table></swdataform_table>
+      <set_onauth_status></set_onauth_status>
+      <seq>6</seq>
+      <flg_unanimous_auth>0</flg_unanimous_auth>
+      <flg_disable_manual>0</flg_disable_manual>
+      <flg_auth_via_email>0</flg_auth_via_email>
+      <flg_requireci>0</flg_requireci>
+      <aba_authreq_email></aba_authreq_email>
+      <notif_template></notif_template>
+      <notif_mailbox></notif_mailbox>
+      <notif_email></notif_email>
+      <notif_days>0</notif_days>
+      <edit_level_reqd>0</edit_level_reqd>
+      <flg_releaseready>0</flg_releaseready>
+      <servownauthreq_email></servownauthreq_email>
+      <techownauthreq_email></techownauthreq_email>
+      <ciownauthreq_email></ciownauthreq_email>
+      <flg_enable_change_control>0</flg_enable_change_control>
+    </Record>
+    <Record>
+      <rej_weighting>100</rej_weighting>
+      <auth_weighting>100</auth_weighting>
+      <flg_addcalltasks>0</flg_addcalltasks>
+      <flg_addcallauths>0</flg_addcallauths>
+      <swauthreq_email></swauthreq_email>
+      <authreq_mbox></authreq_mbox>
+      <custauthreq_email></custauthreq_email>
+      <set_tasksok_status>TASKSOK</set_tasksok_status>
+      <set_tasksfail_status>TASKSFAIL</set_tasksfail_status>
+      <set_taskfail_status></set_taskfail_status>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <swdataform></swdataform>
+      <swwordtemplate></swwordtemplate>
+      <flg_seqtasks>0</flg_seqtasks>
+      <flg_hastasks>0</flg_hastasks>
+      <flg_authorisation>0</flg_authorisation>
+      <pk_stage_id>944</pk_stage_id>
+      <title>COTR Approver - Unauthroized</title>
+      <description></description>
+      <flg_update_access>0</flg_update_access>
+      <flg_visible_access>0</flg_visible_access>
+      <set_allauth_status></set_allauth_status>
+      <set_allmixed_status></set_allmixed_status>
+      <set_allrej_status></set_allrej_status>
+      <flg_custmanagerauth>0</flg_custmanagerauth>
+      <set_onrej_status></set_onrej_status>
+      <swdataform_table></swdataform_table>
+      <set_onauth_status></set_onauth_status>
+      <seq>7</seq>
+      <flg_unanimous_auth>0</flg_unanimous_auth>
+      <flg_disable_manual>0</flg_disable_manual>
+      <flg_auth_via_email>0</flg_auth_via_email>
+      <flg_requireci>0</flg_requireci>
+      <aba_authreq_email></aba_authreq_email>
+      <notif_template></notif_template>
+      <notif_mailbox></notif_mailbox>
+      <notif_email></notif_email>
+      <notif_days>0</notif_days>
+      <edit_level_reqd>0</edit_level_reqd>
+      <flg_releaseready>0</flg_releaseready>
+      <servownauthreq_email></servownauthreq_email>
+      <techownauthreq_email></techownauthreq_email>
+      <ciownauthreq_email></ciownauthreq_email>
+      <flg_enable_change_control>0</flg_enable_change_control>
+    </Record>
+    <Record>
+      <rej_weighting>100</rej_weighting>
+      <auth_weighting>100</auth_weighting>
+      <flg_addcalltasks>0</flg_addcalltasks>
+      <flg_addcallauths>0</flg_addcallauths>
+      <swauthreq_email></swauthreq_email>
+      <authreq_mbox></authreq_mbox>
+      <custauthreq_email></custauthreq_email>
+      <set_tasksok_status>TASKSOK</set_tasksok_status>
+      <set_tasksfail_status>TASKSFAIL</set_tasksfail_status>
+      <set_taskfail_status></set_taskfail_status>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <swdataform></swdataform>
+      <swwordtemplate></swwordtemplate>
+      <flg_seqtasks>0</flg_seqtasks>
+      <flg_hastasks>0</flg_hastasks>
+      <flg_authorisation>0</flg_authorisation>
+      <pk_stage_id>945</pk_stage_id>
+      <title>ISSM Approver - Unauthorized</title>
+      <description></description>
+      <flg_update_access>0</flg_update_access>
+      <flg_visible_access>0</flg_visible_access>
+      <set_allauth_status></set_allauth_status>
+      <set_allmixed_status></set_allmixed_status>
+      <set_allrej_status></set_allrej_status>
+      <flg_custmanagerauth>0</flg_custmanagerauth>
+      <set_onrej_status></set_onrej_status>
+      <swdataform_table></swdataform_table>
+      <set_onauth_status></set_onauth_status>
+      <seq>8</seq>
+      <flg_unanimous_auth>0</flg_unanimous_auth>
+      <flg_disable_manual>0</flg_disable_manual>
+      <flg_auth_via_email>0</flg_auth_via_email>
+      <flg_requireci>0</flg_requireci>
+      <aba_authreq_email></aba_authreq_email>
+      <notif_template></notif_template>
+      <notif_mailbox></notif_mailbox>
+      <notif_email></notif_email>
+      <notif_days>0</notif_days>
+      <edit_level_reqd>0</edit_level_reqd>
+      <flg_releaseready>0</flg_releaseready>
+      <servownauthreq_email></servownauthreq_email>
+      <techownauthreq_email></techownauthreq_email>
+      <ciownauthreq_email></ciownauthreq_email>
+      <flg_enable_change_control>0</flg_enable_change_control>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_ctrl_fields"/>
+  <Recordset table="bpm_audit_fields"/>
+  <Recordset table="bpm_stage_auth">
+    <Record>
+      <weighting>100</weighting>
+      <authorname>&lt;Pending Portfolio Assignment&gt;</authorname>
+      <authortype>Portfolio - Business Approver</authortype>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <fk_auth_id>PORTBUS</fk_auth_id>
+      <fk_stage_id>939</fk_stage_id>
+      <pk_auto_id>48</pk_auto_id>
+    </Record>
+    <Record>
+      <weighting>100</weighting>
+      <authorname>&lt;Pending Portfolio Assignment&gt;</authorname>
+      <authortype>Portfolio - COTR Approver</authortype>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <fk_auth_id>PORTCOTR</fk_auth_id>
+      <fk_stage_id>940</fk_stage_id>
+      <pk_auto_id>49</pk_auto_id>
+    </Record>
+    <Record>
+      <weighting>100</weighting>
+      <authorname>&lt;Pending Portfolio Assignment&gt;</authorname>
+      <authortype>Portfolio - ISSM Approver</authortype>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <fk_auth_id>PORTISSM</fk_auth_id>
+      <fk_stage_id>941</fk_stage_id>
+      <pk_auto_id>50</pk_auto_id>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_stage_task"/>
+  <Recordset table="bpm_stage_sts">
+    <Record>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_auto_id>2205</pk_auto_id>
+      <status>Business Authorized</status>
+      <fk_stage_id>939</fk_stage_id>
+    </Record>
+    <Record>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_auto_id>2206</pk_auto_id>
+      <status>Business Unauthorized</status>
+      <fk_stage_id>939</fk_stage_id>
+    </Record>
+    <Record>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_auto_id>2207</pk_auto_id>
+      <status>COTR Authorized</status>
+      <fk_stage_id>940</fk_stage_id>
+    </Record>
+    <Record>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_auto_id>2208</pk_auto_id>
+      <status>COTR Unauthorized</status>
+      <fk_stage_id>940</fk_stage_id>
+    </Record>
+    <Record>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_auto_id>2209</pk_auto_id>
+      <status>ISSM Authorized</status>
+      <fk_stage_id>941</fk_stage_id>
+    </Record>
+    <Record>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_auto_id>2210</pk_auto_id>
+      <status>ISSM Unauthorized</status>
+      <fk_stage_id>941</fk_stage_id>
+    </Record>
+    <Record>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_auto_id>2211</pk_auto_id>
+      <status>Delivered</status>
+      <fk_stage_id>942</fk_stage_id>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_cond">
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition>1=1</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>939</set_stage>
+      <set_workflow>AWS Account Request</set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status></set_status>
+      <fk_stage_id>938</fk_stage_id>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_condition_id>1570</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>1</flg_runatstart>
+      <title>Switch to business approver</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt></updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>0</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>0</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new>0</set_call_sla_new>
+      <flg_remwatch>0</flg_remwatch>
+      <flg_addwatch>0</flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile>0</set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched>0</flg_copysched>
+      <flg_releaseready>0</flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition> '&amp;[new_opencall.bpm_status_id]'='Business Authorized'</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>940</set_stage>
+      <set_workflow>AWS Account Request</set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status></set_status>
+      <fk_stage_id>939</fk_stage_id>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_condition_id>1571</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>0</flg_runatstart>
+      <title>On Authorized</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt></updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>0</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>0</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new>0</set_call_sla_new>
+      <flg_remwatch>0</flg_remwatch>
+      <flg_addwatch>0</flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile>0</set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched>0</flg_copysched>
+      <flg_releaseready>0</flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition> '&amp;[new_opencall.bpm_status_id]'='Business Unauthorized'</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>943</set_stage>
+      <set_workflow>AWS Account Request</set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status></set_status>
+      <fk_stage_id>939</fk_stage_id>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_condition_id>1572</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>0</flg_runatstart>
+      <title>On Business Rejected</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt></updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>0</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>0</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new>0</set_call_sla_new>
+      <flg_remwatch>0</flg_remwatch>
+      <flg_addwatch>0</flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile>0</set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched>0</flg_copysched>
+      <flg_releaseready>0</flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition> '&amp;[new_opencall.bpm_status_id]'='COTR Authorized'</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>941</set_stage>
+      <set_workflow>AWS Account Request</set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status></set_status>
+      <fk_stage_id>940</fk_stage_id>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_condition_id>1573</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>0</flg_runatstart>
+      <title>COTR Authorized</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt></updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>0</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>0</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new>0</set_call_sla_new>
+      <flg_remwatch>0</flg_remwatch>
+      <flg_addwatch>0</flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile>0</set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched>0</flg_copysched>
+      <flg_releaseready>0</flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition> '&amp;[new_opencall.bpm_status_id]'='COTR Unauthorized'</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>944</set_stage>
+      <set_workflow>AWS Account Request</set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status></set_status>
+      <fk_stage_id>940</fk_stage_id>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_condition_id>1577</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>0</flg_runatstart>
+      <title>COTR Rejected</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt></updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>0</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>0</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new>0</set_call_sla_new>
+      <flg_remwatch>0</flg_remwatch>
+      <flg_addwatch>0</flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile>0</set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched>0</flg_copysched>
+      <flg_releaseready>0</flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition> '&amp;[new_opencall.bpm_status_id]'='ISSM Authorized'</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>942</set_stage>
+      <set_workflow>AWS Account Request</set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status></set_status>
+      <fk_stage_id>941</fk_stage_id>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_condition_id>1568</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>0</flg_runatstart>
+      <title>On ISSM Authorized</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt></updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>0</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>0</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new>0</set_call_sla_new>
+      <flg_remwatch>0</flg_remwatch>
+      <flg_addwatch>0</flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile>0</set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched>0</flg_copysched>
+      <flg_releaseready>0</flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition> '&amp;[new_opencall.bpm_status_id]'='ISSM Unauthorized'</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>945</set_stage>
+      <set_workflow>AWS Account Request</set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status></set_status>
+      <fk_stage_id>941</fk_stage_id>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_condition_id>1578</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>0</flg_runatstart>
+      <title>On ISSM Rejected</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt></updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>0</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>0</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new>0</set_call_sla_new>
+      <flg_remwatch>0</flg_remwatch>
+      <flg_addwatch>0</flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile>0</set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched>0</flg_copysched>
+      <flg_releaseready>0</flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition>1=1</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>942</set_stage>
+      <set_workflow>AWS Account Request</set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status>Delivered</set_status>
+      <fk_stage_id>942</fk_stage_id>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_condition_id>1569</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>1</flg_runatstart>
+      <title>Execute VPME</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt></updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>0</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>0</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new>0</set_call_sla_new>
+      <flg_remwatch>0</flg_remwatch>
+      <flg_addwatch>0</flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile>0</set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched>0</flg_copysched>
+      <flg_releaseready>0</flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition>1=1</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>0</set_stage>
+      <set_workflow></set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>16</set_call_status>
+      <set_status></set_status>
+      <fk_stage_id>943</fk_stage_id>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_condition_id>1574</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>1</flg_runatstart>
+      <title>Close request</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt></updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>0</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>0</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new>0</set_call_sla_new>
+      <flg_remwatch>0</flg_remwatch>
+      <flg_addwatch>0</flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile>0</set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched>0</flg_copysched>
+      <flg_releaseready>0</flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition>1=1</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>0</set_stage>
+      <set_workflow></set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>16</set_call_status>
+      <set_status></set_status>
+      <fk_stage_id>944</fk_stage_id>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_condition_id>1575</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>1</flg_runatstart>
+      <title>Close request</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt></updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>0</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>0</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new>0</set_call_sla_new>
+      <flg_remwatch>0</flg_remwatch>
+      <flg_addwatch>0</flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile>0</set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched>0</flg_copysched>
+      <flg_releaseready>0</flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition>1=1</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>0</set_stage>
+      <set_workflow></set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>16</set_call_status>
+      <set_status></set_status>
+      <fk_stage_id>945</fk_stage_id>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+      <pk_condition_id>1576</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>1</flg_runatstart>
+      <title>Close request</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt></updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>0</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>0</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new>0</set_call_sla_new>
+      <flg_remwatch>0</flg_remwatch>
+      <flg_addwatch>0</flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile>0</set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched>0</flg_copysched>
+      <flg_releaseready>0</flg_releaseready>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_cond_vpme">
+    <Record>
+      <execorder>1</execorder>
+      <pk_auto_id>33</pk_auto_id>
+      <fk_cond_id>1569</fk_cond_id>
+      <vpmescript>submitRequestToCloud</vpmescript>
+      <fk_stage_id>942</fk_stage_id>
+      <fk_workflow_id>AWS Account Request</fk_workflow_id>
+    </Record>
+  </Recordset>
+</workflow>

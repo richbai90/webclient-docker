@@ -1,0 +1,4352 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>wssm_wiz_q</name>
+			<title>Question</title>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>true</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>wssm_wiz_q</name>
+				<type>Main Details Table</type>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var _swdoc = (IsObjectDefined("_bHtmlWebClient"))?top:_swdoc;
+var boolInserting = true;
+
+function oQ()
+{
+	return _swdoc.wssm_wiz_q;
+}
+
+
+function MF()
+{
+	return _swdoc.mainform;
+}
+
+function init_next_lbs()
+{
+//	app._een(_swdoc.MF().lb_nq1,(_swdoc.oQ().fk_nextstage!="0"));
+	
+	if(_swdoc.oQ().fk_nextwiz=="")
+	{
+		if(_swdoc.oQ().fk_nextstage != "0")_swdoc.oQ().fk_nextstage = "0";
+		if(_swdoc.oQ().fk_nextstage != "0")app._ete(_swdoc.MF().lb_ns1,"0");
+	}
+	
+	if(_swdoc.oQ().fk_nextstage=="0")
+	{
+//		app._een(_swdoc.MF().lb_nq1,false);	
+		if(_swdoc.oQ().fk_nextq != "0")_swdoc.oQ().fk_nextq = "0";
+		if(_swdoc.oQ().fk_nextq != "0")app._ete(_swdoc.MF().lb_nq1,"0");
+	}	
+	
+	_swdoc.UpdateFormFromData();
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnSaveData</name>
+					<code>
+						<![CDATA[OnSaveData()
+{
+	if(!app.service.can_update(true))
+		return false;
+	// TODO: Add your event handler code here
+	if(_swdoc.oQ().pk_qid<1)
+	{
+		if(_swdoc.GetArg("fk_form_id"))
+			_swdoc.oQ().fk_form_id = _swdoc.GetArg("fk_form_id");
+		_swdoc.oQ().qindex = _swdoc.GetArg("qindex");		
+	}
+
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnDataSaved</name>
+					<code>
+						<![CDATA[OnDataSaved()
+{
+	// TODO: Add your event handler code here
+	_swdoc.UpdateFormFromData();
+	if(_swdoc.boolInserting)
+	{
+		var strChoiceKeys = app.g.sqllist_get_valuesdel(mainform.sl_choices1, 'PK_QCID', ",", "");
+		if(strChoiceKeys!="")
+		{
+			var strParams = "qid="+wssm_wiz_q.pk_qid+"&cids="+app.pfu(strChoiceKeys);
+			app.g.submitsqs("form/wiz_question/update_choice_key", strParams);
+		}
+	}
+
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>488</width>
+				<height>333</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>lb_type</name>
+						<type>Field</type>
+						<group>TabQ:0</group>
+					</general>
+					<appearance>
+						<index>0</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>100</left>
+							<right>363</right>
+							<bottom>58</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.type</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>true</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<defaultValue>Textbox</defaultValue>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field3</name>
+						<type>Field</type>
+						<group>TabQ:0</group>
+					</general>
+					<appearance>
+						<index>1</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>112</top>
+							<left>100</left>
+							<right>479</right>
+							<bottom>130</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.question</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_target</name>
+						<type>Field</type>
+						<group>TabQ:0</group>
+					</general>
+					<appearance>
+						<index>2</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>154</top>
+							<left>100</left>
+							<right>479</right>
+							<bottom>172</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.targetcolumn</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<hintText>&lt;table&gt;.&lt;column&gt;</hintText>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field1</name>
+						<type>Field</type>
+						<group>TabQ:0</group>
+					</general>
+					<appearance>
+						<index>3</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>176</top>
+							<left>100</left>
+							<right>479</right>
+							<bottom>317</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.defaultvalue</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field2</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:0</group>
+					</general>
+					<appearance>
+						<index>4</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>372</left>
+							<right>477</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.flg_mandatory</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>0</defaultValue>
+							<image>#eeeeee</image>
+							<flagItems>Mandatory^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>TabQ</name>
+						<type>TabControl</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>5</index>
+						<caption>Tab1</caption>
+						<backgroundColor>#ded7ce</backgroundColor>
+						<foregroundColor>#ffffff</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>10</top>
+							<left>10</left>
+							<right>485</right>
+							<bottom>324</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<tabStyle>Top</tabStyle>
+					<tabSize>19</tabSize>
+					<items>
+						<item>
+							<name>Question</name>
+							<properties>56=#8aa8e4|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#8aa8e4</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Choices</name>
+							<properties>56=#ffdb75|_flags=1</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<flags>
+									<invisible>true</invisible>
+									<skipTabStop>false</skipTabStop>
+									<disabled>false</disabled>
+									<protected>false</protected>
+									<noMacroExpand>false</noMacroExpand>
+									<multiLine>false</multiLine>
+								</flags>
+								<properties>
+									<tabColor>#ffdb75</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Jump On Answer</name>
+							<properties>56=#bdcd9f|_flags=1</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<flags>
+									<invisible>true</invisible>
+									<skipTabStop>false</skipTabStop>
+									<disabled>false</disabled>
+									<protected>false</protected>
+									<noMacroExpand>false</noMacroExpand>
+									<multiLine>false</multiLine>
+								</flags>
+								<properties>
+									<tabColor>#bdcd9f</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Option Selector Settings</name>
+							<properties>56=#f09e9f|_flags=1</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<flags>
+									<invisible>true</invisible>
+									<skipTabStop>false</skipTabStop>
+									<disabled>false</disabled>
+									<protected>false</protected>
+									<noMacroExpand>false</noMacroExpand>
+									<multiLine>false</multiLine>
+								</flags>
+								<properties>
+									<tabColor>#f09e9f</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+					</items>
+					<selectedTextFont  size="8">Arial</selectedTextFont>
+					<selectedTextColor>#000000</selectedTextColor>
+					<deselectedTextColor>#000000</deselectedTextColor>
+					<tabSlopeLeft>2</tabSlopeLeft>
+					<tabSlopeRight>2</tabSlopeRight>
+					<deselectedTabHeightOffset>1</deselectedTabHeightOffset>
+					<tabSpacing>0</tabSpacing>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_hidden</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:0</group>
+					</general>
+					<appearance>
+						<index>6</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>58</top>
+							<left>372</left>
+							<right>477</right>
+							<bottom>72</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.flg_hidden</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>0</defaultValue>
+							<image>#eeeeee</image>
+							<flagItems>Hide Question?^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label1</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:0</group>
+					</general>
+					<appearance>
+						<index>7</index>
+						<caption>Default Value</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>176</top>
+							<left>15</left>
+							<right>95</right>
+							<bottom>194</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.defaultvalue</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label3</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:0</group>
+					</general>
+					<appearance>
+						<index>8</index>
+						<caption>Question</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>112</top>
+							<left>15</left>
+							<right>95</right>
+							<bottom>130</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.question</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label5</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:0</group>
+					</general>
+					<appearance>
+						<index>9</index>
+						<caption>Type</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>15</left>
+							<right>95</right>
+							<bottom>58</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.type</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label2</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:1</group>
+					</general>
+					<appearance>
+						<index>10</index>
+						<caption>Filter</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>261</top>
+							<left>10</left>
+							<right>96</right>
+							<bottom>279</bottom>
+						</position>
+						<scaling>
+							<top>90</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>90</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.filter</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field6</name>
+						<type>Field</type>
+						<group>TabQ:1</group>
+					</general>
+					<appearance>
+						<index>11</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>261</top>
+							<left>100</left>
+							<right>479</right>
+							<bottom>317</bottom>
+						</position>
+						<scaling>
+							<top>90</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.filter</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label7</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:1</group>
+					</general>
+					<appearance>
+						<index>12</index>
+						<caption>Table</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>218</top>
+							<left>10</left>
+							<right>90</right>
+							<bottom>236</bottom>
+						</position>
+						<scaling>
+							<top>90</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>90</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.dbtable</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_table</name>
+						<type>Field</type>
+						<group>TabQ:1</group>
+					</general>
+					<appearance>
+						<index>13</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>218</top>
+							<left>100</left>
+							<right>230</right>
+							<bottom>236</bottom>
+						</position>
+						<scaling>
+							<top>90</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>90</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.dbtable</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<listItems>||address|affected_bus_area|bpm_cond|bpm_cond_vpme|bpm_ctrl_fields|bpm_oc_auth|bpm_oc_hist|bpm_oc_task|bpm_progress|bpm_stage|bpm_stage_auth|bpm_stage_sts|bpm_stage_task|bpm_workflow|calltasks|cfh_opencalldept|cfh_opencallmodality|cfh_opencallsites|cfh_ra|cfh_ra_role|ci_avail_action|ci_avail_aggs|ci_avail_hist|ci_avail_vpme|ci_bl_compare|ci_blackout|ci_declined|ci_resource|ci_schedule|ci_type_relkb|citype_genhdw|citype_genhdw_stage|citype_network|citype_network_stage|citype_server|citype_server_stage|citype_software|citype_software_stage|cmdb_me_setup|cmdb_srch_fields|cmdb_stage|cmdb_stagefields|cmdb_uri_link|cmn_rel_opencall_aba|cmn_rel_opencall_ci|cmn_rel_opencall_ila|cmn_rel_opencall_kb|cmn_rel_opencall_oc|company|company_rc_tools|config_bus_area|config_diary|config_itemi|config_reli|config_relkb|config_relme|config_reltype|config_type_def|config_typei|contract|contract_diary|contract_pricing|contract_review|contract_uri|costcent|ct_ctrl_fields|ct_profiles|ct_reltypes|ct_statusl|department|equipmnt|extoc_cfh|extoc_newequip|extoc_newstarter|fixcode|generic|ila_criterion|ila_option|ila_range|itsm_deptsla|itsm_impact_lvl|itsm_impact_matrix|itsm_oc_uri|itsm_opencall_problem|itsm_opencall_rfc|itsm_slamatrix|itsm_urgency_lvl|itsmsp_ola_diary|itsmsp_slad|itsmsp_slad_diary|itsmsp_slad_hist|itsmsp_slad_matrix|itsmsp_slad_ola|itsmsp_slad_priority|itsmsp_slad_review|itsmsp_uri|majinc_notif|makemod|manufact|me_training|opencall|pcdesc|pcinfo|priority|probcode|qa_test|rcdesc|rcinfo|remote_support|request_comp|rmt_sup_logins|sc_dataform|sc_details|sc_favourites|sc_folio|sc_rels|sc_sla|sc_subscription|sc_target|sc_typei|site|socmed_analysts|socmed_appkeys|socmed_comms|socmed_groups|socmed_monitors|socmed_search_log|socmed_search_res_log|socmed_settings|socmed_tp_api_keys|socmed_twitter_acts|ssrequesttype|supplier|sw_adm_settings|sw_settings|swissues|swkb_articles|swkb_catalogs|swkb_changes|swkb_feedback|swkb_related|swkb_subscription|swlists|sys_sett_defbpm|sys_sett_swtoday|tm_periods|tpperformance|updatedb|userdb|userdb_kbnotif|userdb_lockout|userdb_rating|userdb_reqtype|userdb_site|userdb_train|wssm_wiz|wssm_wiz_q|wssm_wiz_qac|wssm_wiz_qc|wssm_wiz_stage</listItems>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_keycolumn</name>
+						<type>Field</type>
+						<group>TabQ:1</group>
+					</general>
+					<appearance>
+						<index>14</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>218</top>
+							<left>312</left>
+							<right>476</right>
+							<bottom>236</bottom>
+						</position>
+						<scaling>
+							<top>90</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>90</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.keycol</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<listItems>address|address_1|address_2|address_3|appcode|comp_name|country|county|custom_a|custom_b|custom_c|custom_d|custom_d1|custom_d2|custom_d3|custom_d4|custom_e|custom_f|custom_g|custom_h|custom_i|custom_i1|custom_i2|custom_i3|custom_i4|custom_j|fax|fk_address_id|fk_cmdb_id|fk_company_id|notes|postcode|site_name|site_type|telephone|timezone|town</listItems>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_displaycolumn</name>
+						<type>Field</type>
+						<group>TabQ:1</group>
+					</general>
+					<appearance>
+						<index>15</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>240</top>
+							<left>312</left>
+							<right>476</right>
+							<bottom>258</bottom>
+						</position>
+						<scaling>
+							<top>90</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>90</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.txtcol</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<listItems>address|address_1|address_2|address_3|appcode|comp_name|country|county|custom_a|custom_b|custom_c|custom_d|custom_d1|custom_d2|custom_d3|custom_d4|custom_e|custom_f|custom_g|custom_h|custom_i|custom_i1|custom_i2|custom_i3|custom_i4|custom_j|fax|fk_address_id|fk_cmdb_id|fk_company_id|notes|postcode|site_name|site_type|telephone|timezone|town</listItems>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label8</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:1</group>
+					</general>
+					<appearance>
+						<index>16</index>
+						<caption>Key Column</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>218</top>
+							<left>230</left>
+							<right>310</right>
+							<bottom>236</bottom>
+						</position>
+						<scaling>
+							<top>90</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>90</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.keycol</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label9</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:1</group>
+					</general>
+					<appearance>
+						<index>17</index>
+						<caption>Display Column</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>240</top>
+							<left>230</left>
+							<right>310</right>
+							<bottom>258</bottom>
+						</position>
+						<scaling>
+							<top>90</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>90</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.txtcol</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_choices1</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>false</verticalGridLines>
+							<horizontalGridLines>false</horizontalGridLines>
+							<autoLoad>false</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>TabQ:1</group>
+					</general>
+					<appearance>
+						<index>18</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>70</top>
+							<left>20</left>
+							<right>476</right>
+							<bottom>212</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>90</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>false</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>cindex</column>
+							</properties>
+							<name>Pos.</name>
+							<width>49</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>false</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>cvalue</column>
+							</properties>
+							<name>Value</name>
+							<width>146</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>false</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>ctext</column>
+							</properties>
+							<name>Display</name>
+							<width>140</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>pk_qcid</column>
+							</properties>
+							<name>ID</name>
+							<width>22</width>
+							<image>-1</image>
+							<dataColumn>3</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_qid</column>
+							</properties>
+							<name>fk Qid</name>
+							<width>46</width>
+							<image>-1</image>
+							<dataColumn>4</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>0</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>18</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#000099</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<highlightStyle>0</highlightStyle>
+							<borderColor>#c0c0c0</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<table>wssm_wiz_qc</table>
+							<newRecordForm>Form.wssm_wiz_qc</newRecordForm>
+							<editRecordForm>Form.wssm_wiz_qc</editRecordForm>
+							<listFilter>swc=fk_qid&amp;kvs=&amp;[wssm_wiz_q.pk_qid]&amp;sf=wiz_existing_question</listFilter>
+							<storedQuery>common.load_by_colname</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_add1</name>
+						<type>EventButton</type>
+						<group>TabQ:1</group>
+					</general>
+					<appearance>
+						<index>19</index>
+						<caption>New</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>415</left>
+							<right>476</right>
+							<bottom>64</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_remove1</name>
+						<type>EventButton</type>
+						<group>TabQ:1</group>
+					</general>
+					<appearance>
+						<index>20</index>
+						<caption>Remove</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>350</left>
+							<right>411</right>
+							<bottom>64</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_view1</name>
+						<type>EventButton</type>
+						<group>TabQ:1</group>
+					</general>
+					<appearance>
+						<index>21</index>
+						<caption>View</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>285</left>
+							<right>346</right>
+							<bottom>64</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_down1</name>
+						<type>EventButton</type>
+						<group>TabQ:1</group>
+					</general>
+					<appearance>
+						<index>22</index>
+						<caption>Down</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>65</left>
+							<right>106</right>
+							<bottom>64</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_up1</name>
+						<type>EventButton</type>
+						<group>TabQ:1</group>
+					</general>
+					<appearance>
+						<index>23</index>
+						<caption>Up</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>20</left>
+							<right>61</right>
+							<bottom>64</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label4</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:0</group>
+					</general>
+					<appearance>
+						<index>24</index>
+						<caption>Target Column</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>154</top>
+							<left>15</left>
+							<right>95</right>
+							<bottom>172</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.targetcolumn</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_prefix</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:0</group>
+					</general>
+					<appearance>
+						<index>25</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>76</top>
+							<left>372</left>
+							<right>477</right>
+							<bottom>90</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.flg_prefixq</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>0</defaultValue>
+							<image>#eeeeee</image>
+							<flagItems>Prefix Question?^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label6</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:0</group>
+					</general>
+					<appearance>
+						<index>26</index>
+						<caption>Picker Name</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>62</top>
+							<left>15</left>
+							<right>95</right>
+							<bottom>80</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.pickername</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_picker</name>
+						<type>Field</type>
+						<group>TabQ:0</group>
+					</general>
+					<appearance>
+						<index>27</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>62</top>
+							<left>100</left>
+							<right>363</right>
+							<bottom>80</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.pickername</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>true</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label10</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:0</group>
+					</general>
+					<appearance>
+						<index>28</index>
+						<caption>Validation Type</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>84</top>
+							<left>15</left>
+							<right>95</right>
+							<bottom>102</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.validation_type</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_validation</name>
+						<type>Field</type>
+						<group>TabQ:0</group>
+					</general>
+					<appearance>
+						<index>29</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>84</top>
+							<left>100</left>
+							<right>363</right>
+							<bottom>102</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.validation_type</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<listItems>Numeric|Email Address|</listItems>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_jump</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:0</group>
+					</general>
+					<appearance>
+						<index>30</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>132</top>
+							<left>93</left>
+							<right>475</right>
+							<bottom>146</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.flg_jumponanswer</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>0</defaultValue>
+							<image>#eeeeee</image>
+							<flagItems>Jump to another question based on answer?^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_view_check</name>
+						<type>EventButton</type>
+						<group>TabQ:2</group>
+					</general>
+					<appearance>
+						<index>31</index>
+						<caption>View</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>285</left>
+							<right>346</right>
+							<bottom>64</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_remove_check</name>
+						<type>EventButton</type>
+						<group>TabQ:2</group>
+					</general>
+					<appearance>
+						<index>32</index>
+						<caption>Remove</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>350</left>
+							<right>411</right>
+							<bottom>64</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_add_check</name>
+						<type>EventButton</type>
+						<group>TabQ:2</group>
+					</general>
+					<appearance>
+						<index>33</index>
+						<caption>New</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>415</left>
+							<right>476</right>
+							<bottom>64</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_checks</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>false</verticalGridLines>
+							<horizontalGridLines>false</horizontalGridLines>
+							<autoLoad>false</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>TabQ:2</group>
+					</general>
+					<appearance>
+						<index>34</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>70</top>
+							<left>20</left>
+							<right>476</right>
+							<bottom>316</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>90</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>false</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>check_value_func</column>
+							</properties>
+							<name>Check Value / Function</name>
+							<width>206</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>false</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_nextwiz</column>
+							</properties>
+							<name>Goto Wizard</name>
+							<width>178</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_nextstage</column>
+							</properties>
+							<name>Goto Step</name>
+							<width>69</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_nextq</column>
+							</properties>
+							<name>Goto Question</name>
+							<width>92</width>
+							<image>-1</image>
+							<dataColumn>3</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>pk_auto_id</column>
+							</properties>
+							<name>ID</name>
+							<width>22</width>
+							<image>-1</image>
+							<dataColumn>4</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>0</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>18</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#000099</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<highlightStyle>0</highlightStyle>
+							<borderColor>#c0c0c0</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<table>wssm_wiz_qac</table>
+							<newRecordForm>Form.wssm_wiz_qac</newRecordForm>
+							<editRecordForm>Form.wssm_wiz_qac</editRecordForm>
+							<listFilter>swc=fk_qid&amp;kvs=&amp;[wssm_wiz_q.pk_qid]</listFilter>
+							<storedQuery>common.load_by_colname</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label11</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>35</index>
+						<caption>Filter</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>117</top>
+							<left>10</left>
+							<right>96</right>
+							<bottom>135</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.filter</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field7</name>
+						<type>Field</type>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>36</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>120</top>
+							<left>100</left>
+							<right>476</right>
+							<bottom>153</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.filter</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label12</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>37</index>
+						<caption>Table</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>52</top>
+							<left>16</left>
+							<right>96</right>
+							<bottom>70</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.dbtable</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_table1</name>
+						<type>Field</type>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>38</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>52</top>
+							<left>101</left>
+							<right>231</right>
+							<bottom>70</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.dbtable</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_keycolumn1</name>
+						<type>Field</type>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>39</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>74</top>
+							<left>101</left>
+							<right>231</right>
+							<bottom>92</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.keycol</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<listItems>address|address_1|address_2|address_3|appcode|comp_name|country|county|custom_a|custom_b|custom_c|custom_d|custom_d1|custom_d2|custom_d3|custom_d4|custom_e|custom_f|custom_g|custom_h|custom_i|custom_i1|custom_i2|custom_i3|custom_i4|custom_j|fax|fk_address_id|fk_cmdb_id|fk_company_id|notes|postcode|site_name|site_type|telephone|timezone|town</listItems>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_displaycolumn1</name>
+						<type>Field</type>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>40</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>74</top>
+							<left>313</left>
+							<right>476</right>
+							<bottom>92</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.txtcol</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<listItems>address|address_1|address_2|address_3|appcode|comp_name|country|county|custom_a|custom_b|custom_c|custom_d|custom_d1|custom_d2|custom_d3|custom_d4|custom_e|custom_f|custom_g|custom_h|custom_i|custom_i1|custom_i2|custom_i3|custom_i4|custom_j|fax|fk_address_id|fk_cmdb_id|fk_company_id|notes|postcode|site_name|site_type|telephone|timezone|town</listItems>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label13</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>41</index>
+						<caption>Key Column</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>74</top>
+							<left>16</left>
+							<right>96</right>
+							<bottom>92</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.keycol</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label14</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>42</index>
+						<caption>Display Column</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>74</top>
+							<left>231</left>
+							<right>311</right>
+							<bottom>92</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.txtcol</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label15</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>43</index>
+						<caption>Details Column</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>97</top>
+							<left>18</left>
+							<right>96</right>
+							<bottom>113</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.prim_extdet</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_extdet1</name>
+						<type>Field</type>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>44</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>97</top>
+							<left>101</left>
+							<right>231</right>
+							<bottom>115</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.prim_extdet</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<listItems>address|address_1|address_2|address_3|appcode|comp_name|country|county|custom_a|custom_b|custom_c|custom_d|custom_d1|custom_d2|custom_d3|custom_d4|custom_e|custom_f|custom_g|custom_h|custom_i|custom_i1|custom_i2|custom_i3|custom_i4|custom_j|fax|fk_address_id|fk_cmdb_id|fk_company_id|notes|postcode|site_name|site_type|telephone|timezone|town</listItems>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label16</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>45</index>
+						<caption>Table</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>200</top>
+							<left>68</left>
+							<right>96</right>
+							<bottom>216</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.sec_table</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_s_table1</name>
+						<type>Field</type>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>46</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>200</top>
+							<left>101</left>
+							<right>231</right>
+							<bottom>218</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.sec_table</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label17</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>47</index>
+						<caption>Key Column</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>222</top>
+							<left>35</left>
+							<right>96</right>
+							<bottom>238</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.sec_keycol</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_s_keycol1</name>
+						<type>Field</type>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>48</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>222</top>
+							<left>101</left>
+							<right>231</right>
+							<bottom>240</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.sec_keycol</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<listItems>ad_login|address_1|address_2|address_3|appcode|attrib1|attrib10|attrib2|attrib3|attrib4|attrib5|attrib6|attrib7|attrib8|attrib9|cfh_analystid|cfh_ra|cfh_smartcardid|cfh_trust|companyname|costcenter|country|county|department|dob|email|faxtel|firstname|fk_address_id|fk_cmdb_id|fk_company_id|fk_dept_code|fk_manager|flg_manager|flg_ocrating|fullname|gender|hometel|job_title|jobdesc|jobrole|keysearch|knownas|location|mobiletel|notes|othernumber|pagertel|password|postcode|priority|satisfactionlevel|sdrating|site|sld|sld_name|start_datex|status|subdepartment|surname|telext|town|twitter_id|twitter_id_notify|user1|user2|user3|user4|webflag</listItems>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label18</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>49</index>
+						<caption>Display Column</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>222</top>
+							<left>236</left>
+							<right>311</right>
+							<bottom>238</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.sec_txtcol</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_s_txtcol1</name>
+						<type>Field</type>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>50</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>222</top>
+							<left>313</left>
+							<right>476</right>
+							<bottom>240</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.sec_txtcol</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<listItems>ad_login|address_1|address_2|address_3|appcode|attrib1|attrib10|attrib2|attrib3|attrib4|attrib5|attrib6|attrib7|attrib8|attrib9|cfh_analystid|cfh_ra|cfh_smartcardid|cfh_trust|companyname|costcenter|country|county|department|dob|email|faxtel|firstname|fk_address_id|fk_cmdb_id|fk_company_id|fk_dept_code|fk_manager|flg_manager|flg_ocrating|fullname|gender|hometel|job_title|jobdesc|jobrole|keysearch|knownas|location|mobiletel|notes|othernumber|pagertel|password|postcode|priority|satisfactionlevel|sdrating|site|sld|sld_name|start_datex|status|subdepartment|surname|telext|town|twitter_id|twitter_id_notify|user1|user2|user3|user4|webflag</listItems>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label19</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>51</index>
+						<caption>Details Column</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>244</top>
+							<left>23</left>
+							<right>96</right>
+							<bottom>260</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.sec_extdet</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_s_detcol1</name>
+						<type>Field</type>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>52</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>244</top>
+							<left>101</left>
+							<right>231</right>
+							<bottom>262</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.sec_extdet</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<listItems>ad_login|address_1|address_2|address_3|appcode|attrib1|attrib10|attrib2|attrib3|attrib4|attrib5|attrib6|attrib7|attrib8|attrib9|cfh_analystid|cfh_ra|cfh_smartcardid|cfh_trust|companyname|costcenter|country|county|department|dob|email|faxtel|firstname|fk_address_id|fk_cmdb_id|fk_company_id|fk_dept_code|fk_manager|flg_manager|flg_ocrating|fullname|gender|hometel|job_title|jobdesc|jobrole|keysearch|knownas|location|mobiletel|notes|othernumber|pagertel|password|postcode|priority|satisfactionlevel|sdrating|site|sld|sld_name|start_datex|status|subdepartment|surname|telext|town|twitter_id|twitter_id_notify|user1|user2|user3|user4|webflag</listItems>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label20</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>53</index>
+						<caption>Filter</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>269</top>
+							<left>70</left>
+							<right>96</right>
+							<bottom>285</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.sec_filter</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field11</name>
+						<type>Field</type>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>54</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>269</top>
+							<left>100</left>
+							<right>476</right>
+							<bottom>302</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.sec_filter</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect1</name>
+						<type>Rectange</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>55</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#c0c0c0</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>189</top>
+							<left>19</left>
+							<right>481</right>
+							<bottom>319</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect2</name>
+						<type>Rectange</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>56</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#c0c0c0</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>41</top>
+							<left>19</left>
+							<right>481</right>
+							<bottom>171</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text2</name>
+						<type>Text</type>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>57</index>
+						<caption>Primary Tab</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>36</top>
+							<left>40</left>
+							<right>108</right>
+							<bottom>50</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text3</name>
+						<type>Text</type>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>58</index>
+						<caption>Options Tab</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>183</top>
+							<left>30</left>
+							<right>96</right>
+							<bottom>197</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label21</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>59</index>
+						<caption>Filter Column</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>244</top>
+							<left>231</left>
+							<right>311</right>
+							<bottom>262</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.sec_filtercolumn</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_filtercol1</name>
+						<type>Field</type>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>60</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>244</top>
+							<left>313</left>
+							<right>476</right>
+							<bottom>262</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.sec_filtercolumn</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<listItems>ad_login|address_1|address_2|address_3|appcode|attrib1|attrib10|attrib2|attrib3|attrib4|attrib5|attrib6|attrib7|attrib8|attrib9|cfh_analystid|cfh_ra|cfh_smartcardid|cfh_trust|companyname|costcenter|country|county|department|dob|email|faxtel|firstname|fk_address_id|fk_cmdb_id|fk_company_id|fk_dept_code|fk_manager|flg_manager|flg_ocrating|fullname|gender|hometel|job_title|jobdesc|jobrole|keysearch|knownas|location|mobiletel|notes|othernumber|pagertel|password|postcode|priority|satisfactionlevel|sdrating|site|sld|sld_name|start_datex|status|subdepartment|surname|telext|town|twitter_id|twitter_id_notify|user1|user2|user3|user4|webflag</listItems>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label22</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>61</index>
+						<caption>Label</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>52</top>
+							<left>262</left>
+							<right>311</right>
+							<bottom>68</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.prim_lbl</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field4</name>
+						<type>Field</type>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>62</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>52</top>
+							<left>313</left>
+							<right>476</right>
+							<bottom>70</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.prim_lbl</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label23</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>63</index>
+						<caption>Label</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>200</top>
+							<left>262</left>
+							<right>311</right>
+							<bottom>216</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.prim_lbl</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>true</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Field5</name>
+						<type>Field</type>
+						<group>TabQ:3</group>
+					</general>
+					<appearance>
+						<index>64</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>200</top>
+							<left>313</left>
+							<right>476</right>
+							<bottom>218</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>wssm_wiz_q.sec_lbl</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>true</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<hintText>You can use ![VAL]! to use the primary tab value</hintText>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>Field6_OnValueChanged</name>
+						<code>
+							<![CDATA[Field6_OnValueChanged(strValue)
+{
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_choices1_OnItemDoubleClicked</name>
+						<code>
+							<![CDATA[sl_choices1_OnItemDoubleClicked(nRow, nCol)
+{
+	btn_view1_OnPressed();
+	return false;
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_choices1_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_choices1_OnItemSelected(nRow)
+{
+	app._een(btn_up1,(nRow>0));
+	app._een(btn_down1, ((nRow+1) < sl_choices1.rowCount()));
+	app._een(btn_remove1,(nRow>-1));
+	app._een(btn_view1,(nRow>-1));
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_add1_OnPressed</name>
+						<code>
+							<![CDATA[btn_add1_OnPressed()
+{
+
+	//-- add form record
+	var intIndex = app.g.sl_getmaxvalue(sl_choices1,'cindex');
+	var strURL = "fk_qid=" + _swdoc.oQ().pk_qid + "&cindex=" + ++intIndex;
+	
+	app.OpenFormForAdd("wssm_wiz_qc", "", strURL, true, function(x){
+		if(_swdoc.oQ().pk_qid<1){
+			var strPK = x.document.strKey;
+			if(strPK > 0){
+				var strCurrentKeys = app.g.sqllist_get_valuesdel(sl_choices1, 'PK_QCID', ",", "");
+				if(strCurrentKeys=="")
+					strCurrentKeys = strPK;
+				else
+					strCurrentKeys += "," + strPK;
+				sl_choices1.storedQuery = "common.load_by_colname";
+				app._slf(sl_choices1 , "swc=PK_QCID&kvs="+app.pfu(strCurrentKeys));
+			}
+	
+		}
+		_swdoc.MF().sl_choices1.Refresh();
+		sl_choices1.SetRowSelected(0, true, false);
+		
+	});	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_remove1_OnPressed</name>
+						<code>
+							<![CDATA[btn_remove1_OnPressed()
+{
+
+	var strConfirm = "Are you sure you want to delete the selected choice?";
+	var deletedSequence = sl_choices1.GetItemTextRaw(sl_choices1.curSel, "cindex");
+	if(app.g.sl_deldbrow(sl_choices1,sl_choices1.curSel,0,null,strConfirm))
+	{
+		//-- loop through list and set seq for each to #
+		var intQ=0;
+		var nextSeq=0;
+		for(var x=0; x < sl_choices1.rowCount();x++)
+		{
+			var thisSequence = sl_choices1.GetItemTextRaw(x, "cindex");
+			if(thisSequence>deletedSequence)
+			{
+				intQ = sl_choices1.GetItemTextRaw(x, "pk_qcid");
+				var strParams = "cid="+app.pfu(intQ);
+				app.g.submitsqs("form/wiz_question/dec_choice_seq", strParams);
+			}
+		}
+		_swdoc.MF().sl_choices1.Refresh();
+		sl_choices1.SetRowSelected(0, true, false);
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_view1_OnPressed</name>
+						<code>
+							<![CDATA[btn_view1_OnPressed()
+{
+		
+		sl_choices1.EditRecord(sl_choices1.curSel);
+		sl_choices1.Refresh();
+		sl_choices1.SetRowSelected(0, true, false);
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_down1_OnPressed</name>
+						<code>
+							<![CDATA[btn_down1_OnPressed()
+{
+	if(!app.service.can_update(true))
+		return false;
+	
+	var currRow = sl_choices1.curSel;
+	var intDownID = sl_choices1.GetItemTextRaw(sl_choices1.curSel, 'pk_qcid');
+	
+	//-- get id to up
+	var intUpID = sl_choices1.GetItemTextRaw(sl_choices1.curSel+1, 'pk_qcid');
+	
+	//-- update seq id for both 
+	var strParams = "cid="+app.pfu(intUpID);
+	if(app.g.submitsqs("form/wiz_question/dec_choice_seq", strParams))
+	{
+		var strParams = "cid="+app.pfu(intDownID);
+		if(app.g.submitsqs("form/wiz_question/inc_choice_seq", strParams))
+		{
+			//-- refresh list
+			sl_choices1.Refresh();
+			sl_choices1.SetRowSelected(currRow+1, true, false);
+		}
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_up1_OnPressed</name>
+						<code>
+							<![CDATA[btn_up1_OnPressed()
+{
+	if(!app.service.can_update(true))
+		return false;
+	//-- NWJ : move up 
+	
+	var currRow = sl_choices1.curSel;
+	var intDownID = sl_choices1.GetItemTextRaw(sl_choices1.curSel-1, 'pk_qcid');
+	
+	//-- get id to up
+	var intUpID = sl_choices1.GetItemTextRaw(sl_choices1.curSel, 'pk_qcid');
+	
+	//-- update seq id for both 
+	var strParams = "cid="+app.pfu(intUpID);
+	if(app.g.submitsqs("form/wiz_question/dec_choice_seq", strParams))
+	{
+		var strParams = "cid="+app.pfu(intDownID);
+		if(app.g.submitsqs("form/wiz_question/inc_choice_seq", strParams))
+		{
+			//-- refresh list
+			sl_choices1.Refresh();
+			sl_choices1.SetRowSelected(currRow-1, true, false);
+		}
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded(bDataReloaded)
+{
+	app.g.popuplate_form_fromargs("wssm_wiz_q", _swdoc, true, true)	
+	
+	app.g.dd_gettablelist(lb_table);
+	app.g.dd_gettablelist(lb_table1);
+	app.g.dd_gettablelist(fld_s_table1);
+	
+	if(_swdoc.oQ().dbtable!="")
+	{
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().dbtable,false,false, lb_keycolumn);
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().dbtable,false,false, lb_displaycolumn);
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().dbtable,false,false, lb_keycolumn1);
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().dbtable,false,false, lb_displaycolumn1);
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().dbtable,false,false, fld_extdet1);
+	}
+	if(_swdoc.oQ().sec_table!="")
+	{
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().sec_table,false,false, fld_s_keycol1);
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().sec_table,false,false, fld_s_txtcol1);
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().sec_table,false,false, fld_s_detcol1);
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().sec_table,false,false, fld_filtercol1);
+	}
+
+	if(_swdoc.oQ().pk_qid>0)
+	{
+		_swdoc.boolInserting = false;
+		//-- hide show choices
+		switch(app.LC(_swdoc.oQ().type))
+		{
+			case 'radiobox':
+			case 'checkbox':
+			case 'selectbox':
+				TabQ.ShowTabItem(1,true);
+				break;
+			case 'option selector':
+			case 'option selector - single select':
+				TabQ.ShowTabItem(3,true);
+				break;
+			default:
+				TabQ.ShowTabItem(1,false);
+				break;
+		}
+		
+		//-- hide show jump on tab item
+		TabQ.ShowTabItem(2,_swdoc.oQ().flg_jumponanswer=="1");
+	}
+	app._etab(TabQ,0);
+	_swdoc.init_next_lbs();
+
+
+	app._een(lb_picker,(_swdoc.oQ().type=="Custom Picker"));
+	app._ema(lb_picker, lb_picker.enable);
+	if(_swdoc.oQ().targetcolumn=="opencall.probcode")
+		app._een(fld_prefix, false);
+		
+	if (app.LC(wssm_wiz_q.type)!="radiobox" && app.LC(wssm_wiz_q.type)!="selectbox" && app.LC(wssm_wiz_q.type)!="option selector - single select")
+	{
+		//Disable clickbox "Jump to another question based on answer"
+		app._een(flg_jump,false);
+		
+		//There is one exception in case is customer picker
+		if (app.LC(wssm_wiz_q.type)=="custom picker"){
+			if (app.LC(wssm_wiz_q.pickername)=="category" || app.LC(wssm_wiz_q.pickername)=="customer organisations" || app.LC(wssm_wiz_q.pickername)=="all organisations")
+				app._een(flg_jump,true);
+		}
+	}
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_table_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_table_OnValueChanged(strValue)
+{
+	
+	_swdoc.oQ().keycol="";
+	_swdoc.oQ().txtcol="";
+	if(_swdoc.oQ().dbtable!="")
+	{
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().dbtable,false,false, lb_keycolumn);
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().dbtable,false,false, lb_displaycolumn);
+	}
+	_swdoc.UpdateFormFromData();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_type_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_type_OnValueChanged(strValue)
+{
+	app._een(lb_picker,(strValue=="Custom Picker"));
+	app._ema(lb_picker, lb_picker.enable);
+
+	wssm_wiz_q.pickername = (!lb_picker.enable)?"":wssm_wiz_q.pickername;
+	_swdoc.UpdateFormFromData();
+	
+	
+	 if (app.LC(strValue)!="radiobox" && app.LC(strValue)!="selectbox" && app.LC(strValue)!="option selector - single select"){
+	 	app._eva(flg_jump,0);
+		app._een(flg_jump,false);
+		wssm_wiz_q.flg_jumponanswer = 0;
+		
+    	//Close tab jump to another question
+    	TabQ.ShowTabItem(2,false);    
+	 }
+	 else {
+      	  app._eva(flg_jump , wssm_wiz_q.flg_jumponanswer);
+      	  app._een(flg_jump , true);
+		
+      	  if (flg_jump.value)
+         	  TabQ.ShowTabItem(2,true);
+		  }
+	
+	
+	
+	
+	TabQ.ShowTabItem(3,false);
+	//-- hide show choices
+	switch(app.LC(strValue))
+	{
+		case 'radiobox':
+		case 'checkbox':
+		case 'selectbox':
+			TabQ.ShowTabItem(1,true);
+			TabQ.ShowTabItem(3,false);
+			break;
+		case 'option selector':
+		case 'option selector - single select':
+			TabQ.ShowTabItem(1,false);
+			TabQ.ShowTabItem(3,true);
+			break;
+		default:
+			TabQ.ShowTabItem(1,false);
+			TabQ.ShowTabItem(3,false);
+			break;
+	}
+	
+	app._etab(TabQ,0);	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>flg_jump_OnValueChanged</name>
+						<code>
+							<![CDATA[flg_jump_OnValueChanged(strValue)
+{
+
+	TabQ.ShowTabItem(2,strValue=="1");
+	app._etab(TabQ, 0);
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_view_check_OnPressed</name>
+						<code>
+							<![CDATA[btn_view_check_OnPressed()
+{
+		
+		var nRow = sl_checks.curSel;
+		sl_checks.EditRecord(sl_checks.curSel);
+		sl_checks.Refresh();
+		sl_checks.SetRowSelected(nRow, true, false);
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_remove_check_OnPressed</name>
+						<code>
+							<![CDATA[btn_remove_check_OnPressed()
+{
+
+	var strConfirm = "Are you sure you want to delete the selected value check?";
+	if(app.g.sl_deldbrow(sl_checks,sl_checks.curSel,0,null,strConfirm))
+	{
+		_swdoc.MF().sl_checks.Refresh();
+		sl_checks.SetRowSelected(0, true, false);
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_add_check_OnPressed</name>
+						<code>
+							<![CDATA[btn_add_check_OnPressed()
+{
+	//-- add form record
+	var strURL = "fk_qid=" + _swdoc.oQ().pk_qid;
+	app.OpenFormForAdd("wssm_wiz_qac", "", strURL, true, function(){
+		_swdoc.MF().sl_checks.Refresh();
+		sl_checks.SetRowSelected(0, true, false);
+	});	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_checks_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_checks_OnItemSelected(nRow)
+{
+	app._een(btn_remove_check,(nRow>-1));
+	app._een(btn_view_check,(nRow>-1));
+	
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>tb_target_OnValueChanged</name>
+						<code>
+							<![CDATA[tb_target_OnValueChanged(strValue)
+{
+	if(strValue!="")
+	{
+		if(strValue.toLowerCase().indexOf("extoc_")!=0)
+		{
+			if ((app.LC(strValue).indexOf("itsm_opencall_rfc.")!=0) && (app.LC(strValue).indexOf("itsm_opencall_problem.")!=0) &&  (app.LC(strValue).indexOf("opencall.")!=0) && (app.LC(strValue).indexOf("updatedb.")!=0) )
+			{
+				MessageBox("The data binding should be made against opencall, updatedb or an extoc_ table.");
+				wssm_wiz_q.targetcolumn="";
+				_swdoc.UpdateFormFromData();
+			}
+		}
+		
+		if(strValue=="opencall.probcode")
+		{
+			if(wssm_wiz_q.flg_prefixq==1)
+				MessageBox("Cannot prefix question for probcode field.");
+			wssm_wiz_q.flg_prefixq = 0;
+			_swdoc.UpdateFormFromData();
+			app._een(fld_prefix,false);	
+			return true;	
+		}
+	}
+	app._een(fld_prefix,true);		
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>Field7_OnValueChanged</name>
+						<code>
+							<![CDATA[Field7_OnValueChanged(strValue)
+{
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_table1_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_table1_OnValueChanged(strValue)
+{
+	
+	_swdoc.oQ().keycol="";
+	_swdoc.oQ().txtcol="";
+	_swdoc.oQ().prim_extdet="";
+//	_swdoc.oQ().sec_filtercolumn="";
+	if(_swdoc.oQ().dbtable!="")
+	{
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().dbtable,false,false, lb_keycolumn1);
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().dbtable,false,false, lb_displaycolumn1);
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().dbtable,false,false, fld_extdet1);
+		//app.g.dd_getcolumndbnamelist(_swdoc.oQ().dbtable,false,false, fld_filtercol1);
+	}
+	_swdoc.UpdateFormFromData();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_s_table1_OnValueChanged</name>
+						<code>
+							<![CDATA[fld_s_table1_OnValueChanged(strValue)
+{
+	
+	_swdoc.oQ().sec_keycol="";
+	_swdoc.oQ().sec_txtcol="";
+	_swdoc.oQ().sec_extdet="";
+	_swdoc.oQ().sec_filtercolumn="";
+	if(_swdoc.oQ().sec_table!="")
+	{
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().sec_table,false,false, fld_s_keycol1);
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().sec_table,false,false, fld_s_txtcol1);
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().sec_table,false,false, fld_s_detcol1);
+		app.g.dd_getcolumndbnamelist(_swdoc.oQ().sec_table,false,false, fld_filtercol1);
+	}
+	_swdoc.UpdateFormFromData();
+	// TODO: Add your event handler code here
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>TabQ_OnTabSelected</name>
+						<code>
+							<![CDATA[TabQ_OnTabSelected(nTab)
+{
+	// TODO: Add your event handler code here
+	var tChoices = 1;
+	var tJump = 2;
+	
+	if(nTab==tChoices)
+	{
+		_swdoc.MF().sl_choices1.Refresh();
+	}
+	else if(nTab==tJump)
+	{
+		_swdoc.MF().sl_checks.Refresh();
+	}
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_picker_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_picker_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	
+	var type_introduced = app.LC(lb_type.value);
+	var category_introduced = app.LC(strValue);
+	
+	
+	if (type_introduced=="custom picker" && (category_introduced=="category" || category_introduced=="customer organisations" || category_introduced=="all organisations")){
+	   app._eva(flg_jump , wssm_wiz_q.flg_jumponanswer);
+       app._een(flg_jump , true);
+		
+       if (flg_jump.value)
+           TabQ.ShowTabItem(2,true);
+	}
+
+
+	else {
+		app._eva(flg_jump,0);
+		app._een(flg_jump,false);
+		wssm_wiz_q.flg_jumponanswer = 0;
+		
+    	//Close tab jump to another question
+    	TabQ.ShowTabItem(2,false);  
+	}
+
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

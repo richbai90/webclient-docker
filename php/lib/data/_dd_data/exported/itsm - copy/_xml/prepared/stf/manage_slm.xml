@@ -1,0 +1,4464 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>manage_slm</name>
+			<title>Service level Management</title>
+			<description>Manage Settings For ITSM</description>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>false</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var _swdoc = (IsObjectDefined("_bHtmlWebClient"))?top:_swdoc;
+
+var boolOnHoldNotification = false;
+//Get Setting
+_swdoc.boolOnHoldNotification = oSettings.get_setting("boolOnHoldNotification");
+
+//-- ci form pointers
+function MF()
+{
+	return _swdoc.mainform;
+}
+]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>509</width>
+				<height>324</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>sl_slad1</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>true</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>tSLM:0</group>
+					</general>
+					<appearance>
+						<index>0</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>57</top>
+							<left>9</left>
+							<right>502</right>
+							<bottom>283</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>slad_id</column>
+							</properties>
+							<name>Name</name>
+							<width>133</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>type</column>
+							</properties>
+							<name>Type</name>
+							<width>133</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>costper</column>
+							</properties>
+							<name>Cost Per</name>
+							<width>93</width>
+							<image>-1</image>
+							<dataColumn>3</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>createdonx</column>
+							</properties>
+							<name>Valid From</name>
+							<width>130</width>
+							<image>-1</image>
+							<dataColumn>4</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>expiresonx</column>
+							</properties>
+							<name>Expires On</name>
+							<width>122</width>
+							<image>-1</image>
+							<dataColumn>5</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>dindex</column>
+							</properties>
+							<name>dindex</name>
+							<width>63</width>
+							<image>-1</image>
+							<dataColumn>6</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>pk_slad_id</column>
+							</properties>
+							<name>pk_slad_id</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>6</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>16</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#000099</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<highlightStyle>0</highlightStyle>
+							<borderColor>#000000</borderColor>
+							<newRecordForm>Form.itsmsp_slad</newRecordForm>
+							<editRecordForm>Form.itsmsp_slad</editRecordForm>
+							<sqlSource>swdata</sqlSource>
+							<table>itsmsp_slad</table>
+							<listFilter>ac=SLA</listFilter>
+							<storedQuery>manage_itsm_processes.sla_filtering</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_view_slad1</name>
+						<type>EventButton</type>
+					</general>
+					<appearance>
+						<index>1</index>
+						<caption>Properties</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>29</top>
+							<left>323</left>
+							<right>381</right>
+							<bottom>51</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_remove_slad1</name>
+						<type>EventButton</type>
+						<group>tSLM:0</group>
+					</general>
+					<appearance>
+						<index>2</index>
+						<caption>Delete</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>381</left>
+							<right>439</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_add_slad1</name>
+						<type>EventButton</type>
+						<group>tSLM:0</group>
+					</general>
+					<appearance>
+						<index>3</index>
+						<caption>Add</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>444</left>
+							<right>502</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tSLM</name>
+						<type>TabControl</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>4</index>
+						<caption>Tab1</caption>
+						<backgroundColor>#ded7ce</backgroundColor>
+						<foregroundColor>#f7f3ef</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>9</top>
+							<left>3</left>
+							<right>508</right>
+							<bottom>320</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<tabStyle>Top</tabStyle>
+					<tabSize>19</tabSize>
+					<items>
+						<item>
+							<name>Service Level Agreements</name>
+							<properties>56=#8aa8e4|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#8aa8e4</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Service Level Requirements</name>
+							<properties>56=#9abfb4|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#9abfb4</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Operational Level Agreements</name>
+							<properties>56=#ffdb75|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#ffdb75</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Priorities</name>
+							<properties>56=#bdcd9f|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#bdcd9f</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Escalation Emails</name>
+							<properties>56=#f09e9f|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#f09e9f</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>On Hold Notifications</name>
+							<properties>56=#baa6e1|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#baa6e1</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>SLA Request Rules</name>
+							<properties>56=#f7b683|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#f7b683</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+					</items>
+					<selectedTextFont  size="8">Arial</selectedTextFont>
+					<selectedTextColor>#000000</selectedTextColor>
+					<deselectedTextColor>#000000</deselectedTextColor>
+					<tabSlopeLeft>2</tabSlopeLeft>
+					<tabSlopeRight>2</tabSlopeRight>
+					<deselectedTabHeightOffset>1</deselectedTabHeightOffset>
+					<tabSpacing>0</tabSpacing>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_ola</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>false</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>tSLM:2</group>
+					</general>
+					<appearance>
+						<index>5</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>57</top>
+							<left>9</left>
+							<right>502</right>
+							<bottom>283</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>slad_ola</column>
+							</properties>
+							<name>Name</name>
+							<width>133</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>pk_ola_id</column>
+							</properties>
+							<name>pk_ola_id</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>6</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_suppgroup</column>
+							</properties>
+							<name>Support Group</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>validfromx</column>
+							</properties>
+							<name>Valid From</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>3</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>expiresonx</column>
+							</properties>
+							<name>Expires On</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>4</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>16</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#000099</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<highlightStyle>0</highlightStyle>
+							<borderColor>#000000</borderColor>
+							<newRecordForm>Form.itsmsp_slad_ola</newRecordForm>
+							<editRecordForm>Form.itsmsp_slad_ola</editRecordForm>
+							<sqlSource>swdata</sqlSource>
+							<table>itsmsp_slad_ola</table>
+							<listFilter>ac=OLA</listFilter>
+							<storedQuery>manage_itsm_processes.sla_filtering</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_view_slad2</name>
+						<type>EventButton</type>
+						<group>tSLM:2</group>
+					</general>
+					<appearance>
+						<index>6</index>
+						<caption>Properties</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>318</left>
+							<right>376</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_remove_slad2</name>
+						<type>EventButton</type>
+						<group>tSLM:2</group>
+					</general>
+					<appearance>
+						<index>7</index>
+						<caption>Delete</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>381</left>
+							<right>439</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_add_slad3</name>
+						<type>EventButton</type>
+						<group>tSLM:2</group>
+					</general>
+					<appearance>
+						<index>8</index>
+						<caption>Add</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>444</left>
+							<right>502</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_priorities</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>false</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>tSLM:3</group>
+					</general>
+					<appearance>
+						<index>9</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>75</top>
+							<left>14</left>
+							<right>247</right>
+							<bottom>270</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_priority</column>
+							</properties>
+							<name>Priority</name>
+							<width>154</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_slad_name</column>
+							</properties>
+							<name>SLA / OLA Name</name>
+							<width>174</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>16</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#000099</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<highlightStyle>0</highlightStyle>
+							<borderColor>#000000</borderColor>
+							<newRecordForm>Form.itsmsp_slad_ola</newRecordForm>
+							<editRecordForm>Form.itsmsp_slad_ola</editRecordForm>
+							<sqlSource>swdata</sqlSource>
+							<table>itsmsp_slad_priority</table>
+							<storedQuery>manage_itsm_processes.sla.browse</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_view_slad3</name>
+						<type>EventButton</type>
+						<group>tSLM:3</group>
+					</general>
+					<appearance>
+						<index>10</index>
+						<caption>Properties</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>49</top>
+							<left>265</left>
+							<right>320</right>
+							<bottom>71</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_remove_slad3</name>
+						<type>EventButton</type>
+						<group>tSLM:3</group>
+					</general>
+					<appearance>
+						<index>11</index>
+						<caption>Delete</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>49</top>
+							<left>442</left>
+							<right>497</right>
+							<bottom>71</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_add_slad4</name>
+						<type>EventButton</type>
+						<group>tSLM:3</group>
+					</general>
+					<appearance>
+						<index>12</index>
+						<caption>Add</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>49</top>
+							<left>324</left>
+							<right>379</right>
+							<bottom>71</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_add_slad5</name>
+						<type>EventButton</type>
+						<group>tSLM:3</group>
+					</general>
+					<appearance>
+						<index>13</index>
+						<caption>Copy</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>49</top>
+							<left>383</left>
+							<right>438</right>
+							<bottom>71</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_priorities1</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>false</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>tSLM:3</group>
+					</general>
+					<appearance>
+						<index>14</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>75</top>
+							<left>264</left>
+							<right>497</right>
+							<bottom>270</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>priority</column>
+							</properties>
+							<name>Priority</name>
+							<width>205</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>16</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#000099</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<highlightStyle>0</highlightStyle>
+							<borderColor>#000000</borderColor>
+							<newRecordForm>Form.itsmsp_slad_ola</newRecordForm>
+							<editRecordForm>Form.itsmsp_slad_ola</editRecordForm>
+							<sqlSource>swdata</sqlSource>
+							<table>priority</table>
+							<storedQuery>manage_itsm_processes.priority_filtering</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_view_slad4</name>
+						<type>EventButton</type>
+						<group>tSLM:3</group>
+					</general>
+					<appearance>
+						<index>15</index>
+						<caption>Properties</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>49</top>
+							<left>14</left>
+							<right>69</right>
+							<bottom>71</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_add_slad6</name>
+						<type>EventButton</type>
+						<group>tSLM:3</group>
+					</general>
+					<appearance>
+						<index>16</index>
+						<caption>Copy</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>49</top>
+							<left>73</left>
+							<right>128</right>
+							<bottom>71</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect1</name>
+						<type>Rectange</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tSLM:3</group>
+					</general>
+					<appearance>
+						<index>17</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#c0c0c0</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>38</top>
+							<left>9</left>
+							<right>252</right>
+							<bottom>279</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text1</name>
+						<type>Text</type>
+						<group>tSLM:3</group>
+					</general>
+					<appearance>
+						<index>18</index>
+						<caption>Associated</caption>
+						<backgroundColor>#f7f3ef</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>33</top>
+							<left>16</left>
+							<right>81</right>
+							<bottom>47</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect2</name>
+						<type>Rectange</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tSLM:3</group>
+					</general>
+					<appearance>
+						<index>19</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#c0c0c0</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>38</top>
+							<left>259</left>
+							<right>503</right>
+							<bottom>279</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text2</name>
+						<type>Text</type>
+						<group>tSLM:3</group>
+					</general>
+					<appearance>
+						<index>20</index>
+						<caption>Available</caption>
+						<backgroundColor>#f7f3ef</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>33</top>
+							<left>267</left>
+							<right>320</right>
+							<bottom>47</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_ola1</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>false</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>tSLM:4</group>
+					</general>
+					<appearance>
+						<index>21</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>57</top>
+							<left>9</left>
+							<right>502</right>
+							<bottom>283</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>role</column>
+							</properties>
+							<name>Role</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>specific_email</column>
+							</properties>
+							<name>Specific Email</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>note</column>
+							</properties>
+							<name>Notes</name>
+							<width>250</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>16</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#000099</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<highlightStyle>0</highlightStyle>
+							<borderColor>#000000</borderColor>
+							<newRecordForm>Form.sla_escalation_emails</newRecordForm>
+							<editRecordForm>Form.sla_escalation_emails</editRecordForm>
+							<sqlSource>swdata</sqlSource>
+							<table>escalation_reference</table>
+							<storedQuery>manage_itsm_processes.sla.browse</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_view_slad5</name>
+						<type>EventButton</type>
+						<group>tSLM:4</group>
+					</general>
+					<appearance>
+						<index>22</index>
+						<caption>Properties</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>318</left>
+							<right>376</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_remove_slad4</name>
+						<type>EventButton</type>
+						<group>tSLM:4</group>
+					</general>
+					<appearance>
+						<index>23</index>
+						<caption>Delete</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>381</left>
+							<right>439</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_add_slad7</name>
+						<type>EventButton</type>
+						<group>tSLM:4</group>
+					</general>
+					<appearance>
+						<index>24</index>
+						<caption>Add</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>444</left>
+							<right>502</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_ohn</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>false</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>tSLM:5</group>
+					</general>
+					<appearance>
+						<index>25</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>3-D Sunken</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>57</top>
+							<left>9</left>
+							<right>502</right>
+							<bottom>283</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>period_name</column>
+							</properties>
+							<name>Period Name</name>
+							<width>130</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>period_days</column>
+							</properties>
+							<name>Period Days</name>
+							<width>130</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>16</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#00008b</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<sqlSource>swdata</sqlSource>
+							<table>onhold_periods</table>
+							<newRecordForm>Form.efOnHoldPeriods</newRecordForm>
+							<editRecordForm>Form.efOnHoldPeriods</editRecordForm>
+							<storedQuery>manage_itsm_processes.sla.browse</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnOHNDelete</name>
+						<type>EventButton</type>
+						<group>tSLM:5</group>
+					</general>
+					<appearance>
+						<index>26</index>
+						<caption>Delete</caption>
+						<backgroundColor>#000000</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>381</left>
+							<right>439</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnOHNNew</name>
+						<type>EventButton</type>
+						<group>tSLM:5</group>
+					</general>
+					<appearance>
+						<index>27</index>
+						<caption>Add</caption>
+						<backgroundColor>#000000</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>444</left>
+							<right>502</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnOHNProperties</name>
+						<type>EventButton</type>
+						<group>tSLM:5</group>
+					</general>
+					<appearance>
+						<index>28</index>
+						<caption>Properties</caption>
+						<backgroundColor>#000000</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>318</left>
+							<right>376</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_show_archived_slas</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tSLM:0</group>
+					</general>
+					<appearance>
+						<index>29</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>39</top>
+							<left>13</left>
+							<right>188</right>
+							<bottom>53</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#d3c9b6</borderColor>
+							<imageHSpace>#eeeeee</imageHSpace>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<flagItems>Show archived SLAs^1|</flagItems>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_slr</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>true</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>tSLM:1</group>
+					</general>
+					<appearance>
+						<index>30</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>57</top>
+							<left>9</left>
+							<right>502</right>
+							<bottom>283</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>title</column>
+							</properties>
+							<name>Name</name>
+							<width>133</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>summary</column>
+							</properties>
+							<name>Summary</name>
+							<width>270</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>requested_by</column>
+							</properties>
+							<name>Requested By</name>
+							<width>93</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>pk_slr_id</column>
+							</properties>
+							<name>pk_slr_id</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>3</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>functionality</column>
+							</properties>
+							<name>Description</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>4</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>16</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#000099</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<highlightStyle>0</highlightStyle>
+							<borderColor>#000000</borderColor>
+							<newRecordForm>Form.itsmsp_slrd</newRecordForm>
+							<editRecordForm>Form.itsmsp_slrd</editRecordForm>
+							<sqlSource>swdata</sqlSource>
+							<table>itsmsp_slr</table>
+							<storedQuery>manage_itsm_processes.sla_filtering</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_view_slr</name>
+						<type>EventButton</type>
+						<group>tSLM:1</group>
+					</general>
+					<appearance>
+						<index>31</index>
+						<caption>Properties</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>317</left>
+							<right>376</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_remove_slr</name>
+						<type>EventButton</type>
+						<group>tSLM:1</group>
+					</general>
+					<appearance>
+						<index>32</index>
+						<caption>Delete</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>381</left>
+							<right>439</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_add_slr</name>
+						<type>EventButton</type>
+						<group>tSLM:1</group>
+					</general>
+					<appearance>
+						<index>33</index>
+						<caption>Add</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>444</left>
+							<right>502</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>mbtn_actions</name>
+						<type>MenuButton</type>
+						<group>tSLM:1</group>
+					</general>
+					<appearance>
+						<index>34</index>
+						<caption>Actions</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>32</top>
+							<left>254</left>
+							<right>312</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>39423</backgroundColor>
+							<commands>Create SLA^1|</commands>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_class</name>
+						<type>Field</type>
+						<group>tSLM:6</group>
+					</general>
+					<appearance>
+						<index>35</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>49</top>
+							<left>12</left>
+							<right>167</right>
+							<bottom>67</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>33</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<imageHSpace>#eeeeee</imageHSpace>
+							<sqlSource>syscache</sqlSource>
+							<distinctTable>swcallclasses</distinctTable>
+							<distinctColumn>CallClass</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<listFilter>callclass!=&apos;OLA Task&apos;</listFilter>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_class</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tSLM:6</group>
+					</general>
+					<appearance>
+						<index>36</index>
+						<caption>Call Class</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>33</top>
+							<left>14</left>
+							<right>119</right>
+							<bottom>47</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_sla</name>
+						<type>Field</type>
+						<group>tSLM:6</group>
+					</general>
+					<appearance>
+						<index>37</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#333333</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>49</top>
+							<left>178</left>
+							<right>333</right>
+							<bottom>67</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>33</left>
+							<right>66</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<hintText>Select to update SLA</hintText>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>itsmsp_slad</distinctTable>
+							<distinctColumn>slad_id</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<storedQuery>entities.filter_itsm_sla</storedQuery>
+							<listFilter>_swc_archive=0</listFilter>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_priority</name>
+						<type>Field</type>
+						<group>tSLM:6</group>
+					</general>
+					<appearance>
+						<index>38</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#333333</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>49</top>
+							<left>342</left>
+							<right>497</right>
+							<bottom>67</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>66</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<distinctTable>itsmsp_slad_priority</distinctTable>
+							<distinctColumn>fk_priority</distinctColumn>
+							<editRecordForm>SystemForms.SLA</editRecordForm>
+							<extraOptions>[Use SLA Default Priority]^[Use Impact/Urgency]</extraOptions>
+							<sqlSource>swdata</sqlSource>
+							<borderColor>#c0c0c0</borderColor>
+							<storedQuery>common.filterByTableValues</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_sla</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tSLM:6</group>
+					</general>
+					<appearance>
+						<index>39</index>
+						<caption>Default SLA</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>33</top>
+							<left>178</left>
+							<right>283</right>
+							<bottom>47</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>33</left>
+							<right>33</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_priority</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>tSLM:6</group>
+					</general>
+					<appearance>
+						<index>40</index>
+						<caption>Default Priority</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>33</top>
+							<left>342</left>
+							<right>447</right>
+							<bottom>47</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>66</left>
+							<right>66</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_slarules</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>false</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>tSLM:6</group>
+					</general>
+					<appearance>
+						<index>41</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>95</top>
+							<left>14</left>
+							<right>435</right>
+							<bottom>286</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>false</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>seq</column>
+								<imageHAlign>0</imageHAlign>
+							</properties>
+							<name>Order</name>
+							<width>72</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>false</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>rulename</column>
+							</properties>
+							<name>Use SLA From</name>
+							<width>240</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>pk_auto_id</column>
+							</properties>
+							<name>pk_auto_id</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>false</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>longest_sla</column>
+							</properties>
+							<name>Use Longest SLA?</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>3</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>0</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>18</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#000099</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<highlightStyle>0</highlightStyle>
+							<borderColor>#d3c9b6</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<table>itsm_sla_rules</table>
+							<newRecordForm>Form.tf_sla_rule</newRecordForm>
+							<editRecordForm>Form.tf_sla_rule</editRecordForm>
+							<storedQuery>entity.sla.rules</storedQuery>
+							<listFilter>pk_auto_id=-1</listFilter>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_add_rule</name>
+						<type>EventButton</type>
+						<group>tSLM:6</group>
+					</general>
+					<appearance>
+						<index>42</index>
+						<caption>Add</caption>
+						<backgroundColor>#000000</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>94</top>
+							<left>443</left>
+							<right>501</right>
+							<bottom>116</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_del_rule</name>
+						<type>EventButton</type>
+						<group>tSLM:6</group>
+					</general>
+					<appearance>
+						<index>43</index>
+						<caption>Delete</caption>
+						<backgroundColor>#000000</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>117</top>
+							<left>443</left>
+							<right>501</right>
+							<bottom>139</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_up_rule</name>
+						<type>EventButton</type>
+						<group>tSLM:6</group>
+					</general>
+					<appearance>
+						<index>44</index>
+						<caption>Up</caption>
+						<backgroundColor>#000000</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>156</top>
+							<left>441</left>
+							<right>499</right>
+							<bottom>178</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Vertical Split Bar</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_down_rule</name>
+						<type>EventButton</type>
+						<group>tSLM:6</group>
+					</general>
+					<appearance>
+						<index>45</index>
+						<caption>Down</caption>
+						<backgroundColor>#000000</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>179</top>
+							<left>441</left>
+							<right>499</right>
+							<bottom>201</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Vertical Split Bar</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_use_rules</name>
+						<type>Field</type>
+						<group>tSLM:6</group>
+					</general>
+					<appearance>
+						<index>46</index>
+						<backgroundColor>#f7f3ef</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>73</top>
+							<left>12</left>
+							<right>162</right>
+							<bottom>91</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>33</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#d3c9b6</borderColor>
+							<imageHSpace>#eeeeee</imageHSpace>
+							<flagItems>Use Rules^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded(bDataReloaded)
+{
+	//###20120705
+	mainform.tSLM.ShowTabItem(5, _swdoc.boolOnHoldNotification);
+	_etab(tSLM , 0);
+	if(!app.session.HaveAppRight(ADMIN_SETTINGS, SLM_VIEW, app.session.dataDictionary)) 
+	{
+		MessageBox("You do not have permission to view SLM.");
+		_swdoc.CloseForm();
+		return false;
+	}
+	//-- Analyst Rights
+	if(!app.session.HaveRight(ANALYST_RIGHT_C_GROUP,ANALYST_RIGHT_C_CANMANAGESLAS))
+	{
+		MessageBox("You do not have permission to manage SLM.");
+		_swdoc.CloseForm();
+		return false;
+	}
+	else
+	{
+		//-- TK Load Tab
+		mainform.tSLM_OnTabSelected(0);
+	}	
+
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_impact2_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_impact2_OnItemSelected(nRow)
+{
+	_een(btn_del_impact ,(sl_impact2.rowCount()>0));
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_slad1_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_slad1_OnItemSelected(nRow)
+{
+	_een(btn_remove_slad1,(sl_slad1.curSel>-1));
+	_een(btn_view_slad1,(sl_slad1.curSel>-1));
+	//MF().sl_slad1.Refresh();
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_view_slad1_OnPressed</name>
+						<code>
+							<![CDATA[btn_view_slad1_OnPressed()
+{
+	sl_slad1.EditRecord(sl_slad1.curSel);
+	sl_slad1.SetRowSelected(sl_slad1.curSel);
+	sl_slad1_OnItemSelected(sl_slad1.curSel);		
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_remove_slad1_OnPressed</name>
+						<code>
+							<![CDATA[btn_remove_slad1_OnPressed()
+{
+	if(!app.session.HaveAppRight(ADMIN_SETTINGS, SLM_DELETE, app.session.dataDictionary)) 
+	{
+		MessageBox("You do not have permission to delete items in SLM.");
+		return false;
+	}
+	var varKey = sl_slad1.GetItemTextRaw(sl_slad1.curSel,'pk_slad_id');
+	var strConfirm = "Are you sure you want to delete the selected service level definition record?";
+	if(app.g.sl_deldbrow(sl_slad1,sl_slad1.curSel,'pk_slad_id',null,strConfirm))
+	{
+		var strParams = "kv="+varKey;
+		app.g.submitsqs("form/manage_itsm_processes/remove_sla_rels", strParams);
+		sl_slad1.SetRowSelected(0);
+		sl_slad1_OnItemSelected(0);	
+	}
+
+
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_add_slad1_OnPressed</name>
+						<code>
+							<![CDATA[btn_add_slad1_OnPressed()
+{
+	if(!app.session.HaveAppRight(ADMIN_SETTINGS, SLM_ADD, app.session.dataDictionary)) 
+	{
+		MessageBox("You do not have permission to add items in SLM.");
+		return false;
+	}
+	
+	//-- NWJ - ITSM-3.0.0
+	//-- allow user to add doc and http refs to call
+	//var intIndex = sl_proposals2.rowCount(); intIndex++;
+	var intIndex = app.g.sl_getmaxvalue(sl_slad1,'dindex');
+	var strURL = "dindex=" + ++intIndex;
+	app.OpenFormForAdd("itsmsp_slad", "", strURL, true, function(){
+		sl_slad1.Refresh();
+		sl_slad1.SetRowSelected(0);
+		sl_slad1_OnItemSelected(0);
+	});
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_slad2_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_slad2_OnItemSelected(nRow)
+{
+	_een(btn_remove_slad5,(sl_slad2.curSel>-1));
+	_een(btn_view_slad6,(sl_slad2.curSel>-1));
+	//MF().sl_slad2.Refresh();
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_view_slad2_OnPressed</name>
+						<code>
+							<![CDATA[btn_view_slad2_OnPressed()
+{
+	sl_ola.EditRecord(sl_ola.curSel);
+	sl_ola.SetRowSelected(sl_ola.curSel);
+	sl_ola_OnItemSelected(sl_ola.curSel);		
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_remove_slad2_OnPressed</name>
+						<code>
+							<![CDATA[btn_remove_slad2_OnPressed()
+{
+	if(!app.session.HaveAppRight(ADMIN_SETTINGS, SLM_DELETE, app.session.dataDictionary)) 
+	{
+		MessageBox("You do not have permission to delete items in SLM.");
+		return false;
+	}
+	
+	var varKey = sl_ola.GetItemTextRaw(sl_ola.curSel,'pk_ola_id');
+	var strConfirm = "Are you sure you want to delete the selected operational level definition record?";
+	if(app.g.sl_deldbrow(sl_ola,sl_ola.curSel,'pk_ola_id',null,strConfirm))
+	{
+		//--F0096623
+		var strParams = "kv="+varKey;
+		app.g.submitsqs("form/manage_itsm_processes/remove_ola_rels", strParams);
+		sl_ola.SetRowSelected(0);
+		sl_ola_OnItemSelected(0);	
+	}
+
+
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_add_slad3_OnPressed</name>
+						<code>
+							<![CDATA[btn_add_slad3_OnPressed()
+{
+	if(!app.session.HaveAppRight(ADMIN_SETTINGS, SLM_ADD, app.session.dataDictionary)) 
+	{
+		MessageBox("You do not have permission to add items in SLM.");
+		return false;
+	}
+	//-- NWJ - ITSM-3.0.0
+	//-- allow user to add doc and http refs to call
+	//var intIndex = sl_proposals2.rowCount(); intIndex++;
+	//var intIndex = app.g.sl_getmaxvalue(sl_slad2,'dindex');
+	//var strURL = "dindex=" + ++intIndex;
+	app.OpenFormForAdd("itsmsp_slad_ola", "", "", true, function(){
+		sl_ola.Refresh();
+		sl_ola.SetRowSelected(0);
+		sl_ola_OnItemSelected(0);
+	});
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_ola_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_ola_OnItemSelected(nRow)
+{
+	// TODO: Add your event handler code here
+	_een(btn_remove_slad2,(sl_ola.curSel>-1));
+	_een(btn_view_slad2,(sl_ola.curSel>-1));
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_ola1_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_ola1_OnItemSelected(nRow)
+{
+	
+	_een(btn_remove_slad4,(sl_ola1.curSel>-1));
+	_een(btn_view_slad5,(sl_ola1.curSel>-1));
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_view_slad3_OnPressed</name>
+						<code>
+							<![CDATA[btn_view_slad3_OnPressed()
+{
+//	sl_priorities.EditRecord(sl_slad2.curSel);
+	var strSLA =  app.g.sqllist_getselected_value(sl_priorities1, "priority");
+	if(strSLA!="")
+	{
+		var oSLA = false;
+		var oRS = app.g.get_sqrecordset("call/common/get_priority_details", "nm="+pfu(strSLA));
+		if(oRS.Fetch())
+		{
+			var intCols = oRS.GetColumnCount();
+	
+			oSLA = new Object();
+			for (x=0; x < intCols;x++)
+			{
+				var colName = oRS.GetColumnName(x);
+				var colValue = app.g.get_field(oRS,x);
+				oSLA[LC(colName)] = colValue;
+			}
+		}
+		app.global.InvokeSlaEditDialog(oSLA.slaid, false, "Priority");
+	}
+	//MessageBox(strSLA);
+	//sl_priorities.SetRowSelected(sl_slad2.curSel);
+	//sl_slad1_OnItemSelected(sl_slad2.curSel);		
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_remove_slad3_OnPressed</name>
+						<code>
+							<![CDATA[btn_remove_slad3_OnPressed()
+{
+	if(!app.session.HaveAppRight(ADMIN_SETTINGS, SLM_DELETE, app.session.dataDictionary)) 
+	{
+		MessageBox("You do not have permission to add delete in SLM.");
+		return false;
+	}
+	
+	var varKey = sl_priorities1.GetItemTextRaw(sl_priorities1.curSel,'priority');
+	if(varKey!="")
+	{
+		var intRowCount = app.g.sqs_rowcount("count/slas_related_to_priorities","kv="+pfu(varKey));
+		if(intRowCount>0)
+		{
+			MessageBox('This priority is associated to SLAs/OLAs. Please dis-associate before deleting Priority.');
+			return false;
+		}
+	
+		var strConfirm = "Are you sure you want to delete the selected priority record?";
+		if(confirm(strConfirm))
+		{
+			var strParams = "nm="+pfu(varKey);
+			var oSLA = app.g.get_sqrecordset("call/common/get_priority_details",strParams); 
+			if(oSLA.Fetch())
+			{
+				var colValue = app.g.get_field(oSLA,"slaid");
+				
+				var bDeleted = app.global.DeleteSla(colValue);
+				if(!bDeleted)
+				{
+					MessageBox('Unable to delete the selected Priority');
+					return false;
+				}
+				sl_priorities1.Refresh();
+			}
+		}
+	}
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_add_slad4_OnPressed</name>
+						<code>
+							<![CDATA[btn_add_slad4_OnPressed()
+{
+	app.global.InvokeAddNewSlaDialog("", false, "Priority",1,function()
+	{
+	sl_priorities1.Refresh();
+	});
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_priorities_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_priorities_OnItemSelected(nRow)
+{
+	// TODO: Add your event handler code here
+	_een(btn_add_slad6,(sl_priorities.curSel>-1));
+	_een(btn_view_slad4,(sl_priorities.curSel>-1));
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_priorities_OnItemDoubleClicked</name>
+						<code>
+							<![CDATA[sl_priorities_OnItemDoubleClicked(nRow, nCol)
+{
+	// TODO: Add your event handler code here
+	var strSLAName = app.g.sl_getcolvalue(sl_priorities, nRow, "fk_priority");
+	if(strSLAName!="")
+	{
+		var oSLA = false;
+		var oRS = app.g.get_sqrecordset("call/common/get_priority_details", "nm="+pfu(strSLAName));
+		if(oRS.Fetch())
+		{
+			var intCols = oRS.GetColumnCount();
+	
+			oSLA = new Object();
+			for (x=0; x < intCols;x++)
+			{
+				var colName = oRS.GetColumnName(x);
+				var colValue = app.g.get_field(oRS,x);
+				oSLA[LC(colName)] = colValue;
+			}
+		}
+		app.global.InvokeSlaEditDialog(oSLA.slaid, false,"Priority");
+	}
+	return false;
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_add_slad5_OnPressed</name>
+						<code>
+							<![CDATA[btn_add_slad5_OnPressed()
+{
+
+	var strSLA =  app.g.sqllist_getselected_value(sl_priorities1, "priority");
+	if(strSLA!="")
+	{
+		app.OpenForm("clone_priority", "fk_priority="+escape(strSLA), true, function(){
+			sl_priorities1.Refresh();
+			_een(btn_remove_slad3,(sl_priorities1.curSel>-1));
+			_een(btn_view_slad3,(sl_priorities1.curSel>-1));
+			_een(btn_add_slad5,(sl_priorities1.curSel>-1));
+		});
+	}
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_priorities1_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_priorities1_OnItemSelected(nRow)
+{
+	// TODO: Add your event handler code here
+	_een(btn_remove_slad3,(sl_priorities1.curSel>-1));
+	_een(btn_view_slad3,(sl_priorities1.curSel>-1));
+	_een(btn_add_slad5,(sl_priorities1.curSel>-1));
+
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_priorities1_OnItemDoubleClicked</name>
+						<code>
+							<![CDATA[sl_priorities1_OnItemDoubleClicked(nRow, nCol)
+{
+	// TODO: Add your event handler code here
+	var strSLA = app.g.sl_getprikeyvalue(sl_priorities1, nRow);
+	if(strSLA!="")
+	{
+		var oSLA = false;
+		var oRS = app.g.get_sqrecordset("call/common/get_priority_details", "nm="+pfu(strSLA));
+		if(oRS.Fetch())
+		{
+			var intCols = oRS.GetColumnCount();
+	
+			oSLA = new Object();
+			for (x=0; x < intCols;x++)
+			{
+				var colName = oRS.GetColumnName(x);
+				var colValue = app.g.get_field(oRS,x);
+				oSLA[LC(colName)] = colValue;
+			}
+		}
+		app.global.InvokeSlaEditDialog(oSLA.slaid, false,"Priority");
+	}
+	return false;
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>tSLM_OnTabSelected</name>
+						<code>
+							<![CDATA[tSLM_OnTabSelected(nTab)
+{
+	// TODO: Add your event handler code here	
+	var tSLR = 1;
+	var tSLA = 0;
+	var tOLA = 2;
+	var tPriority = 3;
+	var tEscalation = 4;
+	var tOnHold = 5;
+	if(nTab==tSLA)
+	{
+		var intShowArchivedSLAs = _swdoc.MF().flg_show_archived_slas.value;
+		var strFilter = "ac=SLA&af=" + intShowArchivedSLAs;
+		_slf(_swdoc.MF().sl_slad1,strFilter);
+		_swdoc.MF().sl_slad1.Refresh();
+	}
+	else if(nTab==tOLA)
+	{
+		_swdoc.MF().sl_ola.Refresh();
+	}
+	else if(nTab==tPriority)
+	{
+		_swdoc.MF().sl_priorities.Refresh();
+		var strPriorities = app.g.sqllist_get_valuesdel(sl_priorities, "fk_priority", ",", "");
+		if(strPriorities=="")strPriorities="";
+		var strFilter = "kv="+strPriorities;
+		_slf(sl_priorities1,strFilter);
+		_swdoc.MF().sl_priorities.Refresh();
+		_swdoc.MF().sl_priorities1.Refresh();
+		_een(btn_add_slad6,(sl_priorities.curSel>-1));
+		_een(btn_view_slad4,(sl_priorities.curSel>-1));
+		_een(btn_remove_slad3,(sl_priorities1.curSel>-1));
+		_een(btn_view_slad3,(sl_priorities1.curSel>-1));
+		_een(btn_add_slad5,(sl_priorities1.curSel>-1));
+
+
+	}
+	else if(nTab==tEscalation)
+	{
+		_swdoc.MF().sl_ola1.Refresh();
+		
+	}
+	else if(nTab==tOnHold)
+	{
+		_swdoc.MF().sl_ohn.Refresh();
+	}
+	else if(nTab==tSLR)
+	{
+		_swdoc.MF().sl_slr.Refresh();
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_view_slad4_OnPressed</name>
+						<code>
+							<![CDATA[btn_view_slad4_OnPressed()
+{
+	var strSLA =  app.g.sqllist_getselected_value(sl_priorities, "fk_priority");
+	if(strSLA!="")
+	{
+		var oSLA = false;
+		var oRS = app.g.get_sqrecordset("call/common/get_priority_details", "nm="+pfu(strSLA));
+		if(oRS.Fetch())
+		{
+			var intCols = oRS.GetColumnCount();
+	
+			oSLA = new Object();
+			for (x=0; x < intCols;x++)
+			{
+				var colName = oRS.GetColumnName(x);
+				var colValue = app.g.get_field(oRS,x);
+				oSLA[LC(colName)] = colValue;
+			}
+		}
+		app.global.InvokeSlaEditDialog(oSLA.slaid, false, "Priority");
+	}
+		
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_add_slad6_OnPressed</name>
+						<code>
+							<![CDATA[btn_add_slad6_OnPressed()
+{
+	var strSLA =  app.g.sqllist_getselected_value(sl_priorities, "fk_priority");
+	if(strSLA!="")
+	{
+		app.OpenForm("clone_priority", "fk_priority="+escape(strSLA), true, function(){
+			sl_priorities1.Refresh();	
+			_een(btn_add_slad6,(sl_priorities.curSel>-1));
+			_een(btn_view_slad4,(sl_priorities.curSel>-1));
+			_een(btn_remove_slad3,(sl_priorities1.curSel>-1));
+			_een(btn_view_slad3,(sl_priorities1.curSel>-1));
+			_een(btn_add_slad5,(sl_priorities1.curSel>-1));
+		});
+	}
+
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_view_slad5_OnPressed</name>
+						<code>
+							<![CDATA[btn_view_slad5_OnPressed()
+{
+	sl_ola1.EditRecord(sl_ola1.curSel);
+	sl_ola1.SetRowSelected(sl_ola1.curSel);
+	sl_ola1_OnItemSelected(sl_ola1.curSel);		
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_remove_slad4_OnPressed</name>
+						<code>
+							<![CDATA[btn_remove_slad4_OnPressed()
+{
+	if(!app.session.HaveAppRight(ADMIN_SETTINGS, SLM_DELETE, app.session.dataDictionary)) 
+	{
+		MessageBox("You do not have permission to delete items in SLM.");
+		return false;
+	}
+	var varKey = sl_ola1.GetItemTextRaw(sl_ola1.curSel,'role');
+	var strConfirm = "Are you sure you want to delete the selected escalation trigger record?";
+	if(app.g.sl_deldbrow(sl_ola1,sl_ola1.curSel,'role',null,strConfirm))
+	{
+		sl_ola1.SetRowSelected(0);
+		sl_ola1_OnItemSelected(0);	
+	}
+
+
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_add_slad7_OnPressed</name>
+						<code>
+							<![CDATA[btn_add_slad7_OnPressed()
+{
+	//-- NWJ - ITSM-3.0.0
+	//-- allow user to add doc and http refs to call
+	//var intIndex = sl_proposals2.rowCount(); intIndex++;
+	//var intIndex = app.g.sl_getmaxvalue(sl_slad2,'dindex');
+	//var strURL = "dindex=" + ++intIndex;
+	app.OpenFormForAdd("sla_escalation_emails", "", "", true, function(){
+		sl_ola1.Refresh();
+		sl_ola1.SetRowSelected(0);
+		sl_ola1_OnItemSelected(0);
+	});
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnOHNProperties_OnPressed</name>
+						<code>
+							<![CDATA[btnOHNProperties_OnPressed()
+{
+    sl_ohn.EditRecord(sl_ohn.curSel);
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnOHNNew_OnPressed</name>
+						<code>
+							<![CDATA[btnOHNNew_OnPressed()
+{
+    app.OpenFormForAdd("efOnHoldPeriods", "", "", true, function(){
+    	sl_ohn.Refresh();
+    });
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnOHNDelete_OnPressed</name>
+						<code>
+							<![CDATA[btnOHNDelete_OnPressed()
+{
+    //-- nwj :- use key col name instead of numbering
+    var sCol = dd.tables[sl_ohn.table].PrimaryKey;
+    if(sCol=="")
+    {
+            MessageBox("No primary key is defined for this table. Please contact your Supportworks Administrator");
+    }
+    else
+    {
+            if(sl_ohn.curSel != -1)
+            {
+
+                    //--  ask them to confirm
+                    if(!confirm('Are you sure you want to delete the selected record?'))return false;
+                    
+                    var strKeyValue = sl_ohn.GetItemTextRaw(sl_ohn.curSel, sCol);
+                    var strParams = "kv="+pfu(strKeyValue);
+                    if(app.g.submitsqp("form/manage_itsm_processes/delete_onhold_notifier",strParams))
+                    {
+                    	sl_ohn.RemoveRow(sl_ohn.curSel);
+                    	sl_ohn.Refresh();
+                    }
+            }
+    }
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_ohn_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_ohn_OnItemSelected(nRow)
+{
+
+	_een(btnOHNDelete,(sl_ohn.curSel>-1));
+	_een(btnOHNProperties,(sl_ohn.curSel>-1));
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_slad1_OnItemDoubleClicked</name>
+						<code>
+							<![CDATA[sl_slad1_OnItemDoubleClicked(nRow, nCol)
+{
+	// TODO: Add your event handler code here
+	var strKey = app.g.sl_getcolvalue(_swdoc.MF().sl_slad1, nRow, "pk_slad_id");
+	app.OpenFormForEdit("itsmsp_slad", strKey, "", true, function(){
+		_swdoc.MF().sl_slad1.Refresh();
+	});
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>flg_show_archived_slas_OnValueChanged</name>
+						<code>
+							<![CDATA[flg_show_archived_slas_OnValueChanged(strValue)
+{
+	_swdoc.MF().tSLM_OnTabSelected(0);
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_slad2_OnItemDoubleClicked</name>
+						<code>
+							<![CDATA[sl_slad2_OnItemDoubleClicked(nRow, nCol)
+{
+	// TODO: Add your event handler code here
+	var strKey = app.g.sl_getcolvalue(_swdoc.MF().sl_slad2, nRow, "pk_slad_id");
+	app.OpenFormForEdit("itsmsp_slad", strKey, "", true);
+	_swdoc.MF().sl_slad2.Refresh();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_slr_OnItemDoubleClicked</name>
+						<code>
+							<![CDATA[sl_slr_OnItemDoubleClicked(nRow, nCol)
+{
+	var strKey = app.g.sl_getcolvalue(_swdoc.MF().sl_slr, nRow, "pk_slr_id");
+	app.OpenFormForEdit("itsmsp_slrd", strKey, "", true, function(){
+		_swdoc.MF().sl_slr.Refresh();
+	});
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_slr_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_slr_OnItemSelected(nRow)
+{
+	_een(btn_remove_slr,(sl_slr.curSel>-1));
+	_een(btn_view_slr,(sl_slr.curSel>-1));
+	_een(mbtn_actions,(sl_slr.curSel>-1));
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_view_slr_OnPressed</name>
+						<code>
+							<![CDATA[btn_view_slr_OnPressed()
+{
+	sl_slr.EditRecord(sl_slr.curSel);
+	sl_slr.SetRowSelected(sl_slr.curSel);
+	sl_slr_OnItemSelected(sl_slr.curSel);		
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_remove_slr_OnPressed</name>
+						<code>
+							<![CDATA[btn_remove_slr_OnPressed()
+{
+	if(!app.session.HaveAppRight(ADMIN_SETTINGS, SLM_DELETE, app.session.dataDictionary)) 
+	{
+		MessageBox("You do not have permission to delete items in SLM.");
+		return false;
+	}
+	
+	var varKey = sl_slr.GetItemTextRaw(sl_slr.curSel,'pk_slr_id');
+	var strConfirm = "Are you sure you want to delete the selected service level requirement record?";
+	if(app.g.sl_deldbrow(sl_slr,sl_slr.curSel,'pk_slr_id',null,strConfirm))
+	{
+		var strParams = "kv="+varKey;
+		app.g.submitsqs("form/manage_itsm_processes/remove_slr_rels", strParams);
+		sl_slr.SetRowSelected(0);
+		sl_slr_OnItemSelected(0);	
+	}
+
+
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_add_slr_OnPressed</name>
+						<code>
+							<![CDATA[btn_add_slr_OnPressed()
+{
+	if(!app.session.HaveAppRight(ADMIN_SETTINGS, SLM_ADD, app.session.dataDictionary)) 
+	{
+		MessageBox("You do not have permission to add items in SLM.");
+		return false;
+	}
+	//-- NWJ - ITSM-3.0.0
+	//-- allow user to add doc and http refs to call
+	//var intIndex = sl_proposals2.rowCount(); intIndex++;
+	var intIndex = app.g.sl_getmaxvalue(sl_slr,'dindex');
+	var strURL = "dindex=" + ++intIndex;
+	app.OpenFormForAdd("itsmsp_slrd", "", strURL, true, function(){
+		sl_slr.Refresh();
+		sl_slr.SetRowSelected(0);
+		sl_slr_OnItemSelected(0);
+	});
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>mbtn_actions_OnMenuItem</name>
+						<code>
+							<![CDATA[mbtn_actions_OnMenuItem(strName, nItemID)
+{
+	var iSLA = 1;
+	if(nItemID==iSLA)
+	{
+		var intIndex = app.g.sl_getmaxvalue(sl_slad1,'dindex');
+		var strName = _swdoc.MF().sl_slr.GetItemText(_swdoc.MF().sl_slr.curSel ,0); //itsmsp_slr.title
+		var strOwner = _swdoc.MF().sl_slr.GetItemText(_swdoc.MF().sl_slr.curSel ,2); //itsmsp_slr.requested_by
+		var intID = _swdoc.MF().sl_slr.GetItemText(_swdoc.MF().sl_slr.curSel ,3); //itsmsp_slr.pk_slr_id
+		var strDesc = _swdoc.MF().sl_slr.GetItemText(_swdoc.MF().sl_slr.curSel ,4); //itsmsp_slr.functionality
+		
+		
+		var strURL = "dindex=" + ++intIndex + "&fk_keysearch=" + strOwner + "&slad_id="
+					+ strName + "&descriptive=" + strDesc + "&fk_aid=" + app.session.analystId
+					+ "&slr_id=" + intID;
+
+		app.OpenFormForAdd("itsmsp_slad", "", strURL, true, function(){
+			sl_slad1.Refresh();
+			sl_slad1.SetRowSelected(0);
+			sl_slad1_OnItemSelected(0);
+		});
+    }
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_slarules1_OnItemDoubleClicked</name>
+						<code>
+							<![CDATA[sl_slarules1_OnItemDoubleClicked(nRow, nCol)
+{
+	// TODO: Add your event handler code here
+	return true;
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_class_OnValueChanged</name>
+						<code>
+							<![CDATA[fld_class_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	_slf(_swdoc.MF().sl_slarules, "callclass="+pfu(strValue));
+	_swdoc.MF().sl_slarules.Refresh();
+	
+	_een(_swdoc.MF().btn_add_rule, (strValue != ""));
+	_een(_swdoc.MF().btn_del_rule, (strValue != ""));
+	_een(_swdoc.MF().btn_up_rule, (strValue != ""));
+	_een(_swdoc.MF().btn_down_rule, (strValue != ""));
+	
+	_een(_swdoc.MF().lbl_sla, (strValue != ""));
+	_een(_swdoc.MF().fld_sla, (strValue != ""));
+	
+	_een(_swdoc.MF().flg_use_rules, (strValue != ""));
+	
+	if(strValue != "")
+	{
+    	var oParams = {};
+    	oParams.callclass = strValue;
+	
+    	//-- call script
+    	var resSLA = app.g.submitsqp("form/manage_slas/get_class_default_sla",oParams);
+		_ete(_swdoc.MF().fld_sla, resSLA);
+		_swdoc.strClassDefSLA = resSLA;
+		
+		var resPriority = app.g.submitsqp("form/manage_slas/get_class_default_priority",oParams);
+		_ete(_swdoc.MF().fld_priority, resPriority);
+		_swdoc.strClassDefPriority = resPriority;
+		
+		var resUseSLARules = app.g.submitsqp("form/manage_slas/get_class_use_sla_rules",oParams);
+		_eva(_swdoc.MF().flg_use_rules, resUseSLARules);
+		
+		if(resSLA != "")
+		{
+			var oRecSLD = app.g.get_sqrecordset("general/get_itsm_sla","kv="+resSLA);
+			if(oRecSLD.Fetch())
+			{
+				var intSLAID = app.g.get_field(oRecSLD, "pk_slad_id");
+				_slf(_swdoc.MF().fld_priority, "_swc_fk_slad="+intSLAID+"&_swc_flg_sla=1");
+			}
+		}
+		_een(_swdoc.MF().lbl_priority, (resSLA != ""));
+		_een(_swdoc.MF().fld_priority, (resSLA != ""));			
+    }
+    else
+    {
+    	_ete(_swdoc.MF().fld_sla, "");
+    	_swdoc.strClassDefSLA = "";
+    }
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_sla_OnValueChanged</name>
+						<code>
+							<![CDATA[fld_sla_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	_eva(_swdoc.MF().fld_priority , "");
+
+	if(strValue!="")
+	{
+  		var oRecSLD = app.g.get_sqrecordset("general/get_itsm_sla","kv="+strValue);
+		if(oRecSLD.Fetch())
+		{
+			var intSLAID = app.g.get_field(oRecSLD, "pk_slad_id");
+			_slf(_swdoc.MF().fld_priority, "_swc_fk_slad="+intSLAID+"&_swc_flg_sla=1");
+			
+			var strParams = "callclass="+pfu(_swdoc.MF().fld_class.value)+"&slaid="+pfu(intSLAID)+"&slaname="+strValue;
+			var res = app.g.submitsqp("form/manage_slas/update_class_default_sla", strParams);
+			if(res) _swdoc.strClassDefSLA = res;
+		}
+	}
+	else
+	{
+		var strConfirm = "This will clear the current Default SLA for Call Class "+_swdoc.MF().fld_class.value+". Do you want to continue?";
+		if(confirm(strConfirm))
+    	{
+			var strParams = "callclass="+pfu(_swdoc.MF().fld_class.value)+"&slaid=&slaname=";
+			if(app.g.submitsqs("form/manage_slas/update_class_default_sla", strParams))
+			{
+				_ete(_swdoc.MF().fld_sla, "");
+				 _swdoc.strClassDefSLA = "";
+			}
+		}
+		else
+		{
+			_ete(_swdoc.MF().fld_sla, _swdoc.strClassDefSLA);
+		}
+	}
+
+	var boolEnable = strValue!="";
+	_een(_swdoc.MF().lbl_priority, boolEnable);
+	_een(_swdoc.MF().fld_priority, boolEnable);
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_priority_OnValueChanged</name>
+						<code>
+							<![CDATA[fld_priority_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	
+	if(strValue!="")
+	{
+		var strParams = "callclass="+pfu(_swdoc.MF().fld_class.value)+"&priority="+strValue;
+		var res = app.g.submitsqp("form/manage_slas/update_class_default_priority", strParams);
+		if(res) _swdoc.strClassDefPriority = res;
+	}
+	else
+	{
+		var strConfirm = "This will clear the current Default Priority for Call Class "+_swdoc.MF().fld_class.value+". Do you want to continue?";
+		if(confirm(strConfirm))
+    	{
+			var strParams = "callclass="+pfu(_swdoc.MF().fld_class.value)+"&priority="+strValue;
+			if(app.g.submitsqs("form/manage_slas/update_class_default_priority", strParams))
+			{
+				_ete(_swdoc.MF().fld_priority, "");
+			 	_swdoc.strClassDefPriority = "";
+			}
+		}
+		else
+		{
+			_ete(_swdoc.MF().fld_priority, _swdoc.strClassDefPriority);
+		}
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_add_rule_OnPressed</name>
+						<code>
+							<![CDATA[btn_add_rule_OnPressed()
+{
+   	var intCurrCount = sl_slarules.rowCount();
+	intCurrCount++;
+	//-- create a new stage for current workflow
+	var strURL = "seq=" + intCurrCount + "&callclass=" + _swdoc.MF().fld_class.value;
+	app.OpenFormForAdd("tf_sla_rule", "", strURL, true, function()
+	{
+		//-- refresh
+		sl_slarules.Refresh();
+	});
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_del_rule_OnPressed</name>
+						<code>
+							<![CDATA[btn_del_rule_OnPressed()
+{
+	// TODO: Add your event handler code here
+	//-- delete the selected rule
+	
+	var selectedRow     = sl_slarules.curSel;
+	var strConfirm = "Are you sure you want to delete the selected rule?";
+	var intStageId = sl_slarules.GetItemTextRaw(sl_slarules.curSel, "pk_auto_id");
+	var delSequence = sl_slarules.GetItemTextRaw(sl_slarules.curSel, "seq");
+
+    if(intStageId!="")
+    {
+    	if(app.g.sl_deldbrow(sl_slarules,selectedRow,"pk_auto_id",null,strConfirm))
+		{
+			_swdoc.MF().sl_slarules.Refresh();
+			//-- loop through list and set seq for each to #
+			var intTask=0;
+			for(var x=0; x < sl_slarules.rowCount();x++)
+			{
+				var thisSeq = sl_slarules.GetItemTextRaw(x, "seq");
+				if(thisSeq>delSequence)
+				{
+					intStage = sl_slarules.GetItemTextRaw(x, "pk_auto_id");
+					
+					var strParams = "sid="+pfu(intStage);
+					app.g.submitsqs("form/manage_slas/dec_rule_seq", strParams);
+				}
+			}
+			sl_slarules.Refresh();		
+			sl_slarules.SetRowSelected(0, true, false);				
+		}
+	}
+	
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_up_rule_OnPressed</name>
+						<code>
+							<![CDATA[btn_up_rule_OnPressed()
+{
+	// TODO: Add your event handler code here
+
+	//-- get selected rule id to move up
+	var currRow = sl_slarules.curSel;
+	var intUpStageID = sl_slarules.GetItemTextRaw(sl_slarules.curSel, 'pk_auto_id');
+	var intUpStageSeq = sl_slarules.GetItemTextRaw(sl_slarules.curSel, 'seq');	
+	
+	//-- get rule id to move down
+	var intDownStageID = sl_slarules.GetItemTextRaw(sl_slarules.curSel-1, 'pk_auto_id');
+	var intDownStageSeq = sl_slarules.GetItemTextRaw(sl_slarules.curSel-1, 'seq');
+	
+	//-- update seq id for both stages
+	var strParams = "sid="+pfu(intUpStageID);
+	if(app.g.submitsqs("form/manage_slas/dec_rule_seq", strParams))
+	{
+		var strParams = "sid="+pfu(intDownStageID);
+		if(app.g.submitsqs("form/manage_slas/inc_rule_seq", strParams))
+		{
+			//-- refresh list
+			sl_slarules.Refresh();
+			sl_slarules.SetRowSelected(currRow-1, true, false);
+		}
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_down_rule_OnPressed</name>
+						<code>
+							<![CDATA[btn_down_rule_OnPressed()
+{
+	// TODO: Add your event handler code here
+
+	//-- get selected stage id to move down
+	var currRow = sl_slarules.curSel;
+	var intDownStageID = sl_slarules.GetItemTextRaw(sl_slarules.curSel, 'pk_auto_id');
+	var intDownStageSeq = sl_slarules.GetItemTextRaw(sl_slarules.curSel, 'seq');	
+	
+	//-- get stage id to move down
+	var intUpStageID = sl_slarules.GetItemTextRaw(sl_slarules.curSel+1, 'pk_auto_id');
+	var intUpStageSeq = sl_slarules.GetItemTextRaw(sl_slarules.curSel+1, 'seq');
+	
+	//-- update seq id for both stages
+	var strParams = "sid="+pfu(intUpStageID);
+	if(app.g.submitsqs("form/manage_slas/dec_rule_seq", strParams))
+	{
+		var strParams = "sid="+pfu(intDownStageID);
+		if(app.g.submitsqs("form/manage_slas/inc_rule_seq", strParams))
+		{
+			//-- refresh list
+			sl_slarules.Refresh();
+			sl_slarules.SetRowSelected(currRow+1, true, false);
+		}
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_slarules_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_slarules_OnItemSelected(nRow)
+{
+	
+	//-- disable up button if first row selected
+	if (nRow == 0)
+	{
+		_een(_swdoc.MF().btn_up_rule,false);
+	}
+	else
+	{
+		_een(_swdoc.MF().btn_up_rule,true);
+	}
+	
+	//-- disable down button if last row selected
+	if (nRow == (_swdoc.MF().sl_slarules.rowCount() - 1))
+	{
+		_een(_swdoc.MF().btn_down_rule,false);
+	}
+	else
+	{
+		_een(_swdoc.MF().btn_down_rule,true);
+	}
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>flg_use_rules_OnValueChanged</name>
+						<code>
+							<![CDATA[flg_use_rules_OnValueChanged(strValue)
+{
+	var strParams = "callclass="+pfu(_swdoc.MF().fld_class.value)+"&use_sla_rules="+strValue;
+	app.g.submitsqp("form/manage_slas/update_class_use_sla_rules", strParams);
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

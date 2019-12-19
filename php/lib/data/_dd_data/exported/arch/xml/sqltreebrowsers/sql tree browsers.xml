@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espSqlTreeBrowsers>
+	<sqlTreeBrowser>
+		<name>Customers</name>
+		<table>userdb</table>
+		<imageList>Helpdesk Icons</imageList>
+		<rootGroupItems>
+			<rootGroupItem>
+				<name>Entire Customer Database</name>
+				<table>userdb</table>
+				<columns>surname, firstname, keysearch</columns>
+				<imageList>Helpdesk Icons</imageList>
+				<image>2</image>
+			</rootGroupItem>
+			<rootGroupItem>
+				<name>Customers by Site</name>
+				<table>userdb</table>
+				<columns>site, surname, firstname, keysearch</columns>
+				<imageList>Helpdesk Icons</imageList>
+				<image>12</image>
+			</rootGroupItem>
+			<rootGroupItem>
+				<name>Customers by Charge Centre</name>
+				<table>userdb</table>
+				<columns>costcenter, surname, firstname, keysearch</columns>
+				<imageList>Helpdesk Icons</imageList>
+				<image>65</image>
+			</rootGroupItem>
+		</rootGroupItems>
+	</sqlTreeBrowser>
+	<sqlTreeBrowser>
+		<name>Organisations</name>
+		<rootGroupItems>
+			<rootGroupItem>
+				<name>Entire Organisation Database</name>
+				<table>company</table>
+				<columns>companyname, pk_company_id</columns>
+				<image>0</image>
+			</rootGroupItem>
+			<rootGroupItem>
+				<name>Organisation by Country</name>
+				<table>company</table>
+				<columns>country, county, town, companyname, pk_company_id</columns>
+				<image>0</image>
+			</rootGroupItem>
+		</rootGroupItems>
+	</sqlTreeBrowser>
+</espSqlTreeBrowsers>

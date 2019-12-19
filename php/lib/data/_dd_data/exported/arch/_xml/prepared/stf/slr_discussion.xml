@@ -1,0 +1,866 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>slr_discussion</name>
+			<title>Discussion</title>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>true</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>slrd_discussion</name>
+				<type>Main Details Table</type>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var boolUpdate = false;
+
+function MF()
+{
+	return mainform;
+}
+
+function oDiscussion()
+{
+	return slrd_discussion;
+}
+
+function insertDiaryEntry(strDiaryText)
+{
+		var p = {};
+		p.fsi = _swdoc.GetArg("fk_slrd_id");
+		p.ut = strDiaryText;
+		p.uc = "Detail Update";
+		p.aid = app.session.analystId;							
+		p.ux = 	app.g.todaysdate_epoch();										
+ 		app.g.submitsimplesql("itsmsp_slrd_diary.insert", p);
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnValidate</name>
+					<code>
+						<![CDATA[OnValidate()
+{
+	return VALIDATE_DEFAULT;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnDataSaved</name>
+					<code>
+						<![CDATA[OnDataSaved()
+{
+    var strDiaryText = "'" + _swdoc.oDiscussion().name + "' discussion (ID=" + _swdoc.oDiscussion().pk_id + ") ";
+   
+    // if review added...
+	if (!_swdoc.boolUpdate)
+	{
+		// ...insert audit entry for added review
+		strDiaryText += "added.";
+		_swdoc.insertDiaryEntry(strDiaryText);
+ 	}
+ 	else
+ 	{
+		strDetails = "";
+		for(var intNumberOfInsert=0;intNumberOfInsert<_swdoc.arrDiary.length;intNumberOfInsert++)
+		{
+			arrDetails = _swdoc.arrDiary[intNumberOfInsert]
+			if(strDetails!="")
+			{
+				strDetails += ","
+			}
+			strDetails += arrDetails[0]+" has been modified from '"+arrDetails[1]+"' to '"+arrDetails[2]+"'";
+		}
+		// if review has been modified..
+		if(strDetails!="")
+		{
+			// ...insert audit entry for modified review
+			strDiaryText += "modified: " + strDetails
+			_swdoc.insertDiaryEntry(strDiaryText);
+		}
+    }
+    _swdoc.boolUpdate = false;    
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnSaveData</name>
+					<code>
+						<![CDATA[OnSaveData()
+{
+	if(!app.session.HaveAppRight(app.ADMIN_SETTINGS, app.SLM_EDIT, app.session.dataDictionary))
+	{
+		app.global.MessageBox('Insufficient privileges to perform operation.\n\nYou have been denied the: [Can edit items in Service Level Management] permission.\n\nPlease contact your Supportworks system administrator', 16);
+		return false;	
+	}
+	var arrInserts = new Array();
+	
+	//-- get current review record
+	var oRec = app.g.get_record("slrd_discussion", _swdoc.oDiscussion().pk_id);
+	var liveVal="";
+	//-- for each field check if diff from current
+	for (x=0; x < dd.tables['slrd_discussion'].columns.length;x++)
+	{
+		var colName = dd.tables['slrd_discussion'].columns[x].Name;
+		//make sure the field exists
+		if(oRec[colName]!=undefined)
+		{
+			//-- if values differ and value is not empty put into a field table
+			var FORM_VALUE = slrd_discussion[colName];
+			
+			//MessageBox(colName + " : " + FORM_VALUE + " : " + oRec[colName]);
+			
+			//-- if numeric value and = 0 then ignore
+			if((app.g.dd_isnumeric('slrd_discussion',colName))&&(FORM_VALUE==0))continue;
+			
+			var	dispFormVal = FORM_VALUE;
+			var liveVal = oRec[colName];
+			var dispLiveVal = liveVal;
+			if(app.g.dd_isnumeric('slrd_discussion',colName))
+			{
+				if(FORM_VALUE<0)
+				{
+					FORM_VALUE= app.g.fix_epoch(FORM_VALUE);
+					dispFormVal = app.g.convert_epochddmmyyyy(FORM_VALUE);
+					dispLiveVal = app.g.convert_epochddmmyyyy(liveVal);
+				}
+			}
+			
+			if((liveVal!=FORM_VALUE))
+			{
+				arrInserts.push(new Array( app.g.dd_fieldlabel('slrd_discussion',colName),app.g.pfs(dispLiveVal) , app.g.pfs(dispFormVal)))
+			}
+		}	
+	}
+
+	_swdoc.arrDiary = arrInserts;
+
+	return true;
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>387</width>
+				<height>359</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>fld_name</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>0</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>17</top>
+							<left>84</left>
+							<right>381</right>
+							<bottom>35</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>slrd_discussion.name</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<storedQuery>generic.select</storedQuery>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>itsmsp_slad_review</distinctTable>
+							<distinctColumn>review_name</distinctColumn>
+							<displayColumn>review_name</displayColumn>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_date</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>1</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>42</top>
+							<left>84</left>
+							<right>263</right>
+							<bottom>60</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>slrd_discussion.datex</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Date/Time Control</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<imageHSpace>#eeeeee</imageHSpace>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<dateFormatMode>0</dateFormatMode>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_name</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>2</index>
+						<caption>Name</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>17</top>
+							<left>6</left>
+							<right>78</right>
+							<bottom>31</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_date</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>3</index>
+						<caption>Date</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>42</top>
+							<left>6</left>
+							<right>78</right>
+							<bottom>56</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_subject</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>4</index>
+						<caption>Subject</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>162</top>
+							<left>6</left>
+							<right>78</right>
+							<bottom>176</bottom>
+						</position>
+						<scaling>
+							<top>25</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>25</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_subject</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>5</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>162</top>
+							<left>84</left>
+							<right>381</right>
+							<bottom>180</bottom>
+						</position>
+						<scaling>
+							<top>25</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>25</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>slrd_discussion.subject</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<imageHSpace>#eeeeee</imageHSpace>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_notes</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>6</index>
+						<caption>Notes</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>187</top>
+							<left>6</left>
+							<right>78</right>
+							<bottom>201</bottom>
+						</position>
+						<scaling>
+							<top>25</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>25</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_notes</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>7</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>187</top>
+							<left>84</left>
+							<right>381</right>
+							<bottom>352</bottom>
+						</position>
+						<scaling>
+							<top>25</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>slrd_discussion.notes</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<imageHSpace>#eeeeee</imageHSpace>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_organiser</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>8</index>
+						<caption>Organiser</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>67</top>
+							<left>6</left>
+							<right>78</right>
+							<bottom>81</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_organiser</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>9</index>
+						<backgroundColor>#eeeeee</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>67</top>
+							<left>84</left>
+							<right>263</right>
+							<bottom>85</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>slrd_discussion.organiser</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<imageHSpace>#eeeeee</imageHSpace>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<sqlSource>syscache</sqlSource>
+							<storedQuery>generic.select</storedQuery>
+							<distinctTable>swanalysts</distinctTable>
+							<distinctColumn>AnalystID</distinctColumn>
+							<displayColumn>Name</displayColumn>
+							<dropdownButtonType>1</dropdownButtonType>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_participants</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>10</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>90</top>
+							<left>84</left>
+							<right>381</right>
+							<bottom>154</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>25</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>slrd_discussion.participants</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<imageHSpace>#eeeeee</imageHSpace>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_participants</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>11</index>
+						<caption>Participants</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>90</top>
+							<left>6</left>
+							<right>78</right>
+							<bottom>104</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded(bDataReloaded)
+{
+	var intSlaId = _swdoc.GetArg("fk_slrd_id");
+	var strFilter = "_swc_fk_id=" + intSlaId;
+	app._slf(_swdoc.MF().fld_name,strFilter);
+
+	_swdoc.boolUpdate = (_swdoc.oDiscussion().pk_id!=0);
+	if(_swdoc.boolUpdate)
+	{
+		//-- updating
+	}
+	else
+	{
+		//-- creating
+		_swdoc.oDiscussion().fk_slrd_id = intSlaId;
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_organiser_OnLeftClick</name>
+						<code>
+							<![CDATA[fld_organiser_OnLeftClick()
+{
+	app.g.pick_analyst("Select Analyst",function(oAnalyst)
+	{
+		if(!oAnalyst)
+			return false;
+		app._ete(_swdoc.MF().fld_organiser , oAnalyst.name);
+		_swdoc.oDiscussion().organiser = oAnalyst.id;
+		_swdoc.UpdateFormFromData();	
+	});
+	return false;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_organiser_OnRightClick</name>
+						<code>
+							<![CDATA[fld_organiser_OnRightClick()
+{
+	app._ete(fld_organiser, "");
+	app._eva(fld_organiser, "");
+	slad_review_details.organiser = "";
+	_swdoc.UpdateFormFromData();
+	return true;
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

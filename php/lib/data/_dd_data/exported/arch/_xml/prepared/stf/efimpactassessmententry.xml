@@ -1,0 +1,1557 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>EfImpactAssessmentEntry</name>
+			<title>Assessment</title>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>false</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var appcode = "";
+var usage_area = "";
+var strSelectedKeys = "";
+var intWeighting = 0;
+var strImpactLevel = "";
+var intLeadTime = 0;
+var boolApplied = false; // set to true if the Apply button is used to indicate that the new settings should be applied
+var changeRisk = false;
+
+var boolEnforceEachCriterion = false;
+var boolCDFAllowAlteration = false; // based on the System Setting to allow alteration of ILA from Change Details Form
+
+var arrCriteriaDetails = new Array();
+
+function MF()
+{
+	return mainform;
+}
+
+function updateWeighting()
+{
+	// Update the current Overall Weighting
+	_swdoc.intWeighting = 0;
+	for (var x=0;x<_swdoc.MF().sl_ila_options.rowCount();x++)
+	{
+		if (_swdoc.MF().sl_ila_options.IsRowChecked(x))
+		{
+			_swdoc.intWeighting = Number(_swdoc.intWeighting) + Number(app.g.sl_getrawcolvalue(_swdoc.MF().sl_ila_options, x, "weighting_value"));
+		}
+	}
+	_swdoc.intWeighting = _swdoc.intWeighting;
+	app._eva(_swdoc.MF().lb_weighting, _swdoc.intWeighting);
+	app._ete(_swdoc.MF().lb_weighting, _swdoc.intWeighting);
+
+}
+
+function updateImpactLevel()
+{
+	var xmlmc = new XmlMethodCall;
+	
+	// Set up our input parameters
+	xmlmc.SetValue("appcode", _swdoc.appcode);
+	xmlmc.SetValue("usage_area", _swdoc.usage_area);
+	xmlmc.SetValue("weighting", _swdoc.intWeighting);
+	
+	// Invoke the method
+	if(xmlmc.Invoke("VPME", "getILAImpactLevel"))
+	{
+		strImpactLvl = xmlmc.GetReturnValue("res1");
+		_swdoc.strImpactLevel = strImpactLvl;
+		app._eva(_swdoc.MF().eb_impact_level, strImpactLvl);
+		app._ete(_swdoc.MF().eb_impact_level, strImpactLvl);
+		
+		// Display the Lead Time based on the Impact
+		_swdoc.intLeadTime = xmlmc.GetReturnValue("res2");
+		_swdoc.intLeadTime = _swdoc.intLeadTime;
+		app._eva(_swdoc.MF().eb_lead_time, _swdoc.intLeadTime);
+		app._ete(_swdoc.MF().eb_lead_time, _swdoc.intLeadTime);
+	}
+	else
+	{
+		MessageBox(xmlmc.GetLastError());
+	}
+	
+	if (strImpactLvl == "")
+	{
+		app._eva(_swdoc.MF().eb_impact_level, "N/A");
+		app._ete(_swdoc.MF().eb_impact_level, "N/A");
+		app._eva(_swdoc.MF().eb_lead_time, "0");
+		app._ete(_swdoc.MF().eb_lead_time, "0");
+	}
+
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>809</width>
+				<height>541</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>sl_ila_options</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>true</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>true</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+					</general>
+					<appearance>
+						<index>0</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>163</top>
+							<left>9</left>
+							<right>805</right>
+							<bottom>441</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>false</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>criterion</column>
+							</properties>
+							<name>Criterion</name>
+							<width>174</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>pk_auto_id</column>
+							</properties>
+							<name>Auto ID</name>
+							<width>23</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>weighting_value</column>
+								<imageHAlign>0</imageHAlign>
+							</properties>
+							<name>Weighting</name>
+							<width>69</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>option_text</column>
+							</properties>
+							<name>Option</name>
+							<width>506</width>
+							<image>-1</image>
+							<dataColumn>3</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>description</column>
+							</properties>
+							<name>Description</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>4</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>18</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#00008b</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<sqlSource>swdata</sqlSource>
+							<table>ila_option</table>
+							<listFilter>_ac=1&amp;_swc_usage_area=Release Risk</listFilter>
+							<newRecordForm>Form.EfImpactAssessment</newRecordForm>
+							<editRecordForm>Form.EfImpactAssessment</editRecordForm>
+							<borderColor>#d3c9b6</borderColor>
+							<storedQuery>common.load_by_colvalues</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnApply</name>
+						<type>EventButton</type>
+					</general>
+					<appearance>
+						<index>1</index>
+						<caption>OK</caption>
+						<backgroundColor>#000000</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>517</top>
+							<left>633</left>
+							<right>713</right>
+							<bottom>537</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text1</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>2</index>
+						<caption>Overall Weighting:</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>517</top>
+							<left>9</left>
+							<right>100</right>
+							<bottom>537</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text2</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>3</index>
+						<caption>Overall Assessment:</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>517</top>
+							<left>202</left>
+							<right>311</right>
+							<bottom>537</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_weighting</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>4</index>
+						<caption>0</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>517</top>
+							<left>102</left>
+							<right>169</right>
+							<bottom>537</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_clear_selected</name>
+						<type>EventButton</type>
+					</general>
+					<appearance>
+						<index>5</index>
+						<caption>Clear All</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>139</top>
+							<left>725</left>
+							<right>805</right>
+							<bottom>159</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_selected_list1</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>6</index>
+						<caption>Selecting a second Option for a Criterion will clear the first selection.</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>141</top>
+							<left>9</left>
+							<right>584</right>
+							<bottom>156</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>true</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>eb_criterion_desc</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>7</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>465</top>
+							<left>9</left>
+							<right>389</right>
+							<bottom>510</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#d3c9b6</borderColor>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text3</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>8</index>
+						<caption>Criterion Description</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>444</top>
+							<left>9</left>
+							<right>142</right>
+							<bottom>462</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>eb_option_desc</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>9</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>465</top>
+							<left>425</left>
+							<right>805</right>
+							<bottom>510</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#d3c9b6</borderColor>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text4</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>10</index>
+						<caption>Option Description</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>444</top>
+							<left>425</left>
+							<right>558</right>
+							<bottom>462</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>eb_impact_level</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>11</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>517</top>
+							<left>312</left>
+							<right>379</right>
+							<bottom>537</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#d3c9b6</borderColor>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_lead_time</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>12</index>
+						<caption>Impact Lead Time:</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>517</top>
+							<left>422</left>
+							<right>531</right>
+							<bottom>537</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>true</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>eb_lead_time</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>13</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>517</top>
+							<left>542</left>
+							<right>609</right>
+							<bottom>537</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>true</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#d3c9b6</borderColor>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_current_ila_options</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>false</verticalGridLines>
+							<horizontalGridLines>false</horizontalGridLines>
+							<autoLoad>false</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+					</general>
+					<appearance>
+						<index>14</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>36</top>
+							<left>9</left>
+							<right>805</right>
+							<bottom>129</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>criterion</column>
+							</properties>
+							<name>Criterion</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>weighting_value</column>
+							</properties>
+							<name>Weighting</name>
+							<width>84</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>option_text</column>
+							</properties>
+							<name>Option</name>
+							<width>438</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>true</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>pk_auto_id</column>
+							</properties>
+							<name>ID</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>3</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>18</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#cae1ee</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<highlightStyle>1</highlightStyle>
+							<borderColor>#d3c9b6</borderColor>
+							<sqlSource>swdata</sqlSource>
+							<table>ila_option</table>
+							<listFilter>pids=-1</listFilter>
+							<storedQuery>common.load_by_pkautoid</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_selected_list2</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>15</index>
+						<caption>The current selected values</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>14</top>
+							<left>10</left>
+							<right>168</right>
+							<bottom>29</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>true</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_history</name>
+						<type>EventButton</type>
+					</general>
+					<appearance>
+						<index>16</index>
+						<caption>History</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>12</top>
+							<left>725</left>
+							<right>805</right>
+							<bottom>32</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_cancel</name>
+						<type>EventButton</type>
+					</general>
+					<appearance>
+						<index>17</index>
+						<caption>Cancel</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>517</top>
+							<left>720</left>
+							<right>800</right>
+							<bottom>537</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded(bDataReloaded)
+{
+	// TODO: Add your event handler code here
+	_swdoc.strSelectedKeys = _swdoc.GetArg("ila_options");
+	_swdoc.appcode = _swdoc.GetArg("appcode");
+	_swdoc.usage_area = _swdoc.GetArg("usage_area");
+	_swdoc.changeRisk = _swdoc.GetArg("changeRisk");
+	
+	app._evi(_swdoc.MF().btn_history, !(_swdoc.GetArg("mode") == "log form"))
+
+	if (_swdoc.strSelectedKeys != "")
+	{
+		app._slf(_swdoc.MF().sl_current_ila_options, "pids=" + _swdoc.strSelectedKeys);
+	}
+	
+	// F0111914 Need to cater for different Usage options
+	switch (_swdoc.usage_area)
+	{
+		case "Change Log Call Form":
+			_swdoc.boolEnforceEachCriterion = app.g.ila_changelogcall_enforce_each_criterion();
+			// Check if the ILA can be altered when this form is launched from the Change Details Form. This is based on Application Right
+			var boolAlterILA = app.itsm.can_alter_ila();
+		break;
+		
+		case "Release Risk":
+			_swdoc.boolEnforceEachCriterion = true;
+			var boolAlterILA = app.itsm.release_can_alter_ila();
+			app._evi(_swdoc.MF().lbl_lead_time, false);
+			app._evi(_swdoc.MF().eb_lead_time, false);
+		break;
+	}
+	// F0111914 EOF
+	
+	// If Risk Assessment is selected, then check for canalterrights against Change Management
+	if (_swdoc.changeRisk)
+	{
+		var boolAlterILA = app.itsm.can_alter_ila();
+	}
+	
+	//--F0101061
+	if(!_swdoc.boolEnforceEachCriterion)
+		app._ete(_swdoc.MF().lb_selected_list1 , "Selecting a second Option for a Criterion will clear the first selection.");
+		
+	if ((_swdoc.GetArg("mode") == "details form") && (!boolAlterILA))
+	{
+		app._een(_swdoc.MF().btnApply, false);
+		app._een(_swdoc.MF().sl_ila_options, false);
+		app._een(_swdoc.MF().btn_clear_selected, false);
+	}
+	
+	// Set the filter of the list based on the contents of the selected keys
+	var strFilter = "_ac=1&_swc_usage_area="+_swdoc.usage_area;
+	app._slf(_swdoc.MF().sl_ila_options , strFilter);	
+	
+	_swdoc.MF().SetTimer(101, 200);
+	_swdoc.MF().sl_ila_options.Refresh();
+	_swdoc.MF().sl_current_ila_options.Refresh();
+	
+	//Check the Options which have already been selected
+	var arrSelectedKeys = _swdoc.strSelectedKeys.split(",");
+	for (x in arrSelectedKeys)
+	{
+		app.g.sqllist_checkrow_byvalue(_swdoc.MF().sl_ila_options, arrSelectedKeys[x], 1);
+	}
+	
+	// Update the Weighting
+	_swdoc.updateWeighting();
+	
+	// Update Level Impact
+	_swdoc.updateImpactLevel();
+
+	_swdoc.arrCriteriaDetails = app.g.get_ILA_criteria_desc(_swdoc.appcode, _swdoc.usage_area);
+	
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_ila_options_OnItemDoubleClicked</name>
+						<code>
+							<![CDATA[sl_ila_options_OnItemDoubleClicked(nRow, nCol)
+{
+	// TODO: Add your event handler code here
+	return false; // no requirement to enable viewing of the selected entry
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnApply_OnPressed</name>
+						<code>
+							<![CDATA[btnApply_OnPressed()
+{
+	// TODO: Add your event handler code here
+	var strTempSelectedKeys = app.g.sl_getchecked_valuesdel(_swdoc.MF().sl_ila_options, "pk_auto_id", ",", "", false);
+	// DTH: Check if we need to enforce the selection of one option for each and every Criteria
+	if (_swdoc.boolEnforceEachCriterion)
+	{
+		var arrTempSelectedKeys = strTempSelectedKeys.split(",");
+		if (arrTempSelectedKeys.length < _swdoc.arrCriteriaDetails.length)
+		{
+			MessageBox("One Option must be selected for each available Criterion");
+			return;
+		}
+	}
+	_swdoc.strSelectedKeys = strTempSelectedKeys;
+	_swdoc.boolApplied = true;
+    _swdoc.CloseForm();
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_ila_options_OnItemChecked</name>
+						<code>
+							<![CDATA[sl_ila_options_OnItemChecked(nRow, bChecked)
+{
+	// TODO: Add your event handler code here
+	// DTH: If an Option has bee checked, we need to clear any other checked options for the same Criterion
+	if (bChecked)
+	{
+		// get the Criterion for the current row
+		var strCriterion = app.g.sl_getrawcolvalue(_swdoc.MF().sl_ila_options, nRow, "criterion");
+		
+		// loop through the list. if the Criterion matches the newly checked row and the row is different, then the check should be cleared
+		for (var x=0;x<_swdoc.MF().sl_ila_options.rowCount();x++)
+		{
+			if (x == nRow)
+				continue; // leave the recently checked option
+			if (app.g.sl_getrawcolvalue(_swdoc.MF().sl_ila_options, x, "criterion") == strCriterion)
+				_swdoc.MF().sl_ila_options.SetRowChecked(x, false);
+		}
+	}
+	
+	_swdoc.updateWeighting(); // Update the Weighting
+	
+	_swdoc.updateImpactLevel(); // Update the Impact Level
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_clear_selected_OnPressed</name>
+						<code>
+							<![CDATA[btn_clear_selected_OnPressed()
+{
+	// TODO: Add your event handler code here
+	
+	for (var x=0;x<_swdoc.MF().sl_ila_options.rowCount();x++)
+	{
+		_swdoc.MF().sl_ila_options.SetRowChecked(x, false);
+	}
+		
+	// Update the Weighting
+	_swdoc.updateWeighting();
+	
+	// Update Level Impact
+	_swdoc.updateImpactLevel(); 
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_ila_options_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_ila_options_OnItemSelected(nRow)
+{
+	// TODO: Add your event handler code here
+	app._eva(_swdoc.MF().eb_option_desc, app.g.sl_getrawcolvalue(_swdoc.MF().sl_ila_options, nRow, "description"));
+	
+	var strCriterion = app.g.sl_getrawcolvalue(_swdoc.MF().sl_ila_options, nRow, "criterion");
+	app._eva(_swdoc.MF().eb_criterion_desc, _swdoc.arrCriteriaDetails[strCriterion]);
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>OnTimer</name>
+						<code>
+							<![CDATA[OnTimer(nTimer)
+{
+	// TODO: Add your event handler code here
+	if (nTimer == 101)  
+	{
+		_swdoc.MF().KillTimer(101);
+		_swdoc.MF().sl_ila_options.SetRowSelected(0);
+	}
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>eb_impact_level_OnLeftClick</name>
+						<code>
+							<![CDATA[eb_impact_level_OnLeftClick()
+{
+	// TODO: Add your event handler code here
+
+
+	return false; // effectively makes this a read only field and it still displays with normal black text
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>eb_lead_time_OnLeftClick</name>
+						<code>
+							<![CDATA[eb_lead_time_OnLeftClick()
+{
+	// TODO: Add your event handler code here
+
+
+	return false; // effectively makes this a read only field and it still displays with normal black text
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_cancel_OnPressed</name>
+						<code>
+							<![CDATA[btn_cancel_OnPressed()
+{
+	// TODO: Add your event handler code here
+
+    _swdoc.CloseForm();
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_current_ila_options_OnItemDoubleClicked</name>
+						<code>
+							<![CDATA[sl_current_ila_options_OnItemDoubleClicked(nRow, nCol)
+{
+	// TODO: Add your event handler code here
+
+// No edit form
+return false;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_history_OnPressed</name>
+						<code>
+							<![CDATA[btn_history_OnPressed()
+{
+	// TODO: Add your event handler code here
+	var strURL = "callref="+_swdoc.GetArg("callref")+"&usage_area=" + _swdoc.usage_area;
+	app.OpenForm("EfILACallHistory", strURL, false, function(oRes)
+	{
+	
+	});
+
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

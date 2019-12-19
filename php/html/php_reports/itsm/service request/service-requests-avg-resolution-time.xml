@@ -1,0 +1,40 @@
+<report title="Service Request Avg Resolution Time" reportstyle="list" dsn="swdata" uid="" pwd="">
+	<columns>
+		<column dbname="description" dbtable="config_itemi" level="1">Service Name</column>
+		<aggregate dbname="callref" dbtable="opencall" aggregate="1" aggFunction="Count" graph="1" level="1">Total Calls</aggregate>
+		<freetext dbname="Avg_Resolution_Time" graph='1' level="1" conversion="hhmmss">cast(avg(opencall.fix_time) as char(20))</freetext>
+		<column dbname="callref" dbtable="opencall" conversion="callref" level="2">Call Reference</column>
+		<column dbname="logdatex" dbtable="opencall" conversion="customerdate" level="2">Log Date</column>
+		<column dbname="status" dbtable="opencall" conversion="callstatus" level="2">Status</column>
+		<column dbname="cust_name" dbtable="opencall" conversion="" level="2">Customer</column>
+	</columns>
+	<tables>
+		<table name="opencall" type="master"/>
+		<table name="sc_folio" type="related" join_type="left" join="sc_folio.fk_cmdb_id = opencall.itsm_fk_service"/>
+		<table name="config_itemi" type="related" join_type="left" join="sc_folio.fk_cmdb_id = config_itemi.pk_auto_id"/>
+	</tables>
+	<criteria>
+		<userinput type="daterange" binding="opencall.logdatex" int="1" op="=">
+			<prompt>Requests logged on and between</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.fk_company_id" dsn="swdata" dbtable="opencall" keycol="fk_company_id" txtcol="companyname" filter=" where fk_company_id IS NOT NULL  and fk_company_id &lt;&gt;'' group by opencall.fk_company_id,opencall.companyname" int="0" op="=">
+			<prompt>Organisation</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.site" dsn="swdata" dbtable="site" keycol="site_name" txtcol="site_name" filter="" int="0" op="=">
+			<prompt>Site</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.suppgroup" dsn="swdata" dbtable="opencall" keycol="suppgroup" txtcol="suppgroup" filter=" group by opencall.suppgroup"  int="0" op="=">
+			<prompt>Support Group</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.owner" dsn="swdata" dbtable="opencall" keycol="owner" txtcol="owner" filter=" where opencall.owner IS NOT NULL and opencall.owner &lt;&gt;''  group by opencall.owner   " int="0" op="=">
+			<prompt>Analyst</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.probcode"  dsn="swdata" dbtable="pcdesc" keycol="code" txtcol="info" filter="" int="0" op="=">
+			<prompt>Profile Name</prompt>
+		</userinput>
+		<userinput type="strpicklist" binding="opencall.status" items="16=>Closed|6=>Resolved"  dsn="swdata" dbtable="pcdesc" keycol="code" txtcol="info" filter="" int="0" op="=">
+			<prompt>Status</prompt>
+		</userinput>
+		<static>opencall.callclass='Service Request' AND opencall.status in (6,16,18) and opencall.appcode IN (![$GLOBALS['datasetfilterlist']]!)</static>
+	</criteria>
+</report>

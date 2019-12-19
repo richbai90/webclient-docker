@@ -1,0 +1,118 @@
+<?php
+	//-- increment this for each release - this will mean important js files will be re-cached in browsers
+	define("_CACHEFILEVERSION","2017_11_14_2_0_4_QA_1"); 
+
+	define("_DEVMODE",true);
+	define("_QAMODE",true);
+	define("_VERSION", " - 2.0.5");
+	define("_SERVER_NAME", "host.docker.internal");	
+	define("_INSTANCE_NAME","");
+	// supporting definitions for running in docker
+	define("_SW_WWW_PATH", "swsupport/");
+	define("_SWFS_WC_PATH", "/var/www/html/webclient/");
+	define("_SWFS_INSTALL_PATH", "/usr/local/lib/sw/");
+	define("_SWFS_HTML_PATH", "/var/www/html/swsupport/");
+
+	define("_LOG_WC_SQL_ACTIVITY",false);
+	define("_LOG_WC_XMLMC_ACTIVITY",false);
+	define("_LOG_WC_XMLMC_RESPONSE",false);
+	define("_LOG_WC_5005_ACTIVITY",false);
+	define("_LOG_WC_SERVICE_ACTIVITY",false);
+	define("_ORACLE_CASE_INSENSITIVE",true);
+
+	//-- security options - if your webclient server is accessible outside of your intranet then switch these on.
+	define("_SECURITY_CSRF_ON",true); //-- switch on/off csrf token checking
+	define("_SECURITY_URLPARAMS_ON",false); //-- switch on/off parameter cheking for defined urls
+
+	//-- SHOW DISCLAIMER IMAGE (client/images/disclaimer.png)
+	define("_WC_SHOWDISCLAIMER",false);
+
+	//-- SHOW SECURITY NOTE IMAGE (client/images/securitynotice.png)
+	define("_WC_SHOWSECURITYNOTES",false);
+
+
+	//-- SSPI
+	//define("_WC_TRUSTEDLOGON",true); 
+	//-- ENABLE IF USING UPN
+	//define("_WC_UPN_SUPPORT",true);  // Use fully qualified login id (user@domain.com)
+	//define("_WC_TOPLEVEL_DOMAIN","domain.com");
+	//define("_WC_USE_REMOTE_DOMAIN",true); //-- USE DOMAIN SPECIFIED BY REMOTE USER  VARIABLE
+	//-- EOF SSPI
+
+	//-- enable when running on remote webserver (has to use apache reverse proxy - http://httpd.apache.org/docs/2.1/mod/mod_proxy.html)
+	//-- set _proxyport typically to 80 for http and 443 for https or to whatever the proxy server port is - this is required in order to support swjs session.httpPort variable
+	//define("_PROXYURL","http://192.168.0.106/webclient"); 
+	//define("_PROXYPORT","80"); 
+
+	//-- and add below to apache conf file - replace <swserver> with name or ip of sw server
+	//-- 
+	/*
+		ProxyPass /webclient http://<swserver>/sw/webclient
+		ProxyPassReverse /webclient http://<swserver>/sw/webclient
+		ProxyPass /sw http://<swserver>/sw
+		ProxyPassReverse /sw http://<swserver>/sw
+		ProxyRequests Off
+	*/
+
+	// Drop-in replacement for apache_request_headers() when it's not available
+if(!function_exists('apache_request_headers')) {
+	function apache_request_headers() {
+		static $arrHttpHeaders;
+		if (!$arrHttpHeaders) {
+			// Based on: http://www.iana.org/assignments/message-headers/message-headers.xml#perm-headers
+			$arrCasedHeaders = array(
+				// HTTP
+				'Dasl'             => 'DASL',
+				'Dav'              => 'DAV',
+				'Etag'             => 'ETag',
+				'Mime-Version'     => 'MIME-Version',
+				'Slug'             => 'SLUG',
+				'Te'               => 'TE',
+				'Www-Authenticate' => 'WWW-Authenticate',
+				// MIME
+				'Content-Md5'      => 'Content-MD5',
+				'Content-Id'       => 'Content-ID',
+				'Content-Features' => 'Content-features',
+			);
+			$arrHttpHeaders = array();
+			foreach($_SERVER as $strKey => $mixValue) {
+				if('HTTP_' !== substr($strKey, 0, 5)) {
+					continue;
+				}
+				$strHeaderKey = strtolower(substr($strKey, 5));
+				if(0 < substr_count($strHeaderKey, '_')) {
+					$arrHeaderKey = explode('_', $strHeaderKey);
+					$arrHeaderKey = array_map('ucfirst', $arrHeaderKey);
+					$strHeaderKey = implode('-', $arrHeaderKey);
+				}
+				else {
+					$strHeaderKey = ucfirst($strHeaderKey);
+				}
+				if(array_key_exists($strHeaderKey, $arrCasedHeaders)) {
+					$strHeaderKey = $arrCasedHeaders[$strHeaderKey];
+				}
+				$arrHttpHeaders[$strHeaderKey] = $mixValue;
+			}
+			/** in case you need authorization and your hosting provider has not fixed this for you:
+				* VHOST-Config: 
+				* FastCgiExternalServer line needs    -pass-header Authorization
+				*
+				* .htaccess or VHOST-config file needs: 
+				  SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+				* to add the Authorization header to the environment for further processing
+			 */
+			if (isset($arrHttpHeaders['Authorization']) && $arrHttpHeaders['Authorization']) {
+				// in case of Authorization, but the values not propagated properly, do so :)
+				if (!isset($_SERVER['PHP_AUTH_USER'])) {
+					list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':' , base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
+				}
+			}
+		}
+		return $arrHttpHeaders;
+	}
+	// execute now so other scripts have little chance to taint the information in $_SERVER
+	// the data is cached, so multiple retrievals of the headers will not cause further impact on performance.
+	apache_request_headers();
+}
+
+?>

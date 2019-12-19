@@ -1,0 +1,34 @@
+<report title="Forward Schedule of Changes" reportstyle="list" dsn="swdata" uid="" pwd="">
+	<columns>
+		<column dbname="callref" dbtable="opencall" conversion="callref" level="1">Call Reference</column>
+		<column dbname="status" dbtable="opencall" conversion="callstatus" level="1">Status</column>
+		<column dbname="itsm_schedstartx" dbtable="opencall" conversion="customerdate" level="1">Scheduled From</column>
+		<column dbname="itsm_schedendx" dbtable="opencall" conversion="customerdate" level="1">Scheduled To</column>
+		<column dbname="suppgroup" dbtable="opencall" conversion="" level="1">Support Group</column>
+		<column dbname="prob_text" dbtable="opencall" conversion="" level="1">Description</column>
+	</columns>
+	<tables>
+		<table name="opencall" type="master"/>
+	</tables>
+	<criteria>
+		<userinput type="daterange" binding="opencall.logdatex" int="1" op="=">
+			<prompt>Requests logged on and between</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.fk_company_id" dsn="swdata" dbtable="opencall" keycol="fk_company_id" txtcol="companyname" filter=" where fk_company_id IS NOT NULL  and fk_company_id &lt;&gt;'' group by opencall.fk_company_id,opencall.companyname" int="0" op="=">
+			<prompt>Organisation</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.site" dsn="swdata" dbtable="opencall" keycol="site" txtcol="site" filter=" where site IS NOT NULL  group by opencall.site" int="0" op="=">
+			<prompt>Site</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.suppgroup" dsn="swdata" dbtable="opencall" keycol="suppgroup" txtcol="suppgroup" filter=" group by opencall.suppgroup" int="0" op="=">
+			<prompt>Support Group</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.owner" dsn="swdata" dbtable="opencall" keycol="owner" txtcol="owner" filter=" where opencall.owner IS NOT NULL and opencall.owner &lt;&gt;''  group by opencall.owner   " int="0" op="=">
+			<prompt>Analyst</prompt>
+		</userinput>
+		<userinput type="strpicklist" binding="opencall.status"  items="1=>Pending|2=>Unassigned|3=>Unaccepted|4=>On Hold|5=>Off Hold|6=>Resolved|7=>Deferred|8=>Incoming|9=>Escalated Owner|10=>Escalated Group|11=>Escalated All|16=>Closed|18=>Closed Chargable" int="0" op="=">
+			<prompt>Call Status</prompt>
+		</userinput>
+		<static>opencall.callclass='Change Request' and opencall.status not in (6,16,17,18) and opencall.appcode='ITSMF'</static>
+	</criteria>
+</report>

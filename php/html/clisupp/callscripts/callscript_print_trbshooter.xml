@@ -1,0 +1,115 @@
+<CallScriptQuestionTemplate>
+	<Group name="Print Troubleshooter">
+		<Group name="Radio buttons">
+			<Question name="What problem are you having?" type="vertradiobuttons" text="What problem are you having?">
+				<choice>My plotter won't print. </choice>
+				<choice>My network server printer won't print.</choice>
+				<choice>A printer I connect to through Transmission Control Protocol/Internet Protocol (TCP/IP) won't print. </choice>
+				<choice>A printer I connect to through a universal naming convention (UNC) server name won't print.</choice>
+				<choice>My local printer won't print.</choice>
+			</Question>
+			
+			<Question name="Is your printer driver corrupted?" type="vertradiobuttons" text="Is your printer driver corrupted?">
+				<choice>Yes, I can print from my program.</choice>
+				<choice>No, I can't print from my program.</choice>
+				<choice>I want to skip this step and try something else.</choice>
+			</Question>
+			
+			<Question name="Can you print after creating a local printer port?" type="vertradiobuttons" text="Can you print after creating a local printer port?">
+				<choice>Yes, I can print from my program.</choice>
+				<choice>No, I can't print from my program, nor can I successfully print a test page.</choice>
+				<choice>I want to skip this step and try something else.</choice>
+			</Question>
+			
+			<Question name="Can you ping the IP address of the printer?" type="vertradiobuttons" text="Can you ping the IP address of the printer?">
+				<choice>No, I can't ping the IP address of the printer. I'll contact my network administrator to find out if I have a network connectivity problem.</choice>
+				<choice>Yes, I can ping the IP address of the printer.</choice>
+				<choice>I want to skip this step and try something else.</choice>
+			</Question>			
+		</Group>		
+	</Group>
+	
+	
+	<Group name="Hardware Troubleshooter">
+		<Group name="Combobox">
+			<Question name="What problem are you having?" type="dropdownlist" text="What problem are you having?" >
+				<choice>I need to resolve a hardware conflict on my computer. </choice>
+				<choice>My CD-ROM drive doesn't work.</choice>
+				<choice>I'm having a problem with my camera or scanner.</choice>
+				<choice>I'm having a problem with a hard disk drive or floppy disk drive.</choice>
+				<choice>I'm having a problem connecting an infrared device.</choice>
+				<choice>I'm having a problem with a joystick or other game device.</choice>
+				<choice>I'm having a problem with my keyboard.</choice>
+				<choice>I'm having a problem with my mouse.</choice>
+				<choice>My network adapter doesn't work.</choice>
+				<choice>I'm having a problem with a Universal Serial Bus (USB) device.</choice>
+				<choice>Windows doesn't detect my modem.</choice>
+				<choice>My sound card doesn't work.</choice>
+				<choice>I'm having a problem with my display adapter.</choice>				
+			</Question>
+			
+			<Question name="Is there a box with resource settings on the Resources tab? " type="dropdownlist" text="Is there a box with resource settings on the Resources tab?" >
+				<choice>I see a Resource settings box.</choice>
+				<choice>I see a Set Configuration Manually button.</choice>
+			</Question>
+			
+			
+			<Question name="What message appears above the button?" type="dropdownlist" text="What message appears above the button?" >
+				<choice>Yes. I'll contact the device manufacturer for more assistance.</choice>
+				<choice>No, the text mentions a different problem.</choice>
+				<choice>I don't know.</choice>
+			</Question>			
+		</Group>
+	</Group>
+	
+	
+	<Group name="System Setup Troubleshooter">
+		<Group name="Horzonital buttons">
+			<Question name="What problem are you having?" type="horzradiobuttons" text="What problem are you having?" >
+				<choice>I'm having intermittent problems running Setup.</choice>
+				<choice>Setup fails when my computer tries to copy files. </choice>
+			</Question>
+			<Question name="Do you need to make your system cache memory unavailable during Setup?" type="horzradiobuttons" text="Do you need to make your system cache memory unavailable during Setup?" >
+				<choice>Yes, I can run Setup.</choice>
+				<choice>No, I can't run Setup.</choice>
+			</Question>
+			<Question name="Are problems with your RAM chips preventing you from completing Setup?" type="horzradiobuttons" text="Are problems with your RAM chips preventing you from completing Setup?" >
+				<choice>Yes, I can run Setup.</choice>
+				<choice>No, I can't run Setup. Or, my RAM chips are working and in the proper order.</choice>
+			</Question>
+		</Group>
+	</Group>
+	
+	<Group name="Display Troubleshooter">
+		<Group name="Multi Select List">
+			<Question name="What problem are you having?" type="multiselectlist" text="What problem are you having?" >
+				<choice>My display flickers.</choice>
+				<choice>My display is garbled.</choice>
+				<choice>I don't know.</choice>
+			</Question>
+		</Group>
+	</Group>
+	
+	<Group name="Display Troubleshooter">	
+		<Group name="Horizontal Check Boxes">
+			<Question name="What problem are you having?" type="horzcheckboxes" text="What problem are you having?" >
+				<choice>There's no sound coming from my left speaker.</choice>
+				<choice>There's no sound coming from my right speaker.</choice>
+			</Question>			
+		</Group>
+	</Group>
+	
+	<Group name="Remote Access Troubleshooter">	
+		<Group name="Vertical Check Boxes">
+			<Question name="What problem are you having?" type="vertcheckboxes" text="What problem are you having?" >
+				<choice>My remote server isn't answering my call.</choice>
+				<choice>I unexpectedly get disconnected from the server.</choice>
+			</Question>
+			<Question name="Is your modem dialing the correct number?" type="vertcheckboxes" text="Is your modem dialing the correct number?" >
+				<choice>No, I can't connect to the server.</choice>
+				<choice>I already have a dial-up connection that is dialing the correct number.</choice>
+			</Question>
+		</Group>
+	</Group>
+</CallScriptQuestionTemplate>
+

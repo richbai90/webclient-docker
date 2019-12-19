@@ -1,0 +1,25 @@
+<!-- used to check data types for php variables that are used in php esp when used for sql statements - helps limit sqlinj -->
+<variablechecks>
+		<!-- Variable Checks -->
+		<check id="viewcallref">numericonly</check>
+		<check id="in_callref">numericonlynotblank</check>
+		<check id="in_udid">numericonlynotblank</check>
+		<check id="in_status">numericonly</check>
+		<check id="in_callclass">validcallclass</check>
+		<check id="orderby">alphaonly</check>
+		<!-- TK field Checks -->
+		<field id="callref">numericonly</field>
+		<field id="sessionid">sessionid</field>
+		<!-- TK Additions for 3.4.15 -->
+		<check id="in_fileid">numericonlynotblank</check>
+		<check id="docref">validkbdocref</check><!--Doc Ref -->
+		<check id="in_ciid">numericonlynotblank</check>
+		<callclass>Incident</callclass>
+		<callclass>Change Request</callclass>
+		<callclass>B.P Task</callclass>
+		<callclass>Known Error</callclass>
+		<callclass>OLA Task</callclass>
+		<callclass>Problem</callclass>
+		<callclass>Release Request</callclass>
+		<callclass>Service Request</callclass>
+</variablechecks>

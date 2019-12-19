@@ -1,0 +1,3174 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>sla_escalation_emails</name>
+			<title>Escalation Reference</title>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>true</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>escalation_reference</name>
+				<type>Main Details Table</type>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var _swdoc = (IsObjectDefined("_bHtmlWebClient"))?top:_swdoc;
+
+var SwDataTableList = "";
+var SwCacheTableList = "";
+
+
+function EscRef()
+{
+	return _swdoc.escalation_reference;
+}
+
+
+function MF()
+{
+	return mainform;
+}
+//-- F0091281
+function check_edit_rights()
+{
+	if(!app.session.HaveAppRight(ADMIN_SETTINGS, SLM_EDIT, app.session.dataDictionary))
+	{
+		app.global.MessageBox('Insufficient privileges to perform operation.\n\nYou have been denied the: [Can edit items in Service Level Management] permission.\n\nPlease contact your Supportworks system administrator', 16);
+		return false;	
+	}
+	if(!app.session.HaveRight(ANALYST_RIGHT_C_GROUP,ANALYST_RIGHT_C_CANMODIFYSLA))
+	{
+		app.global.MessageBox('Insufficient privileges to perform operation.\n\nYou have been denied the: [Can modify SLAs] permission.\n\nPlease contact your Supportworks system administrator', 16);
+		return false;	
+	}
+	return true;
+}
+function setup_fields(){
+
+
+	//###20120618 - disable everything
+	var blnSpecificSelected = false;
+	var blnCallRecordSelected = (1 == _swdoc.EscRef().call_record);
+	var blnMatchWithSelected = (1 == _swdoc.EscRef().match_with);
+	var blnDiscoverSelected = (1 == _swdoc.EscRef().discover_data);
+	if (!(blnCallRecordSelected || blnMatchWithSelected || blnDiscoverSelected)){
+		blnSpecificSelected = true;
+		if (1!=_swdoc.EscRef().flg_specific) _swdoc.EscRef().flg_specific = 1;
+	}
+	//Set specific email field to mandatory
+	_een(_swdoc.MF().lb_specificemail, blnSpecificSelected);
+	_ema(_swdoc.MF().lb_specificemail, blnSpecificSelected);
+	if (!(blnSpecificSelected)){
+		if (""!=_swdoc.EscRef().specific_email) _swdoc.EscRef().specific_email='';
+	};
+
+	
+	//Set all other fields in TAB1 to disabled as they shouldnt be used
+	_een(_swdoc.MF().lb_callrecordfield, !(blnSpecificSelected));
+	_ema(_swdoc.MF().lb_callrecordfield, !(blnSpecificSelected));
+	
+
+	if (blnSpecificSelected){
+		if (""!=_swdoc.EscRef().call_record_field) _swdoc.EscRef().call_record_field='';
+	}
+
+
+	var boolShowLeft = (blnDiscoverSelected || blnMatchWithSelected);
+	_een(_swdoc.MF().lb_discover_leftdb, boolShowLeft); 
+	_ema(_swdoc.MF().lb_discover_leftdb, boolShowLeft); 
+	_een(_swdoc.MF().lb_discover_lefttable, boolShowLeft); 
+	_ema(_swdoc.MF().lb_discover_lefttable, boolShowLeft); 
+	_een(_swdoc.MF().lb_discover_leftfield, boolShowLeft); 
+	_ema(_swdoc.MF().lb_discover_leftfield, boolShowLeft); 
+	_een(_swdoc.MF().lb_discover_leftfieldtouse, boolShowLeft); 
+	_ema(_swdoc.MF().lb_discover_leftfieldtouse, boolShowLeft);
+	_een(_swdoc.MF().tb_cond, boolShowLeft);
+	_een(_swdoc.MF().fld_multi_mail, boolShowLeft);
+
+	if (!(boolShowLeft)){
+		if (""!=_swdoc.EscRef().discover_data_lefttable) _swdoc.EscRef().discover_data_lefttable = '';
+		if (""!=_swdoc.EscRef().discover_data_leftfield) _swdoc.EscRef().discover_data_leftfield = '';
+		if (""!=_swdoc.EscRef().discover_data_leftfield_to_use) _swdoc.EscRef().discover_data_leftfield_to_use = '';
+	}
+	 
+	_een(_swdoc.MF().lb_discover_rightdb, blnDiscoverSelected); 
+	_ema(_swdoc.MF().lb_discover_rightdb, blnDiscoverSelected); 
+	_een(_swdoc.MF().lb_discover_righttable, blnDiscoverSelected); 
+	_ema(_swdoc.MF().lb_discover_righttable, blnDiscoverSelected); 
+	_een(_swdoc.MF().lb_discover_rightfield, blnDiscoverSelected); 
+	_ema(_swdoc.MF().lb_discover_rightfield, blnDiscoverSelected); 
+	_een(_swdoc.MF().lb_discover_rightfieldtouse, blnDiscoverSelected); 
+	_ema(_swdoc.MF().lb_discover_rightfieldtouse, blnDiscoverSelected);
+	
+	_een(_swdoc.MF().tb_cond_right, blnDiscoverSelected && !(_swdoc.EscRef().discover_data_leftdb == _swdoc.EscRef().discover_data_rightdb));
+	
+	
+	if (!(blnDiscoverSelected)){
+		if (""!=_swdoc.EscRef().discover_data_righttable) _swdoc.EscRef().discover_data_righttable = '';
+		if (""!=_swdoc.EscRef().discover_data_rightfield) _swdoc.EscRef().discover_data_rightfield = '';
+		if (""!=_swdoc.EscRef().discover_data_rightfield_use) _swdoc.EscRef().discover_data_rightfield_use = '';
+	}
+	
+	_swdoc.UpdateFormFromData();
+
+
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnSaveData</name>
+					<code>
+						<![CDATA[OnSaveData()
+{
+	// TODO: Add your event handler code here
+	if(!_swdoc.check_edit_rights())
+		return false;
+
+	return true;
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>612</width>
+				<height>588</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>lb_role</name>
+						<type>Field</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>0</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>84</left>
+							<right>299</right>
+							<bottom>58</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.role</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>swlists</distinctTable>
+							<distinctColumn>value</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<listFilter>list_id=&apos;ROLES&apos;</listFilter>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_mailbox</name>
+						<type>Field</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>1</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>382</left>
+							<right>597</right>
+							<bottom>58</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.email_mailbox</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_template</name>
+						<type>Field</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>2</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>60</top>
+							<left>382</left>
+							<right>597</right>
+							<bottom>78</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.email_template</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<sqlSource>syscache</sqlSource>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_failure_email</name>
+						<type>Field</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>3</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>80</top>
+							<left>84</left>
+							<right>559</right>
+							<bottom>98</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.failure_email</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>E-mail Address</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<imageList>Helpdesk Icons</imageList>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_specific</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>4</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>129</top>
+							<left>25</left>
+							<right>145</right>
+							<bottom>145</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.flg_specific</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<flagItems>Specific^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>chk_call_record</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>5</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>149</top>
+							<left>25</left>
+							<right>145</right>
+							<bottom>165</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.call_record</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<flagItems>Call Record^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>chk_match_with</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>6</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>169</top>
+							<left>25</left>
+							<right>117</right>
+							<bottom>185</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.match_with</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<flagItems>Match With^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_discover</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>7</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>189</top>
+							<left>25</left>
+							<right>156</right>
+							<bottom>205</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.discover_data</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<flagItems>Use Discover Method^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_specificemail</name>
+						<type>Field</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>8</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>129</top>
+							<left>259</left>
+							<right>547</right>
+							<bottom>147</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.specific_email</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>E-mail Address</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<imageList>Helpdesk Icons</imageList>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_callrecordfield</name>
+						<type>Field</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>9</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>149</top>
+							<left>259</left>
+							<right>588</right>
+							<bottom>167</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.call_record_field</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>swlists</distinctTable>
+							<distinctColumn>value</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<listFilter>list_id=&apos;Roles&apos;</listFilter>
+							<extraOptions>Specific</extraOptions>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_match_condition</name>
+						<type>Field</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>10</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>169</top>
+							<left>259</left>
+							<right>588</right>
+							<bottom>205</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.match_condition_value</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>true</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>2</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<hintText>eg: &amp;[opencall_match.status] = 4 OR &apos;&amp;[opencall_match.suppgroup]&apos; = &apos;1STLINE&apos; will only send if a call is on hold or with 1st line. [Please use the full ampersand notation with opencall_match (as in the example) for this to work - blank will always be true]</hintText>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_discover_leftdb</name>
+						<type>Field</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>11</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>252</top>
+							<left>35</left>
+							<right>285</right>
+							<bottom>270</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.discover_data_leftdb</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>swlists</distinctTable>
+							<distinctColumn>value</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<listFilter>list_id=&apos;Roles&apos;</listFilter>
+							<extraOptions>Specific</extraOptions>
+							<defaultValue>swdata</defaultValue>
+							<listItems>swdata|syscache|</listItems>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_discover_lefttable</name>
+						<type>Field</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>12</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>289</top>
+							<left>35</left>
+							<right>285</right>
+							<bottom>307</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.discover_data_lefttable</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>swlists</distinctTable>
+							<distinctColumn>value</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<listFilter>list_id=&apos;Roles&apos;</listFilter>
+							<extraOptions>Specific</extraOptions>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_discover_leftfield</name>
+						<type>Field</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>13</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>326</top>
+							<left>35</left>
+							<right>285</right>
+							<bottom>344</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.discover_data_leftfield</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>swlists</distinctTable>
+							<distinctColumn>value</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<listFilter>list_id=&apos;Roles&apos;</listFilter>
+							<extraOptions>Specific</extraOptions>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_discover_leftfieldtouse</name>
+						<type>Field</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>14</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>363</top>
+							<left>35</left>
+							<right>285</right>
+							<bottom>381</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.discover_data_leftfield_to_use</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>swlists</distinctTable>
+							<distinctColumn>value</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<listFilter>list_id=&apos;Roles&apos;</listFilter>
+							<extraOptions>Specific</extraOptions>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_cond</name>
+						<type>Field</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>15</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>425</top>
+							<left>35</left>
+							<right>285</right>
+							<bottom>532</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.extra_cond</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>true</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>2</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<hintText>eg: lefttable.flg_manager=1 AND lefttable.fk_dept_code LIKE &apos;IT%&apos; [Please note that this will be fed to the database directly, so properly escape characters if need be. Also whatever the actual table name is (given above) USE lefttable instead (the fieldnames should reflect the actual fieldnames).]</hintText>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_discover_rightdb</name>
+						<type>Field</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>16</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>252</top>
+							<left>322</left>
+							<right>572</right>
+							<bottom>270</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.discover_data_rightdb</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>swlists</distinctTable>
+							<distinctColumn>value</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<listFilter>list_id=&apos;Roles&apos;</listFilter>
+							<extraOptions>Specific</extraOptions>
+							<defaultValue>swdata</defaultValue>
+							<listItems>swdata|syscache|</listItems>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_discover_righttable</name>
+						<type>Field</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>17</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>289</top>
+							<left>322</left>
+							<right>572</right>
+							<bottom>307</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.discover_data_righttable</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>swlists</distinctTable>
+							<distinctColumn>value</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<listFilter>list_id=&apos;Roles&apos;</listFilter>
+							<extraOptions>Specific</extraOptions>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_discover_rightfield</name>
+						<type>Field</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>18</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>363</top>
+							<left>322</left>
+							<right>572</right>
+							<bottom>381</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.discover_data_rightfield</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>swlists</distinctTable>
+							<distinctColumn>value</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<listFilter>list_id=&apos;Roles&apos;</listFilter>
+							<extraOptions>Specific</extraOptions>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_discover_rightfieldtouse</name>
+						<type>Field</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>19</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>400</top>
+							<left>322</left>
+							<right>572</right>
+							<bottom>418</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.discover_data_rightfield_use</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>swlists</distinctTable>
+							<distinctColumn>value</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<listFilter>list_id=&apos;Roles&apos;</listFilter>
+							<extraOptions>Specific</extraOptions>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_cond_right</name>
+						<type>Field</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>20</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>425</top>
+							<left>322</left>
+							<right>572</right>
+							<bottom>532</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.right_cond</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>true</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>2</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<hintText>eg: righttable.flg_manager=1 AND righttable.fk_dept_code LIKE &apos;IT%&apos; [Please note that this will be fed to the database directly, so properly escape characters if need be. Also whatever the actual table name is (given above) USE righttable instead (the fieldnames should reflect the actual fieldnames).]</hintText>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_test</name>
+						<type>EventButton</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>21</index>
+						<caption>Test</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>553</top>
+							<left>517</left>
+							<right>597</right>
+							<bottom>579</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Tab2</name>
+						<type>TabControl</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>22</index>
+						<caption>Tab2</caption>
+						<backgroundColor>#ded7ce</backgroundColor>
+						<foregroundColor>#f7f3ef</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>10</top>
+							<left>10</left>
+							<right>606</right>
+							<bottom>583</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<tabStyle>Top</tabStyle>
+					<tabSize>19</tabSize>
+					<items>
+						<item>
+							<name>Role Selection</name>
+							<properties>56=#8aa8e4|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#8aa8e4</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Notes</name>
+							<properties>56=#ffdb75|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#ffdb75</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+					</items>
+					<selectedTextFont  size="8">Arial</selectedTextFont>
+					<selectedTextColor>#000000</selectedTextColor>
+					<deselectedTextColor>#000000</deselectedTextColor>
+					<tabSlopeLeft>2</tabSlopeLeft>
+					<tabSlopeRight>2</tabSlopeRight>
+					<deselectedTabHeightOffset>1</deselectedTabHeightOffset>
+					<tabSpacing>0</tabSpacing>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>23</index>
+						<caption>Role</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>12</left>
+							<right>79</right>
+							<bottom>56</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.role</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>CaptionPanel1</name>
+						<type>CaptionBar</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>true</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>24</index>
+						<caption>Source of Email</caption>
+						<backgroundColor>#f1f1f1</backgroundColor>
+						<foregroundColor>#003366</foregroundColor>
+						<font  size="10" bold="1">Trebuchet (MS)</font>
+						<alignment>Left</alignment>
+						<fillStyle>Vertical Gradient</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>102</top>
+							<left>20</left>
+							<right>597</right>
+							<bottom>551</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#d8d8d8</backgroundColor2>
+							<imageHSpace>10</imageHSpace>
+							<slope>12</slope>
+							<borderColor>#d3c9b6</borderColor>
+							<headerHeight>23</headerHeight>
+							<hasBorder>1</hasBorder>
+							<panelBorderColor>#d3c9b6</panelBorderColor>
+							<fillStyle>0</fillStyle>
+							<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+							<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label2</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>25</index>
+						<caption>Main Call Field</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>149</top>
+							<left>166</left>
+							<right>254</right>
+							<bottom>165</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.call_record_field</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_notes</name>
+						<type>Field</type>
+						<group>Tab2:1</group>
+					</general>
+					<appearance>
+						<index>26</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>20</left>
+							<right>597</right>
+							<bottom>576</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.note</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>swlists</distinctTable>
+							<distinctColumn>value</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+							<listFilter>list_id=&apos;Roles&apos;</listFilter>
+							<extraOptions>Specific</extraOptions>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>captionTitle1</name>
+						<type>CaptionBar</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>true</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>27</index>
+						<caption>Database Linking</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8" bold="1">Trebuchet MS</font>
+						<alignment>Center</alignment>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>211</top>
+							<left>26</left>
+							<right>588</right>
+							<bottom>546</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#d8d8d8</backgroundColor2>
+							<imageHSpace>10</imageHSpace>
+							<slope>0</slope>
+							<borderColor>#d3c9b6</borderColor>
+							<headerHeight>18</headerHeight>
+							<hasBorder>1</hasBorder>
+							<panelBorderColor>#d3c9b6</panelBorderColor>
+							<fillStyle>0</fillStyle>
+							<panelBackgroundColor>#ffffff</panelBackgroundColor>
+							<panelBackgroundColor2>#ffffff</panelBackgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label7</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>28</index>
+						<caption>Left Database</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>236</top>
+							<left>31</left>
+							<right>196</right>
+							<bottom>249</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.discover_data_leftdb</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label8</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>29</index>
+						<caption>Left Table</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>273</top>
+							<left>31</left>
+							<right>196</right>
+							<bottom>286</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.discover_data_lefttable</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label9</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>30</index>
+						<caption>Left Field (to match with Main Call Field)</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>310</top>
+							<left>31</left>
+							<right>292</right>
+							<bottom>323</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.discover_data_leftfield</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label10</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>31</index>
+						<caption>Left Field to Use (contains email if no Right Database)</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>347</top>
+							<left>31</left>
+							<right>292</right>
+							<bottom>360</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.discover_data_leftfield_to_use</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label11</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>32</index>
+						<caption>Right Database</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>236</top>
+							<left>407</left>
+							<right>572</right>
+							<bottom>249</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.discover_data_rightdb</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label12</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>33</index>
+						<caption>Right Table</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>273</top>
+							<left>407</left>
+							<right>572</right>
+							<bottom>286</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.discover_data_righttable</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label13</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>34</index>
+						<caption>Right Field</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>347</top>
+							<left>407</left>
+							<right>572</right>
+							<bottom>360</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.discover_data_rightfield</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label14</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>35</index>
+						<caption>Discover Data Rightfield Use</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>384</top>
+							<left>407</left>
+							<right>572</right>
+							<bottom>397</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.discover_data_rightfield_use</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label1</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>36</index>
+						<caption>Specific Email</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>129</top>
+							<left>180</left>
+							<right>254</right>
+							<bottom>145</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.specific_email</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label21</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>37</index>
+						<caption>Email Mailbox</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>299</left>
+							<right>379</right>
+							<bottom>56</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.email_mailbox</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label22</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>38</index>
+						<caption>Email Template</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>60</top>
+							<left>299</left>
+							<right>379</right>
+							<bottom>76</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.email_template</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_multi_mail</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>39</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>60</top>
+							<left>78</left>
+							<right>251</right>
+							<bottom>76</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.send_multi</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<flagItems>Send to all discovered emails^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label3</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>40</index>
+						<caption>Call Match Condition</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>169</top>
+							<left>139</left>
+							<right>254</right>
+							<bottom>185</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.match_condition_value</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label4</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>41</index>
+						<caption>Failure Email</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>80</top>
+							<left>12</left>
+							<right>79</right>
+							<bottom>96</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>escalation_reference.failure_email</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_match_cols</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>true</toolbarButtonStyle>
+							<cache>true</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>42</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>359</top>
+							<left>290</left>
+							<right>319</right>
+							<bottom>385</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#000000</backgroundColor>
+							<eventButtonIcon>ImageList=Form Layout;IconIndex=6</eventButtonIcon>
+							<eventButtonIconAlign>1</eventButtonIconAlign>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text1</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>43</index>
+						<caption>Conditions:</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="12" bold="1">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>404</top>
+							<left>30</left>
+							<right>230</right>
+							<bottom>418</bottom>
+						</position>
+						<scaling>
+							<top>50</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>50</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnfailcustemail</name>
+						<type>EventButton</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>44</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>78</top>
+							<left>560</left>
+							<right>578</right>
+							<bottom>99</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+							<eventButtonIcon>ImageList=Helpdesk Utility Icons;IconIndex=1</eventButtonIcon>
+							<eventButtonIconAlign>1</eventButtonIconAlign>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnfailanalyststemail</name>
+						<type>EventButton</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>45</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>78</top>
+							<left>580</left>
+							<right>598</right>
+							<bottom>99</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+							<eventButtonIcon>ImageList=Helpdesk Utility Icons;IconIndex=41</eventButtonIcon>
+							<eventButtonIconAlign>1</eventButtonIconAlign>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnspeccustemail</name>
+						<type>EventButton</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>46</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>127</top>
+							<left>549</left>
+							<right>567</right>
+							<bottom>148</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+							<eventButtonIcon>ImageList=Helpdesk Utility Icons;IconIndex=1</eventButtonIcon>
+							<eventButtonIconAlign>1</eventButtonIconAlign>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnspecanalyststemail</name>
+						<type>EventButton</type>
+						<group>Tab2:0</group>
+					</general>
+					<appearance>
+						<index>47</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>127</top>
+							<left>569</left>
+							<right>587</right>
+							<bottom>148</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+							<eventButtonIcon>ImageList=Helpdesk Utility Icons;IconIndex=41</eventButtonIcon>
+							<eventButtonIconAlign>1</eventButtonIconAlign>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>chk_call_record_OnValueChanged</name>
+						<code>
+							<![CDATA[chk_call_record_OnValueChanged(strValue)
+{
+	if (1==strValue){
+		_swdoc.EscRef().flg_specific = 0;
+		//EscRef().call_record = 1;
+		_swdoc.EscRef().match_with = 0;
+		_swdoc.EscRef().discover_data = 0;
+	}
+
+	_swdoc.setup_fields();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>chk_match_with_OnValueChanged</name>
+						<code>
+							<![CDATA[chk_match_with_OnValueChanged(strValue)
+{
+	if (1==strValue){
+		_swdoc.EscRef().flg_specific = 0;
+		_swdoc.EscRef().call_record = 0;
+		//EscRef().match_with = 1;
+		_swdoc.EscRef().discover_data = 0;
+	}
+
+	_swdoc.setup_fields();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded(bDataReloaded)
+{
+	if(!app.session.HaveAppRight(ADMIN_SETTINGS, SLM_VIEW, app.session.dataDictionary)) 
+	{
+		MessageBox("You do not have permission to view SLM items.");
+		_swdoc.CloseForm();
+		return false;
+	}
+	
+	//-- Load List of Opencall columns.
+	var wo = "just to provide nonnull";
+	_swdoc.SwDataTableList = app.g.dd_gettablelist(wo);
+	
+	if (boolNotificationFullCache){
+		_swdoc.SwCacheTableList = app.g.cache_gettablelist();
+	} else {
+		_swdoc.SwCacheTableList = "swanalysts|swanalysts_groups|swgroups"
+	}
+	
+	var strLbData = app.g.dd_getcolumndbnamelist("opencall", false,undefined,undefined,false);
+	_swdoc.MF().lb_callrecordfield.pickList = strLbData;
+
+	//-- Load List of swdata Tables
+
+	var e_template = _swdoc.EscRef().email_template;
+	if(""!=_swdoc.EscRef().email_mailbox){
+		_swdoc.MF().lb_mailbox_OnValueChanged(_swdoc.EscRef().email_mailbox);
+		_swdoc.EscRef().email_template = e_template;
+	}
+	
+
+	if("syscache"==	_swdoc.EscRef().discover_data_leftdb.toLowerCase()){
+		_swdoc.MF().lb_discover_lefttable.pickList = _swdoc.SwCacheTableList;
+		if(""!=_swdoc.EscRef().discover_data_lefttable){
+			strLbData = app.g.cache_getcolumnlisttblename(_swdoc.EscRef().discover_data_lefttable, false,undefined,false);
+			_swdoc.MF().lb_discover_leftfield.pickList = strLbData;
+			_swdoc.MF().lb_discover_leftfieldtouse.pickList = strLbData;
+		}
+	} else {
+		_swdoc.MF().lb_discover_lefttable.pickList = _swdoc.SwDataTableList;
+		if(""!=_swdoc.EscRef().discover_data_lefttable){
+			strLbData = app.g.dd_getcolumndbnamelist(_swdoc.EscRef().discover_data_lefttable, true,undefined,undefined,false);
+			_swdoc.MF().lb_discover_leftfield.pickList = strLbData;
+			_swdoc.MF().lb_discover_leftfieldtouse.pickList = strLbData;
+		}
+	}
+
+
+	if("syscache"==	_swdoc.EscRef().discover_data_rightdb.toLowerCase()){
+		_swdoc.MF().lb_discover_righttable.pickList = _swdoc.SwCacheTableList;
+		if(""!=_swdoc.EscRef().discover_data_righttable){
+			strLbData = app.g.cache_getcolumnlisttblename(_swdoc.EscRef().discover_data_righttable, false,undefined,false);
+			_swdoc.MF().lb_discover_rightfield.pickList = strLbData;
+			_swdoc.MF().lb_discover_rightfieldtouse.pickList = strLbData;
+		}
+	} else {
+		_swdoc.MF().lb_discover_righttable.pickList = _swdoc.SwDataTableList;
+		if(""!=_swdoc.EscRef().discover_data_righttable){
+			strLbData = app.g.dd_getcolumndbnamelist(_swdoc.EscRef().discover_data_righttable, true,undefined,undefined,false);
+			_swdoc.MF().lb_discover_rightfield.pickList = strLbData;
+			_swdoc.MF().lb_discover_rightfieldtouse.pickList = strLbData;
+		}
+	}
+
+	_swdoc.setup_fields();
+	
+	_swdoc.ResetModiedFlag("escalation_reference");
+	
+	_evi(_swdoc.MF().btn_match_cols, !(app.bWebClient));
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_discover_OnValueChanged</name>
+						<code>
+							<![CDATA[fld_discover_OnValueChanged(strValue)
+{
+	if (1==strValue){
+		_swdoc.EscRef().flg_specific = 0;
+		_swdoc.EscRef().call_record = 0;
+		_swdoc.EscRef().match_with = 0;
+		//EscRef().discover_data = 1;
+	}
+
+	_swdoc.setup_fields();
+		
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_discover_lefttable_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_discover_lefttable_OnValueChanged(strValue)
+{
+
+	if(strValue!=''){
+		var strLbData = "";
+		if ("syscache" != _swdoc.MF().lb_discover_leftdb.value.toLowerCase()){
+			strLbData = app.g.dd_getcolumndbnamelist(strValue, true,undefined,undefined,false);
+		} else {
+			strLbData = app.g.cache_getcolumnlisttblename(strValue, false,undefined,false);
+		}
+		_swdoc.MF().lb_discover_leftfield.pickList = strLbData;
+		_swdoc.MF().lb_discover_leftfieldtouse.pickList = strLbData;
+		_swdoc.EscRef().discover_data_leftfield = "";
+		_swdoc.EscRef().discover_data_leftfield_to_use = "";
+		_swdoc.EscRef().extra_cond = "";
+		_swdoc.UpdateFormFromData();
+	}
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_discover_righttable_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_discover_righttable_OnValueChanged(strValue)
+{
+
+	if(strValue!=''){
+		var strLbData = "";
+		if ("syscache" != _swdoc.MF().lb_discover_rightdb.value.toLowerCase()){
+			strLbData = app.g.dd_getcolumndbnamelist(strValue, true,undefined,undefined,false);
+		} else {
+			strLbData = app.g.cache_getcolumnlisttblename(strValue, false,undefined,false);
+		}
+		_swdoc.MF().lb_discover_rightfield.pickList = strLbData;
+		_swdoc.MF().lb_discover_rightfieldtouse.pickList = strLbData;
+		_swdoc.EscRef().discover_data_rightfield = "";
+		_swdoc.EscRef().discover_data_rightfield_use = "";
+		_swdoc.EscRef().right_cond = "";
+		_swdoc.UpdateFormFromData();
+	}
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_discover_leftfieldtouse_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_discover_leftfieldtouse_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+
+	if(strValue!='')
+	{
+		_eva(lb_discover_rightfieldtouse,'');
+		escalation_reference.discover_data_rightfield_use=''
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_specific_OnValueChanged</name>
+						<code>
+							<![CDATA[fld_specific_OnValueChanged(strValue)
+{
+
+	if (1==strValue){
+		//EscRef().flg_specific = 1;
+		_swdoc.EscRef().call_record = 0;
+		_swdoc.EscRef().match_with = 0;
+		_swdoc.EscRef().discover_data = 0;
+	}
+
+	_swdoc.setup_fields();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_mailbox_OnLeftClick</name>
+						<code>
+							<![CDATA[lb_mailbox_OnLeftClick()
+{
+	//-- get mailbox list
+	
+	if(lb_mailbox.pickList=="")
+	{
+		//-- call php to get mailbox list
+		var strURL = "php/itsm/get_mailboxlist.php"; 
+		var strResult = app.g.submit_php(strURL,true);
+		lb_mailbox.pickList = strResult;
+	}
+
+
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_discover_leftdb_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_discover_leftdb_OnValueChanged(strValue)
+{
+
+	if("syscache"==strValue.toLowerCase()){
+		_swdoc.MF().lb_discover_lefttable.pickList = _swdoc.SwCacheTableList;
+	} else {
+		_swdoc.MF().lb_discover_lefttable.pickList = _swdoc.SwDataTableList;
+	}
+	_swdoc.MF().lb_discover_leftfield.pickList = "";
+	_swdoc.MF().lb_discover_leftfieldtouse.pickList = "";
+	_swdoc.EscRef().discover_data_lefttable = "";
+	_swdoc.EscRef().discover_data_leftfield = "";
+	_swdoc.EscRef().discover_data_leftfield_to_use = "";
+	_swdoc.EscRef().extra_cond = "";
+	_een(_swdoc.MF().tb_cond_right, ( 1 == _swdoc.EscRef().discover_data ) && !(strValue == _swdoc.EscRef().discover_data_rightdb));
+	_swdoc.UpdateFormFromData();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_discover_rightdb_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_discover_rightdb_OnValueChanged(strValue)
+{
+
+	if("syscache"==strValue.toLowerCase()){
+		_swdoc.MF().lb_discover_righttable.pickList = _swdoc.SwCacheTableList;
+	} else {
+		_swdoc.MF().lb_discover_righttable.pickList = _swdoc.SwDataTableList;
+	}
+	_swdoc.MF().lb_discover_rightfield.pickList = "";
+	_swdoc.MF().lb_discover_rightfieldtouse.pickList = "";
+	_swdoc.EscRef().discover_data_righttable = "";
+	_swdoc.EscRef().discover_data_rightfield = "";
+	_swdoc.EscRef().discover_data_rightfield_use = "";
+	_swdoc.EscRef().right_cond = "";
+	_een(_swdoc.MF().tb_cond_right, ( 1 == _swdoc.EscRef().discover_data ) && !(_swdoc.EscRef().discover_data_leftdb == strValue));
+	_swdoc.UpdateFormFromData();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_mailbox_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_mailbox_OnValueChanged(strValue)
+{
+
+
+	if("" != strValue){
+		var strURL = "php/itsm/get_templatelist.php?mailboxname=" + lb_mailbox.text; 
+		var strResult = app.g.submit_php(strURL,true);
+		_swdoc.MF().lb_template.pickList = strResult;
+	}
+	_swdoc.EscRef().email_template = "";
+	_swdoc.UpdateFormFromData();
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_test_OnPressed</name>
+						<code>
+							<![CDATA[btn_test_OnPressed()
+{
+
+var test_callref = prompt("Please provide a call reference");
+if (test_callref && !(isNaN(test_callref))){
+
+	var xmlmc = new XmlMethodCall;
+	
+	// Set up our input parameters
+	xmlmc.SetValue("callRef", test_callref);
+	xmlmc.SetValue("verb", "rolevpmetest");
+
+	xmlmc.SetValue("email_mailbox", _swdoc.MF().lb_mailbox.value);
+	xmlmc.SetValue("email_template", _swdoc.MF().lb_template.value);
+	xmlmc.SetValue("failure_email", _swdoc.MF().fld_failure_email.value);
+	xmlmc.SetValue("send_multi", _swdoc.MF().fld_multi_mail.value);
+	
+	xmlmc.SetValue("flg_specific", _swdoc.MF().fld_specific.value);
+	xmlmc.SetValue("specific_email", _swdoc.MF().lb_specificemail.value);
+	xmlmc.SetValue("match_condition_value", _swdoc.MF().fld_match_condition.value);
+
+	xmlmc.SetValue("call_record", _swdoc.MF().chk_call_record.value);
+	xmlmc.SetValue("call_record_field", _swdoc.MF().lb_callrecordfield.value);
+
+	xmlmc.SetValue("match_with", _swdoc.MF().chk_match_with.value);
+	xmlmc.SetValue("discover_data_leftdb", _swdoc.MF().lb_discover_leftdb.value);
+	xmlmc.SetValue("discover_data_lefttable", _swdoc.MF().lb_discover_lefttable.value);
+	xmlmc.SetValue("discover_data_leftfield", _swdoc.MF().lb_discover_leftfield.value);
+	xmlmc.SetValue("discover_data_leftfield_to_use", _swdoc.MF().lb_discover_leftfieldtouse.value);
+	xmlmc.SetValue("extra_cond", _swdoc.MF().tb_cond.value);
+
+	xmlmc.SetValue("discover_data", _swdoc.MF().fld_discover.value);
+	xmlmc.SetValue("discover_data_rightdb", _swdoc.MF().lb_discover_rightdb.value);
+	xmlmc.SetValue("discover_data_righttable", _swdoc.MF().lb_discover_righttable.value);
+	xmlmc.SetValue("discover_data_rightfield", _swdoc.MF().lb_discover_rightfield.value);
+	xmlmc.SetValue("discover_data_rightfield_use", _swdoc.MF().lb_discover_rightfieldtouse.value);
+	xmlmc.SetValue("right_cond", _swdoc.MF().tb_cond_right.value);
+
+	// Invoke the method
+	if(xmlmc.Invoke("VPME", "EscalationNotification"))
+	{
+		var res1 = xmlmc.GetReturnValue("res1");
+		if (""==res1)
+			MessageBox("No results found!");
+		else
+			MessageBox(res1);
+	}
+	else
+	{
+		MessageBox("Error:" + xmlmc.GetLastError());
+	}
+
+}
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_role_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_role_OnValueChanged(strValue)
+{
+
+	if (!(strValue.match(/^[\_\-a-zA-Z0-9]*$/))){
+		MessageBox("Please use only alphanumeric, underscore or hyphen characters (no spaces or commas) in the role field");
+		_swdoc.EscRef().role = strValue.replace(/[^\_\-a-zA-Z0-9]/g, "");
+		_swdoc.UpdateFormFromData();
+	}
+	if (0==strValue.toLowerCase().indexOf("rolevpmetest")){
+		MessageBox("Please use a different name for this role (what you are using is reserved)");
+		_swdoc.EscRef().role = "";
+		_swdoc.UpdateFormFromData();
+	}
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnfailanalyststemail_OnPressed</name>
+						<code>
+							<![CDATA[btnfailanalyststemail_OnPressed()
+{
+
+	app.g.pick_analyst("Select Analyst Email Address", function(oAnalyst)
+	{
+		if(!oAnalyst)
+			return false;
+		_swdoc.EscRef().failure_email = oAnalyst.email;
+		
+		_swdoc.UpdateFormFromData();	
+
+	});
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnfailcustemail_OnPressed</name>
+						<code>
+							<![CDATA[btnfailcustemail_OnPressed()
+{
+
+	var strURL = "canreset=1&";
+	app.g.search_for("customers",true,strURL,function(oRes)
+	{
+		if(oRes.selectedkeys=="")return;
+	
+		var arrKeys = oRes.selectedkeys.split(",");
+		var c = app.g.get_record("userdb", arrKeys[0]);
+		if (c) _swdoc.EscRef().failure_email = c.email;
+		_swdoc.UpdateFormFromData();	
+	});
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnspecanalyststemail_OnPressed</name>
+						<code>
+							<![CDATA[btnspecanalyststemail_OnPressed()
+{
+
+	app.g.pick_analyst("Select Analyst Email Address", function(oAnalyst)
+	{
+		if(!oAnalyst)
+			return false;
+		_swdoc.EscRef().specific_email = oAnalyst.email;
+		
+		_swdoc.UpdateFormFromData();	
+	});
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnspeccustemail_OnPressed</name>
+						<code>
+							<![CDATA[btnspeccustemail_OnPressed()
+{
+
+	var strURL = "canreset=1&";
+	app.g.search_for("customers",true,strURL,function(oRes)
+	{
+		if(oRes.selectedkeys=="")return;
+		
+		var arrKeys = oRes.selectedkeys.split(",");
+		var c = app.g.get_record("userdb", arrKeys[0]);
+		if (c) _swdoc.EscRef().specific_email = c.email;
+		_swdoc.UpdateFormFromData();	
+	});
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

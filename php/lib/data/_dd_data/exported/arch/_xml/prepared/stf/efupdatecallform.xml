@@ -1,0 +1,3412 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>EfUpdateCallForm</name>
+			<title>Update Call Form</title>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>true</showMenubar>
+				<showToolbar>false</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>updatedb</name>
+				<type>Main Details Table</type>
+				<flags>5</flags>
+				<assignments>
+				</assignments>
+			</table>
+			<table>
+				<name>opencall</name>
+				<type>Extended Details Table</type>
+				<mainDetailsColumn>callref</mainDetailsColumn>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>OnFormClosing</name>
+					<code>
+						<![CDATA[OnFormClosing()
+{
+	//Check for Changes to any of the data fields
+	if(_swdoc.bFormFieldChanged)
+	{
+		
+				//-- are we running in webclient
+				if(app && app._wc_version)
+				{
+					//-- return object that contains save message and the code to execute if the user chooses to leave the page
+					var o = {};
+					o.message = "You have unsaved data on this form.";
+					o.onclosexecute = function()
+							  {
+								app.global.UnlockCalls(_swdoc._form["callrefs"]);
+								_swdoc.ResetData();
+							  }
+					return o;
+				}
+
+				if(MessageBox("You have unsaved data on this form. Do you still want to close this form?", MB_ICONQUESTION | MB_YESNO) == IDNO)
+				
+			
+			return false;
+	}
+	
+	// Unlock our call(s)
+	app.global.UnlockCalls(_swdoc._form["callrefs"]);
+
+	_swdoc.ResetData();
+		
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnFormLoading</name>
+					<code>
+						<![CDATA[OnFormLoading(strFormName, strClass)
+{
+
+	//if analyst does not have permissions to
+	//update calls, don't open form.
+	if (!app.session.HaveRight(ANALYST_RIGHT_A_GROUP, ANALYST_RIGHT_A_CANUPDATECALLS, false))
+	{
+		MessageBox("I am sorry, you do not have the right to update calls.\n Please contact your administrator");
+		return false;
+	}
+	
+	//-- itsmf - check that can edit this call class
+	if(!_swdoc.check_callclass_edit(_swdoc._form["callrefs"])) return false;
+	
+	//if one or more calls are locked, then don't open form.
+	if(!app.global.LockCalls(_swdoc._form["callrefs"],"UPDATE",true))
+	{
+		//MessageBox("I am sorry, one or more of the selected calls is locked by another user.");
+		return false;
+	}
+	
+	
+	// convert string of call references into an array
+	_swdoc.arrCallRefs = _swdoc._form["callrefs"].split(",");
+	
+	// set the page title
+	var strPageTitle = "";
+	strPageTitle = "Update Call";
+	if (_swdoc.arrCallRefs.length > 1)
+	{
+		//if there is more than one call, set the page title to plural
+		strPageTitle += "s";
+	}
+	
+	for(var i=0; i<_swdoc.arrCallRefs.length; i++)
+	{
+		strPageTitle += (i > 0) ? ", " : ":";
+		strPageTitle += " "+dd.tables.opencall.columns.callref.FormatValue(_swdoc.arrCallRefs[i]);
+	}
+	_swdoc.SetTitle(strPageTitle);
+
+	// get current time, so we can check if call is being backdated later
+	_swdoc.dtCurrentTime = new Date();
+
+	// Set the default update text if it has been passed in
+	_swdoc.updatedb.updatetxt = _form['updatetext'];
+
+	// Get the Call Status information for various checks later
+	for(var i = 0; i<_swdoc.arrCallRefs.length; i++)
+	{
+		var nCStatus = app.global.GetCallStatusInfo(_swdoc.arrCallRefs[i]).nStatus;
+		if (nCStatus == 1)
+		{
+			_swdoc.bPending = true;
+		}		
+		if (nCStatus == 2)
+		{
+			_swdoc.nUnassigned++;
+		} 
+		if (nCStatus == 3)
+		{
+			_swdoc.nUnaccepted++;
+		}
+		if (nCStatus > 15 || nCStatus == 6)
+		{
+			_swdoc.bNotOpen = true;
+		}
+		if (nCStatus == 4)
+		{
+			_swdoc.bOnHold = true;
+		}
+		
+	}
+
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnSaveData</name>
+					<code>
+						<![CDATA[OnSaveData()
+{
+	// This should never get called, but if for some reason it does, we only want this form
+	// to close if it is cancelled or if the analyst clicks one of the update buttons.
+	MessageBox("Please use the [Update] or [Update and Assign] button to process the update action");
+	return false;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[// Define global variables used by this form
+var arrCallRefs = null; 	// This is an array of the call references applied to this update
+var dtCurrentTime = null; 	// This is the time the form was opened.
+var strUpdateText = null;	// This will store any update text that was passed to the form.
+var nUnassigned = 0;     // The next few variables are to double-check statuses for various checks
+var nUnaccepted = 0;
+var bNotOpen = false;
+var bPending = false;
+var bOnHold = false;
+var bFormFieldChanged = false;	//This var is used to check for changes to data fields and is set to true when any 
+								//field data is changed
+var bTargetFixTimeChanged = false;
+
+var strCurrentSLA = "";
+var strCurrentSLARespondedTo = "0";
+
+
+//-- mainform pointer
+function MF()
+{
+	return mainform;
+}
+
+function check_sla_response_flag()
+{
+	//--
+	//-- NWJ - 14.02.2006 - by default set to hidden. We will show if it needs responding to.		
+	//-- if the logged-in analyst does not have permission to change call status, then they cannot mark this as SLA response
+	app._een(_swdoc.MF().flg_slaresponse,false);
+	if(app.session.HaveRight(ANALYST_RIGHT_A_GROUP,ANALYST_RIGHT_A_CANMODIFYCALLS))
+	{
+		//-- make sure the flag is visible
+		app._evi(_swdoc.MF().flg_slaresponse,true);
+		
+		//-- if the calls have not been responded to previously, then give the analyst the option of marking this as the SLA response	
+		var db = new SqlQuery;		
+		db.Query("SELECT count(*) AS reccount FROM opencall WHERE callref IN (" + _swdoc._form["callrefs"] + ") AND slaresp = 0", "syscache");
+		if(db.Fetch())
+		{
+			var nCount = db.GetValueAsNumber(0);
+			if(nCount > 0)
+			{
+				//-- can mark as sla response
+				app._een(_swdoc.MF().flg_slaresponse,true);
+			}
+			else
+			{
+			    //sandra 17/08/2007 Bug 60006 Mark SLA response flag 
+			    
+				app._eva(_swdoc.MF().flg_slaresponse,1);
+				_swdoc.strCurrentSLARespondedTo = "1";
+				
+			}
+		}
+	}
+	else
+	{
+		//-- they do not have permission so hide the field
+		app._evi(_swdoc.MF().flg_slaresponse,false);
+	}
+}
+
+function check_callclass_edit(strCheckCallrefs)
+{
+    var aRScallstate = new SqlQuery;
+	var strSelect = "SELECT  callclass FROM opencall WHERE callref IN(" + strCheckCallrefs + ")";
+	
+    if(aRScallstate.Query(strSelect, "sw_systemdb"))
+    {
+		//--
+		//-- loop through our returned rows and get state and classes
+		var strCurrentCallClass = "";
+		var strLastCallClass = "";					
+		
+		var nPendingStatus = 0;
+		var nResolvedStatus = 0;
+		var nOtherStatus = 0;	
+		
+		while(aRScallstate.Fetch())
+		{			
+			//-- get status and callref and add info an array
+			var strCallClass =  aRScallstate.GetValueAsString("callclass");
+			if(!app.itsm.can_edit(strCallClass,true))return false;
+		}
+	}
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>(User Defined Functions)</name>
+					<code>
+						<![CDATA[/*
+	Created by Hornbill Systems
+	
+	Updates
+	-------
+	
+	Code	Date		Author					Description
+	-----------------------------------------------------------------------------------------
+	ind01	11/05/07	Ivan Nicholas Dorosh	Error when accepting multiple calls Bug 57068
+
+*/
+
+///////////////////////////////////////////////////////////////////////////////////
+// this is the _swdoc.UpdateCalls function that is called when a user clicks
+// on either Update Call or Update and Assign.  It is being
+// defined here so that we can use it for either.
+// this function takes as an argument the analyst, if any, to whom you are assigning the call
+
+function UpdateCalls(strAssignTo)
+{
+
+	var con = new HelpdeskSession;
+	var strSLAtext = "";
+	if(con.Connect())
+	{
+		// Set the SLA text to null if the SLA field is not applicable (multiple calls, etc.)
+		if (mainform.tb_sla.visible == false || _swdoc.arrCallRefs.length > 1)
+		{
+			strSLAtext = "^^^";
+		} 
+		else
+		{
+			strSLAtext = mainform.tb_sla.text;
+		}
+		
+	//-- NWJ - 08.02.2007 - We might want to update call values before updating i.e. for customisation
+	//-- update opencall fields - we need to do this by looping through form elements	
+	//-- problem is BeginCallValueUpdates doesnt accept multiple callrefs so have to do a call update per callref
+	var arrUpdateCallValues = new Array();
+	var boolCallUpdates = false;
+	var rec = _swdoc.GetRecord("opencall");			
+	if(rec)
+	{
+		var nColCount = rec.GetCount();
+		for(x=0; x<nColCount; x++)
+		{
+			if(!rec.IsModified(x))continue;
+			boolCallUpdates = true;
+			arrUpdateCallValues[rec.GetColumnName(x)] = rec.GetValue(x);
+		}
+
+		
+		//-- if we have opencal l values to update
+		if(boolCallUpdates)
+		{
+			for(var refcount = 0; refcount < _swdoc.arrCallRefs.length;refcount++)
+			{
+				//-- start to update this call
+				if(con.BeginCallValueUpdates(_swdoc.arrCallRefs[refcount],"Before Update Call"))
+				{
+					//-- for each opencall field that needs updating send
+					for (fieldName in arrUpdateCallValues)
+					{
+						con.SendValue("opencall." + fieldName, arrUpdateCallValues[fieldName]);
+					}
+        			con.Commit();					
+				}
+			}
+		}
+	}
+		
+		
+		
+		// We start a new transaction to update the specified call (complex req)
+		if(con.BeginUpdateCall(_swdoc._form["callrefs"]))
+		{   
+			var bSendSuccess = true;
+
+			// Send each bound value in the updatedb table that has been modified
+			if(rec = _swdoc.GetRecord("updatedb"))
+			{
+				var nColCount = rec.GetCount();
+				for(x = 0; x < nColCount; x++)
+				{
+					if(!rec.IsModified(x))
+						continue;
+						
+					//MessageBox("sendvalue : updatedb." + rec.GetColumnName(x) + "=" + rec.GetValue(x));
+					if(!con.SendValue("updatedb." + rec.GetColumnName(x), rec.GetValue(x)))
+					{
+						bSendSuccess = false;
+						break;
+					}
+				}
+			}
+
+
+    		if(bSendSuccess && con.SendNumber("backdateperiod", ((_swdoc.dtCurrentTime.getTime()/1000) - mainform.dt_updatedate.value)) &&
+		    	con.SendBoolean("_acceptmode", false) &&
+		    	con.SendBoolean("markslaresponse", mainform.flg_slaresponse.text) &&
+		    	con.SendBoolean("publicupdate", mainform.flg_updatepublic.text) &&
+		    	con.SendString("priority", strSLAtext) &&
+		    	con.SendNumber("timespent", mainform.tm_timespent.value))
+		    {
+		    	//don't send the target fix time unless changed
+		    	if (_swdoc.bTargetFixTimeChanged)
+		    	{
+		    		if (!con.SendNumber("_targetfixtime", mainform.tb_target.value))
+		    		{
+		    			MessageBox("There was a problem sending the Target Fix Time");
+		    			return false;
+		    		}
+		    	}
+		    	if (strAssignTo)
+		    	{    		
+		    		con.SendString("assignto", strAssignTo)	
+		    	}
+		    	
+		    	for(i=0; i<mainform.fl_attachslist.rowCount();i++)
+		    	{
+    				if(!con.SendFile("attach", mainform.fl_attachslist.GetItemText(i,0), mainform.fl_attachslist.GetItemText(i,3)))
+    				{
+    					MessageBox("There was an error attaching one or more files to this update.");
+    					return false;
+    				}
+    			}
+    			
+    			if(con.Commit())
+    			{
+					// The returned data is in the format "updateref=<callref>.<udindex>"
+					// The following regex will put the callref into arrInfo[1] and the udeindex
+					// into arrInfo[2]
+					
+					var arrCallInfo = con.GetCallUpdateResultData();
+
+					// If we have been invoked to update a call from an e-mail message, this update will 
+					// only relate to a single call. We can only handle e-mail audit trail if we are working
+					// on a single-call update. 
+					if(_swdoc.arrCallRefs.length == 1 && 			// Are we only dealing with a single call refernce?
+						_swdoc._form["messagesource"] && 	// Are we woring from an e-mail message?
+						dd.GetGlobalParamAsNumber("Email Audit Trail/StoreEmailAuditTrail")) // Are we configured?
+					{
+						// The message source string contains the "mailbox name\message id". We need 
+						// to split these out for the following function
+						var arrMsgInfo = _swdoc._form["messagesource"].split('\\');
+						
+						// Check config to see if we need to include the file attachments in the message too
+						var bIncludeAttachments = dd.GetGlobalParamAsNumber("Email Audit Trail/IncludeAttachmentsInMessage");
+						
+						// We need to specify the folder to which the message should be moved to based
+						// on the options set in the DD. 
+						var strMoveMessageToFolder = "";
+						
+						
+						
+						// Next, see if we have specified a specific folder to move the message to
+						strMoveMessageToFolder = dd.GetGlobalParamAsString("Mail Move Folders/UpdateCallMailFolder");
+						
+						if (strMoveMessageToFolder.length == 0)
+						{
+							// First we see if the config tells us to move the message to the deleted items folder
+							if(dd.GetGlobalParamAsNumber("Email Audit Trail/MoveToDeletedItems"))
+							{
+								strMoveMessageToFolder = "Deleted Items";
+							}//end if move message to deleted items
+						}//end if there is a move to folder
+						
+						// As we are going to use the Email Subject in the name of the audit trail file we are saving
+						// we need to check it for characters that are invalid in a filename and replace them with "-"
+							var strEmailSubject = "";
+							if(_swdoc._form["subject"])
+							{
+								strEmailSubject = _swdoc.replaceIllegalFileCharacters(_swdoc._form["subject"]);
+							}//end if there is a subject line
+						
+						// The following function does a number of things. It tells the server to encode
+						// and attach the specified message to the call. It sets the state icon of the 
+						// call update to "mail-received" in this instace. If the strMoveMessageToFolder
+						// contains a valid folder, it will move the specified mail message to the folder
+						if(!app.global.AttachMessageToCall(arrMsgInfo[0], 			// Mailbox name
+												arrMsgInfo[1], 			// Message ID
+												"Received-" + strEmailSubject + ".swm", 	// File name
+												_swdoc.arrCallRefs[0], 		// Call reference
+												arrCallInfo[_swdoc.arrCallRefs[0]],			// UdIndex
+												"mail-received",		// Indicate that this is a received message
+												bIncludeAttachments,	// Include File attachments?
+												strMoveMessageToFolder))// Move the message to this folder
+						{
+				    		MessageBox("There was an error attaching the originating e-mail to this call.");
+						}//end if attaching originating email was not successful
+						else
+						{
+							app.global.CloseMailMessageWindow(arrMsgInfo[1]);
+						}//end else attaching originating email was successful
+				    }//end if there is an email audit trail
+		    
+    				// if we want to send an email to the customer AND there are file attachments, obtain the 
+    				// attachments to attach to the email as well
+    				var flSessionFilesInfo = "";
+    				if(mainform.flg_emailcustomer.value && app.global.IsConnectedToMailServer())
+    				{
+						// Now, compose an email to the customer				
+						app.global.ComposeCallUpdateEmail(arrCallInfo, 					// Array: Call reference-UdIndex
+												_swdoc.updatedb.updatetxt, 	// Message text
+												con.GetSessionFileInfo(), 		// File attachments
+												mainform.tm_timespent.value,
+												"UpdateCallMailTemplate", 		// Template name
+												TEMPLATE_UPDATECALL);			// Template type
+					}//end if emailing customer
+    			}	
+		    }//end if sending the values was successful
+		    else
+		    {
+		    	MessageBox("One or more values was not sent to the update successfully");
+		    	return false;
+		    }//end else
+		}//end if begin update call is successful
+		else
+		{
+			MessageBox("The update transaction was rejected by the server.");
+			return false;
+		}//end if connection successful
+		
+		// We have finished with the connection, close it.    
+		con.Close();
+		_swdoc.bFormFieldChanged = false;
+		return true;
+	}//end if connection successful
+	else
+	{
+		MessageBox("There was an error connecting to the database.");
+		return false;
+	}
+}//end updatecalls function
+
+// Validate the information entered into the form by the user. Return 'true' if
+// the data is OK, of 'false' otherwise.  MessageBox's may be shown to indicate
+// validation failure
+function ValidateForm()
+{
+	//validate timespent field
+	if((mainform.tm_timespent.text == 0) && (mainform.tm_timespent.mandatory)) 
+	{
+		MessageBox("You must enter the amount of time you spent on this action.", MB_OK);
+		return false;	// Make sure that the time spent is entered
+	}
+    
+    //validate sla field
+	if(mainform.tb_sla.mandatory == true && mainform.tb_sla.text == "")
+	{
+		//ind01 if(mainform.tb_sla.text != _swdoc.Priority)
+		if(mainform.tb_sla.text != _swdoc.opencall.Priority)
+		{
+			if(!app.global.ValidateSLAName(mainform.tb_sla.text))
+		    {
+				MessageBox("You must select a Service Level Agreement", MB_OK);
+				return false;	// Make sure that the priority is set
+			}
+		}
+	}
+
+	//validate description field
+	if(mainform.tb_description.text == "")
+	{
+		MessageBox("You must enter an update in the  Action Description", MB_OK);
+		return false;	// Make sure we have some update text
+	}
+
+	//validate target field
+	if(mainform.tb_target.mandatory == true && mainform.tb_target.text == "")
+	{
+		var Message = "The Target Fix Time must be completed before you can apply this action";
+		MessageBox(Message);
+		return false;	
+	}
+
+	//validate actionsource field
+	if(mainform.tb_actionsource.mandatory == true  && mainform.tb_actionsource.text.length == 0)
+	{
+		var Message = "The field '" + mainform.lbl_actionsource.text + "' must be completed before you can apply this action";
+		MessageBox(Message);
+		return false;
+	}
+	
+	//validate general update field
+	if(mainform.tb_generalupdate.mandatory == true && mainform.tb_generalupdate.text.length == 0)
+	{
+		var Message = "The field '" + mainform.lbl_actiontype.text + "' must be completed before you can apply this action";
+		MessageBox(Message);
+		return false;
+	}
+	
+	
+	
+	if(_swdoc.check_mandatory_fields("opencall",mainform))
+	{
+		return _swdoc.check_mandatory_fields("updatedb",mainform);
+	}
+	else
+	{
+		return false;
+	}
+	
+	return true;
+}	//end _swdoc.ValidateForm
+
+//-- 08.02.2007 - NWJ - Check mandatory fields on the form for a given table
+//--					alert user if need be and return false						
+function check_mandatory_fields(strTable,oForm)
+{
+    for (var x = 0; x<oForm.elements.length;x++)
+    {
+        var element = oForm.elements[x];
+        if ((element.mandatory) && (element.text =="") && (element.visible))
+        {
+            var colName = "";
+            var fieldName = "(not specified)";
+            if(element.dataRef!="")
+            {
+            	var arrInfo = element.dataRef.split(".");
+            	var strTable = arrInfo[0];
+            	var colName = arrInfo[1];
+            	var fieldName = dd.tables[strTable].columns[colName.toLowerCase()].DisplayName;
+            }
+            MessageBox("The field '" + fieldName + "' is a mandatory field and must be completed.");
+            return false;
+        }
+    }
+    return true;
+}
+
+
+function replaceIllegalFileCharacters(strText)
+{
+	//-- This function is used to replace characters in the passed in string that 
+	//-- are not suitable for use in filenames and return the modified string 
+	
+	strOutput = strText;
+	strReplacement = "-";
+	var i = 0;
+	
+	while(i < strOutput.length)
+	{
+		strOutput = strOutput.replace('/', strReplacement);
+		strOutput = strOutput.replace(':', strReplacement);
+		strOutput = strOutput.replace('*', strReplacement);
+		strOutput = strOutput.replace('?', strReplacement);
+		strOutput = strOutput.replace('"', strReplacement);
+		strOutput = strOutput.replace('\'', strReplacement);
+		strOutput = strOutput.replace('<', strReplacement);
+		strOutput = strOutput.replace('>', strReplacement);
+		
+		i++;
+	}
+	
+	return strOutput;
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>553</width>
+				<height>401</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>tb_description</name>
+						<type>Field</type>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>0</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>243</top>
+							<left>17</left>
+							<right>537</right>
+							<bottom>383</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>updatedb.updatetxt</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>true</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>4</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>CaptionPanel2</name>
+						<type>CaptionBar</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>true</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>1</index>
+						<caption>Details</caption>
+						<backgroundColor>#f1f1f1</backgroundColor>
+						<foregroundColor>#003366</foregroundColor>
+						<font  size="10" bold="1">Trebuchet (MS)</font>
+						<alignment>Left</alignment>
+						<fillStyle>Vertical Gradient</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>29</top>
+							<left>4</left>
+							<right>395</right>
+							<bottom>179</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#d8d8d8</backgroundColor2>
+							<imageHSpace>10</imageHSpace>
+							<slope>12</slope>
+							<borderColor>#d3c9b6</borderColor>
+							<headerHeight>23</headerHeight>
+							<hasBorder>1</hasBorder>
+							<panelBorderColor>#d3c9b6</panelBorderColor>
+							<fillStyle>0</fillStyle>
+							<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+							<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>dt_updatedate</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>2</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>73</top>
+							<left>11</left>
+							<right>218</right>
+							<bottom>91</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>25</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Date/Time Control</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<colorDateIndicator>false</colorDateIndicator>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<rawColumns>#eeeeee</rawColumns>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<dateFormatMode>0</dateFormatMode>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tm_timespent</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>3</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>73</top>
+							<left>227</left>
+							<right>286</right>
+							<bottom>91</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>25</left>
+							<right>25</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Minute Time Period</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<defaultValue>5</defaultValue>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_actionsource</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>4</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>110</top>
+							<left>11</left>
+							<right>218</right>
+							<bottom>128</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>25</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>updatedb.udsource</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>true</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<defaultValue>E-Mail</defaultValue>
+							<hintText> </hintText>
+							<listItems>E-Mail|Telephone|Fax|Post|Web|In Person|Online Forum|</listItems>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_generalupdate</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>5</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>110</top>
+							<left>227</left>
+							<right>388</right>
+							<bottom>128</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>25</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>updatedb.udcode</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>true</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<defaultValue>E-Mailed Customer</defaultValue>
+							<listItems>Called Customer|E-Mailed Customer|General Update|Sent Fax|Sent Letter|Announcement Posted to Web|</listItems>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_slamultiple</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>6</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>149</top>
+							<left>11</left>
+							<right>218</right>
+							<bottom>167</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>25</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<distinctTable>priority</distinctTable>
+							<distinctColumn>priority</distinctColumn>
+							<displayColumn>priority</displayColumn>
+							<defaultValue>&lt;Multiple Calls&gt;</defaultValue>
+							<extraOptions>&quot;&lt;Multiple Calls&gt;&quot;</extraOptions>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_sla</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>7</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>149</top>
+							<left>11</left>
+							<right>218</right>
+							<bottom>167</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>25</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<displayColumnValue>SN Critical</displayColumnValue>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<distinctTable>priority</distinctTable>
+							<distinctColumn>priority</distinctColumn>
+							<sqlSource>swdata</sqlSource>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_targetmultiple</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>8</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>149</top>
+							<left>227</left>
+							<right>388</right>
+							<bottom>167</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>25</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<dateFormat>dd/MM/yyyy HH:mm:ss</dateFormat>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<defaultValue>&lt;Multiple Calls&gt;</defaultValue>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_target</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>9</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>149</top>
+							<left>227</left>
+							<right>388</right>
+							<bottom>167</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>25</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Date/Time Control</type>
+						<flags>
+							<invisible>true</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<colorDateIndicator>false</colorDateIndicator>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<dateFormatMode>0</dateFormatMode>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_emailcustomer</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>10</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>78</top>
+							<left>405</left>
+							<right>521</right>
+							<bottom>97</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<flagItems>E-mail customer^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_updatepublic</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>11</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>58</top>
+							<left>405</left>
+							<right>534</right>
+							<bottom>76</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<flagItems>Update to be public^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_slaresponse</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>12</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>98</top>
+							<left>405</left>
+							<right>546</right>
+							<bottom>116</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<flagItems>Mark as SLA response^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Tab1</name>
+						<type>TabControl</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>13</index>
+						<caption>Tab1</caption>
+						<backgroundColor>#ded7ce</backgroundColor>
+						<foregroundColor>#ffffff</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>212</top>
+							<left>7</left>
+							<right>546</right>
+							<bottom>393</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<tabStyle>Top</tabStyle>
+					<tabSize>19</tabSize>
+					<items>
+						<item>
+							<name>Description</name>
+							<properties>56=#d1e0ee|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#d1e0ee</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>File Attachments</name>
+							<properties>56=#ffcc66|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#ffcc66</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+					</items>
+					<selectedTextFont  size="8">Arial</selectedTextFont>
+					<selectedTextColor>#000000</selectedTextColor>
+					<deselectedTextColor>#000000</deselectedTextColor>
+					<tabSlopeLeft>2</tabSlopeLeft>
+					<tabSlopeRight>2</tabSlopeRight>
+					<deselectedTabHeightOffset>1</deselectedTabHeightOffset>
+					<tabSpacing>0</tabSpacing>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<tabStyle>0</tabStyle>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fl_attachslist</name>
+						<type>FileListTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>true</autoLoad>
+							<allowMultiSelect>true</allowMultiSelect>
+						</flags>
+						<group>Tab1:1</group>
+					</general>
+					<appearance>
+						<index>14</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>240</top>
+							<left>16</left>
+							<right>467</right>
+							<bottom>384</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+							</properties>
+							<name>File Name</name>
+							<width>188</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+							</properties>
+							<name>Size</name>
+							<width>70</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+							</properties>
+							<name>Last Modified</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>false</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+							</properties>
+							<name>Full Local Path</name>
+							<width>100</width>
+							<image>-1</image>
+							<dataColumn>3</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>16</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#00008b</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_update</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>true</toolbarButtonStyle>
+							<cache>true</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>15</index>
+						<caption>Update</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>1</top>
+							<left>8</left>
+							<right>78</right>
+							<bottom>24</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<commands>-1</commands>
+							<eventButtonIcon>ImageList=Hold Call;IconIndex=4</eventButtonIcon>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_addfile</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:1</group>
+					</general>
+					<appearance>
+						<index>16</index>
+						<caption>Add</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>237</top>
+							<left>475</left>
+							<right>539</right>
+							<bottom>261</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<commands>74</commands>
+							<eventButtonIcon>ImageList=Helpdesk Utility Icons;IconIndex=74</eventButtonIcon>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_removefile</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:1</group>
+					</general>
+					<appearance>
+						<index>17</index>
+						<caption>Remove</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>267</top>
+							<left>475</left>
+							<right>539</right>
+							<bottom>291</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<commands>-1</commands>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_updateassign</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>true</toolbarButtonStyle>
+							<cache>true</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>18</index>
+						<caption>Update and Assign</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>1</top>
+							<left>81</left>
+							<right>205</right>
+							<bottom>24</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<commands>-1</commands>
+							<eventButtonIcon>ImageList=Hold Call;IconIndex=3</eventButtonIcon>
+							<eventButtonIconAlign>0</eventButtonIconAlign>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_actiontype</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>19</index>
+						<caption>Action Type</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>94</top>
+							<left>225</left>
+							<right>287</right>
+							<bottom>106</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>25</left>
+							<right>25</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>updatedb.udcode</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_actionsource</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>20</index>
+						<caption>Action Source</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>94</top>
+							<left>9</left>
+							<right>82</right>
+							<bottom>106</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>updatedb.udsource</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>21</index>
+						<caption>Time Spent</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>57</top>
+							<left>225</left>
+							<right>282</right>
+							<bottom>71</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>25</left>
+							<right>25</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>updatedb.timespent</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_sla</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>22</index>
+						<caption>Service Level Agreement</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>133</top>
+							<left>8</left>
+							<right>208</right>
+							<bottom>147</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_target</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>23</index>
+						<caption>Target Fix Time</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>133</top>
+							<left>224</left>
+							<right>337</right>
+							<bottom>147</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>25</left>
+							<right>25</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_datetime</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>24</index>
+						<caption>Date/Time of Update</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>57</top>
+							<left>8</left>
+							<right>120</right>
+							<bottom>71</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_addfile</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>true</toolbarButtonStyle>
+							<cache>true</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>25</index>
+						<caption>Attach File</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>1</top>
+							<left>456</left>
+							<right>545</right>
+							<bottom>24</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<commands>74</commands>
+							<eventButtonIcon>ImageList=Helpdesk Utility Icons;IconIndex=74</eventButtonIcon>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect1</name>
+						<type>Rectange</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>true</toolbarButtonStyle>
+							<cache>true</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>26</index>
+						<backgroundColor>#d4d0c8</backgroundColor>
+						<foregroundColor>#dddddd</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>0</top>
+							<left>0</left>
+							<right>558</right>
+							<bottom>25</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>CaptionPanel3</name>
+						<type>CaptionBar</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>true</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>27</index>
+						<caption>Options</caption>
+						<backgroundColor>#f1f1f1</backgroundColor>
+						<foregroundColor>#003366</foregroundColor>
+						<font  size="10" bold="1">Trebuchet (MS)</font>
+						<alignment>Left</alignment>
+						<fillStyle>Vertical Gradient</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>29</top>
+							<left>403</left>
+							<right>552</right>
+							<bottom>179</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#d8d8d8</backgroundColor2>
+							<imageHSpace>10</imageHSpace>
+							<slope>12</slope>
+							<borderColor>#d3c9b6</borderColor>
+							<headerHeight>23</headerHeight>
+							<hasBorder>1</hasBorder>
+							<panelBorderColor>#d3c9b6</panelBorderColor>
+							<fillStyle>0</fillStyle>
+							<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+							<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>CaptionPanel1</name>
+						<type>CaptionBar</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>true</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>28</index>
+						<caption>Other Information</caption>
+						<backgroundColor>#f1f1f1</backgroundColor>
+						<foregroundColor>#003366</foregroundColor>
+						<font  size="10" bold="1">Trebuchet (MS)</font>
+						<alignment>Left</alignment>
+						<fillStyle>Vertical Gradient</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>184</top>
+							<left>4</left>
+							<right>552</right>
+							<bottom>400</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#d8d8d8</backgroundColor2>
+							<imageHSpace>10</imageHSpace>
+							<slope>12</slope>
+							<borderColor>#d3c9b6</borderColor>
+							<headerHeight>23</headerHeight>
+							<hasBorder>1</hasBorder>
+							<panelBorderColor>#d3c9b6</panelBorderColor>
+							<fillStyle>0</fillStyle>
+							<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+							<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded()
+{
+	/*
+		Created by Hornbill Systems
+		
+		Updates
+		-------
+		
+		Code	Bug		Date		Author					Description
+		-----------------------------------------------------------------------------------------
+		ind01	57303	11/05/07	Ivan Nicholas Dorosh	Problem with multiple calls, this is due to the state of 
+															the objects when they are saved.  The form was expecting 
+				these to be in a visible, state.  This would be fixed by resetting the form values to visible, however
+				if the state of the fields were invisible and the form saved, the issue would re-occur. Therefore my 
+				solution is to force them to be visible on initial load.													
+	*/
+	
+	//ind01
+	app._evi(mainform.tb_sla, true);
+	app._evi(mainform.tb_slamultiple,false);		
+	app._evi(mainform.tb_target,true);
+	app._evi(mainform.flg_slaresponse,true);
+	app._evi(mainform.flg_updatepublic,true);
+	app._evi(mainform.flg_emailcustomer, true);
+	
+	//ind01 end
+	
+	// Set form with defaults set:
+
+	// if analyst does not have permission to assign calls, then make the Update and Assign button invisible.
+	if(!app.session.HaveRight(ANALYST_RIGHT_A_GROUP,ANALYST_RIGHT_A_CANASSIGNCALLS) || _swdoc.bOnHold)
+	{
+		app._evi(btn_updateassign,false);
+	}
+	
+	// if the analyst does not have permission to change call statuses, and there is more than one call passed, and these
+	// do not have the same call status *or* any of the calls are of ineligible status, disable the "assign" button
+	// ineligible status is anything but unassigned or unaccepted
+	if(!app.session.HaveRight(ANALYST_RIGHT_A_GROUP,ANALYST_RIGHT_A_CANMODIFYCALLS))
+	{
+		if((_swdoc.nUnaccepted > 0 && _swdoc.nUnassigned > 0) || (_swdoc.nUnaccepted + _swdoc.nUnassigned !== _swdoc.arrCallRefs.length))
+		{
+			app._evi(btn_updateassign,false);
+		}
+	}
+	
+	// set update date to current time
+	app._eva(dt_updatedate, (_swdoc.dtCurrentTime.getTime()/1000));
+	
+	// if analyst has permission to backdate calls, make update time editable
+	
+	if(app.session.CanBackdateCallActions())
+	{
+		app._ero(dt_updatedate, false);
+		app._een(lbl_datetime, true);
+	}
+	
+	
+	
+	// If the analyst's default is to send an email on update, check the email box
+	// else we uncheck the box
+	if(app.session.IsDefaultOption(ANALYST_DEFAULT_UPDATESENDEMAIL))
+	{
+		app._eva(flg_emailcustomer,"1");
+	}
+	else
+	{
+		app._eva(flg_emailcustomer,"0");
+	}
+	
+	//If we are not connected to a mail server then reset and disable the email flag
+	if(app.global.IsConnectedToMailServer() == false)
+	{
+		app._eva(flg_emailcustomer,"0");
+		app._een(flg_emailcustomer,false);
+	}
+	
+	// if the analyst's default is to make the update private, then check the Make Private box.
+	app._eva(flg_updatepublic,app.session.IsDefaultOption(ANALYST_DEFAULT_UPDATEPRIVATE));
+
+	_swdoc.check_sla_response_flag();
+		
+	var db = new SqlQuery;
+	
+	//if this form has been called with attachments, add them to the attachments list
+	var index = 0;
+	var bAreAttachments = false;
+	
+ 	while(_swdoc._form["attach"+index]) 
+ 	{
+ 		bAreAttachments = true;
+    	fl_attachslist.AddAttachment(_swdoc._form["attach" + index]);
+		index++;
+ 	} 
+ 	
+ 	//if the analyst does not have permissions to add files to calls, make the file attachments box invisible
+ 	//UNLESS there are file attachments being included from the email which called this form, in which case
+ 	//show the file attachments, but make the Add and Remove buttons invisible
+ 	
+ 	if(!app.session.HaveRight(ANALYST_RIGHT_A_GROUP,ANALYST_RIGHT_A_CANATTACHFILESTOCALLS, false))
+ 	{
+ 		if(!bAreAttachments)
+ 		{
+ 			Tab1.ShowTabItem(1,false);
+ 		}
+ 		else
+ 		{
+ 			app._evi(btn_addfile, false);
+ 			app._evi(btn_removefile, false);
+ 		}
+ 	}
+ 	
+	
+	/////////////////////////////////  SLAs ////////////////////////////////////////////
+	// 
+	// if multiple calls, disable and write "multiple calls"  
+	if (_swdoc.arrCallRefs.length > 1)
+	{
+		app._evi(tb_sla,false);
+		app._evi(tb_slamultiple,true);
+		app._een(lbl_sla,false);
+	}
+	else
+	{
+			
+		db.Query("SELECT priority,fixby FROM opencall WHERE opencall.callref = " + _swdoc.arrCallRefs[0], "syscache");
+		
+		if(db.Fetch())
+		{
+			if(db.GetValueAsString(0))
+			{
+				app._eva(tb_sla,db.GetValueAsString(0));
+				app._eva(tb_sla,db.GetValueAsString(0));
+				_swdoc.strCurrentSLA = db.GetValueAsString(0);
+			}
+	
+			if(db.GetValueAsString(1) == "_THIRDPARTY")
+			{
+				app._ete(flg_slaresponse,"Mark as Third Party SLA Response");
+			}
+		}
+	}
+	
+	db.Reset();
+	// if the analyst does not have permissions to change SLAs or call statuses, or if there is more than one call passed, disable the SLA box & text.
+	// note:  because Javascript will not evaluate right-hand expressions unless all prior expressions return false, the GetCallStatus
+	// at the end of this expression will not be called unless arr.CallRefs.length is <= 1.
+	if(!app.session.HaveRight(ANALYST_RIGHT_A_GROUP,ANALYST_RIGHT_A_CANCHANGEPRIORITY) || !app.session.HaveRight(ANALYST_RIGHT_A_GROUP,ANALYST_RIGHT_A_CANMODIFYCALLS) || _swdoc.arrCallRefs.length > 1 || 
+		_swdoc.bOnHold || _swdoc.bNotOpen)
+	{
+		app._een(lbl_sla,false);
+		app._een(tb_sla,false);
+	}
+
+
+   	
+   	// if the data dictionary calls the priority something other than "SLA", change the label
+   	if(dd.tables["updatedb"].IsColumnDefined("priority"))
+   	{
+		_eta(lbl_sla, dd.tables["updatedb"].columns["priority"].DisplayName);
+	}
+
+	//////////////////////// FIX BY /////////////////////
+	// set the Fix By time to the current date, unless there is another one set already
+	if (_swdoc.arrCallRefs.length >1)
+	{
+		app._evi(tb_target,false);
+		app._evi(tb_targetmultiple,true);
+	}
+	else
+	{
+	
+		//-- system allows analyst to adjust time
+		//-- so check if fix time has already been missed if so disable it		
+   		db.Query("SELECT opencall_sla.fixby, opencall_sla.fix_ctr, opencall.status FROM opencall_sla JOIN opencall ON opencall.callref = opencall_sla.callref WHERE opencall_sla.callref in (" + _swdoc.arrCallRefs[0] + ") ORDER BY fix_ctr desc", "sw_systemdb");
+   		if(db.Fetch())
+		{
+			app._eva(tb_target,db.GetValueAsString(0));
+				
+			//-- NWJ - 21.04.2006 -	bug ref 45542
+			//-- We werent checking the actual fix_ctr and disabling / enabling fix time as needed
+			
+			//-- if fix_ctr > 0, then make target fix time editable
+			var intFixCounter = db.GetValueAsNumber(1);
+			
+			var boolEnable = (intFixCounter > 0);
+			app._ero(tb_target,(!boolEnable));
+			app._een(lbl_target,boolEnable);
+			
+			//-- disable if the call is resolved or closed
+			var status = db.GetValueAsNumber(2)
+			if ((status == 6) || (status > 15))
+			{
+				app._ero(tb_target, true);
+				app._een(lbl_target,false);
+			}
+					
+		}
+		else
+		{
+			app._eva(tb_target,app.global.GetCurrentEpocTime());
+		}
+	
+		db.Reset();
+	}	
+
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>dt_updatedate_OnValueChanged</name>
+						<code>
+							<![CDATA[dt_updatedate_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+
+	// Find out what time the date/time is being changed.  This number will be used to make sure that the analyst is
+	// not trying to change the update to a time in the future.
+	// The time the form was opened will be checked against the user's maximum backdate period
+	// to make sure that they are not trying to backdate this update too far.  The reason for this is that the analyst
+	// may ostensibly backdate from the max period before the form was opened, but for checking times in the future,
+	// this would error if they spend any time editing the form.  
+	
+	// Get the backdate period that the analyst is trying to backdate to
+	var dtBackdatePeriod = _swdoc.dtCurrentTime.getTime() - (dt_updatedate.value * 1000);
+	// calculate the actual time the analyst can backdate to, based on current time - maximum backdate period
+	
+	var dtMaxBDTime = new Date();
+		
+	// GetMaxiumumBackdatePeriodAllowed is stored in seconds.  Convert to milliseconds to obtain actual
+	// maximum backdate time.
+	dtMaxBDTime.setTime(_swdoc.dtCurrentTime.getTime() - (app.session.GetMaxBackdatePeriodAllowed() * 1000));
+	
+
+	// ensure that the backdate time entered is not in the future
+	if(dt_updatedate.value > app.global.GetCurrentEpocTime())
+	{
+		var message = "Forwarding call updates is not permitted.";
+		MessageBox(message, MB_ICONEXCLAMATION | MB_OK);
+		app._eva(dt_updatedate , app.global.GetCurrentEpocTime());
+		return;
+	}
+
+	// ensure that the backdate period does not exceed the analyst's rights
+
+	if((dtBackdatePeriod/1000) > app.session.GetMaxBackdatePeriodAllowed())
+	{
+		
+		var message = "The earliest time to which you can backdate calls is "+dtMaxBDTime.toLocaleString()+".\n\nDo you want to use this time and date?";
+		if(MessageBox(message, MB_ICONQUESTION | MB_YESNO) == 6){ // 6 = YES
+			app._eva(dt_updatedate , dtMaxBDTime.getTime()/1000);
+			return;
+		}
+		else{	
+			app._eva(dt_updatedate , app.global.GetCurrentEpocTime());
+		}
+	}
+	// make sure that the backdate time is not prior to the last previous update time for any of the calls being updated
+	SqlRecordSetObj = new SqlQuery;
+	
+	SqlRecordSetObj.Query("SELECT max(updatetimex) AS dtthemaxtime FROM updatedb WHERE callref IN (" + _swdoc._form["callrefs"] + ")", "sw_systemdb");
+	if(SqlRecordSetObj.Fetch())
+	{
+		var dtLastUpdate = new Date();
+		dtLastUpdate.setTime(SqlRecordSetObj.GetValueAsNumber(0));
+		
+		if(dtLastUpdate > (dt_updatedate.value * 1000))
+		{
+			var message = "You have chosen to backdate this action \nto a time before than the last action was carried out against one of the selected calls. This is not allowed!\n\n\nThe last action was carried out on ";
+			MessageBox(message + dtLastUpdate.toLocaleString(), MB_ICONQUESTION | MB_OK);
+						
+			return;
+		}
+	}
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_update_OnPressed</name>
+						<code>
+							<![CDATA[btn_update_OnPressed()
+{
+	// Validate Form
+	if(!_swdoc.ValidateForm())
+	{
+		return;
+	}
+
+	// Update Calls Fun -- this will be defined globally, so that we can reuse the code
+	// for the Update and Assign option	
+	var strAssignTo = "";
+		
+	if(_swdoc.UpdateCalls())
+	{
+		_swdoc.CloseForm();
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_updateassign_OnPressed</name>
+						<code>
+							<![CDATA[btn_updateassign_OnPressed()
+{
+	// Validate Form
+	if(!_swdoc.ValidateForm())
+	{
+		return;
+	}
+	
+	// Get an Analyst to assign call to
+	
+	var bAssignedToThirdParty = false;
+	var analChosenAnalyst = null;
+	var strAssignTo = "";
+	
+	var analChosenAnalyst = new AssignCallPropertySheet;
+    if(analChosenAnalyst.Open() != IDOK)
+    {
+    	return;
+    }
+    
+    // check if a group id and analyst id have been chosen, and if the group is Third Party.
+	if(analChosenAnalyst.groupid.length)
+	{
+		strAssignTo = "#";
+		strAssignTo += analChosenAnalyst.groupid;
+		if(analChosenAnalyst.repid.length)
+		{
+			strAssignTo += ":";
+			strAssignTo += analChosenAnalyst.repid;
+		}
+		
+		//-- nwj 12.05.2009 - applied cbs fix from default to here
+		//-- F0070476 - CB - we add the 3rd party contract if any
+		if(analChosenAnalyst.tpcontract.length)
+		{
+			strAssignTo += ":";
+			strAssignTo += analChosenAnalyst.tpcontract;
+		}
+
+
+		if(analChosenAnalyst.groupid == "_THIRDPARTY")
+			bAssignedToThirdParty = true;
+	}
+	
+	// ensure that there is no reason not to assign this call to this analyst
+	if(analChosenAnalyst.repid.length)	// Only check if we have chosen an analyst
+	{
+		if(!bAssignedToThirdParty)
+		{
+			analystObj = app.session.GetAnalystStatus(analChosenAnalyst.repid);
+			if(!analystObj)
+			{
+				MessageBox("Unable to determine analyst status");
+				return;
+			}
+		}
+		
+		// if the logged-in analyst does not have "Can Change Call Status" permissions, then
+		// he/she can only assign unaccepted calls to an analyst, or unassigned calls to a group.
+		// nothing else is permitted.
+		
+		if (!app.session.HaveRight(ANALYST_RIGHT_A_GROUP,ANALYST_RIGHT_A_CANMODIFYCALLS))
+		{
+
+    		if (_swdoc.nUnassigned == _swdoc.arrCallRefs.length)
+    		{
+        		//can assign to a group  only 
+        		MessageBox("I am sorry, this call can only be assigned to a group, not an analyst.");
+        		return;
+   			} 
+		}
+		
+		
+		// if the analyst is blocked from call assignment, do not allow assignment
+		
+		if((!bAssignedToThirdParty)&&(analystObj.bAssignBlocked))
+		{
+			MessageBox("Assigning calls to this analyst has been disallowed by the system administrator.", MB_ICONSTOP);
+			return;
+		}
+
+		// if analyst has an unavailable status, display away message and confirm assignment
+		if(!bAssignedToThirdParty)
+		{
+			switch(analystObj.nStatus)
+			{
+			case ANALYST_STATUS_ATLUNCH:
+				if(MessageBox(analChosenAnalyst.repid + " is at lunch.\n\n" + analystObj.strMessage + "\n\n" + "Do you still want to assign the call?", MB_ICONQUESTION | MB_YESNO) != IDYES)
+					return;
+				break;
+			case ANALYST_STATUS_ONTRAINING:
+				if(MessageBox(analChosenAnalyst.repid + " is on training.\n\n" + analystObj.strMessage + "\n\n" + "Do you still want to assign the call?", MB_ICONQUESTION | MB_YESNO) != IDYES)
+					return;
+				break;
+			case ANALYST_STATUS_ONHOLIDAY:
+				if(MessageBox(analChosenAnalyst.repid + " is on holiday.\n\n" + analystObj.strMessage + "\n\n" + "Do you still want to assign the call?", MB_ICONQUESTION | MB_YESNO) != IDYES)
+					return;
+				break;
+			case ANALYST_STATUS_INAMEETING:
+				if(MessageBox(analChosenAnalyst.repid + " is in a meeting.\n\n" + analystObj.strMessage + "\n\n" + "Do you still want to assign the call?", MB_ICONQUESTION | MB_YESNO) != IDYES)
+					return;
+				break;
+			case ANALYST_STATUS_OUTOFOFFICE:
+				if(MessageBox(analChosenAnalyst.repid + " is currently out of the office.\n\n" + analystObj.strMessage + "\n\n" + "Do you still want to assign the call?", MB_ICONQUESTION | MB_YESNO) != IDYES)
+					return;
+				break;
+			case ANALYST_STATUS_DONOTDISTURB:
+					if(MessageBox(analChosenAnalyst.repid + " has requested not to be disturbed.\n\n" + analystObj.strMessage + "\n\n" + "Do you still want to assign the call?", MB_ICONQUESTION | MB_YESNO) != IDYES)
+					return;
+				break;
+	
+			case ANALYST_STATUS_AVAILABLE:
+			default:
+				break;
+			}
+		}
+		
+		// If this analyst has a maximum number of calls set, make sure that this number has not been exceeded
+		if((!bAssignedToThirdParty)&&(analystObj.nMaxAssignedCalls > 0) )
+		{	
+			SqlRecordSetObj = new SqlQuery;
+			SqlRecordSetObj.Query("select count(*) as ct from opencall where status < 16 AND status != " + CS_RESOLVED + " and owner = '" + analChosenAnalyst.repid + "'", "sw_systemdb");
+			
+			if(SqlRecordSetObj.Fetch())
+			{
+				var nCount = SqlRecordSetObj.GetValueAsNumber(0);
+				if(nCount >= analystObj.nMaxAssignedCalls)
+				{
+					MessageBox("The Maximum Call Assignment count has been reached for this analyst. No call assignment possible.", MB_ICONSTOP);
+					SqlRecordSetObj.Reset();
+					return;
+				}
+			}
+			
+			
+			SqlRecordSetObj.Reset();
+		}
+
+	}
+	else
+	{
+		//being assigned to group
+		if (!app.session.HaveRight(ANALYST_RIGHT_A_GROUP,ANALYST_RIGHT_A_CANMODIFYCALLS))
+		{
+			if (_swdoc.nUnaccepted == _swdoc.arrCallRefs.length)
+			{
+        		//can assign to an analyst  only 
+        		MessageBox("I am sorry, this call can only be assigned to an analyst, not a group.");
+        		return;
+    		}
+    	}
+	}
+	
+	// Update Calls Function -- this is being defined globally so that we can reuse it for the Update Call form
+	
+	if (_swdoc.UpdateCalls(strAssignTo))
+	{
+		_swdoc.CloseForm();
+	}		
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_addfile_OnPressed</name>
+						<code>
+							<![CDATA[btn_addfile_OnPressed()
+{
+	fl_attachslist.AddFiles();
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_removefile_OnPressed</name>
+						<code>
+							<![CDATA[btn_removefile_OnPressed()
+{
+	// remove the highlighted attachment from the list
+	fl_attachslist.RemoveSelectedFiles();
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>tm_timespent_OnValueChanged</name>
+						<code>
+							<![CDATA[tm_timespent_OnValueChanged(strValue)
+{
+	if (tm_timespent.value < 1 || tm_timespent.value > 60000)
+	{
+		MessageBox("I am sorry, you can only enter values between 1 minute and 1000 hours.");
+		app._eva(tm_timespent, 5);
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>OnFieldValueChanged</name>
+						<code>
+							<![CDATA[OnFieldValueChanged(strName, strValue)
+{
+	//-- When a Field value changes we set this variable to true.  
+	//-- We will then check this when closing our form to see if there have been any changes that we need to save
+	_swdoc.bFormFieldChanged = true;
+
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>tb_target_OnValueChanged</name>
+						<code>
+							<![CDATA[tb_target_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	_swdoc.bTargetFixTimeChanged = true;
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>tb_sla_OnValueChanged</name>
+						<code>
+							<![CDATA[tb_sla_OnValueChanged(strValue)
+{
+
+	//-- nwj 13.10.2008 -  if we change SLA then we need to reset the sla resp flag to make it editable and uncheck e.g. so analyst can re-mark sla response met
+	if(strValue!=_swdoc.strCurrentSLA)
+	{
+		app._ete(mainform.flg_slaresponse,"0");
+		app._een(mainform.flg_slaresponse,true);
+	}
+	else
+	{
+		app._ete(mainform.flg_slaresponse,_swdoc.strCurrentSLARespondedTo);
+		app._een(mainform.flg_slaresponse,(_swdoc.strCurrentSLARespondedTo!=1));
+	
+	}
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>btnUpdate_OnPressed</name>
+						<code>
+							<![CDATA[btnUpdate_OnPressed()
+{
+	// Validate Form
+	if(!_swdoc.ValidateForm()){
+		return;
+	}
+	
+	EncodeUpdateMail(_swdoc.MessageSource);
+	
+	// Update Calls Fun -- this will be defined globally, so that we can reuse the code
+	// for the Update and Assign option	
+	
+	UpdateCallsFun("");
+
+	_swdoc.CloseForm();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnUpdateAssig_OnPressed</name>
+						<code>
+							<![CDATA[btnUpdateAssig_OnPressed()
+{
+	// Validate Form
+	if(!_swdoc.ValidateForm())
+	{
+		return;
+	}
+	
+	
+	// Update Calls Function -- this is being defined globally so that we can reuse it for the Update Call form
+	UpdateCallsFun();
+	// Validate the form
+
+	/*
+
+
+	_swdoc.UpdateText = Description.text;
+	
+	var bAssignedToThirdParty = false;
+	var AssignToAnalyst = "";
+	var AssignTo = "";
+	
+	var dlg = new AssignCallPropertySheet;
+    if(dlg.Open() != IDOK)
+    	return;
+    	
+	if(dlg.groupid.length)
+	{
+		AssignTo = "#";
+		AssignTo += dlg.groupid;
+		if(dlg.repid.length)
+		{
+			AssignToAnalyst = dlg.repid;
+			AssignTo += ":";
+			AssignTo += dlg.repid;
+		}
+
+		if(dlg.groupid == "_THIRDPARTY")
+			bAssignedToThirdParty = true;
+	}
+	
+	
+	
+	EncodeUpdateMail(_swdoc.MessageSource);
+		
+	if(!HaveRight(ANALYST_RIGHT_A_GROUP, ANALYST_RIGHT_A_CANASSIGNCALLS, TRUE))
+		return;
+		
+	if(AssignToAnalyst.length)	// Only check if we are an analyst
+	{
+		var nStatus;
+		var Message;
+		var bBassignBlocked = FALSE;
+		var nMaxAssignedCalls = 0;
+
+		if(!bAssignedToThirdParty)
+		{
+			AanalystStat = new AnalystSatusHolder(AssignToAnalyst);
+			if(!AanalystStat)
+			{
+				MessageBox("Unable to determine analyst status");
+				return;
+			}
+			
+			nStatus = AanalystStat.status;
+			Message = AanalystStat.message;
+			bBassignBlocked = AanalystStat.assignblocked;
+			nMaxAssignedCalls = AanalystStat.maxassigncall;
+		}
+		
+		if(bBassignBlocked)
+		{
+			MessageBox("Assigning calls to this analysts has been disallowed by the system administrator.", MB_ICONSTOP);
+			return;
+		}
+
+		
+		switch(nStatus)
+		{
+		case ANALYST_STATUS_ATLUNCH:
+			if(MessageBox(AssignToAnalyst + " is at lunch.\n\n" + Message + "\n\n" + "Do you still want to assign the call?", MB_ICONQUESTION | MB_YESNO) != IDYES)
+				return;
+			break;
+		case ANALYST_STATUS_ONTRAINING:
+			if(MessageBox(AssignToAnalyst + " is on training.\n\n" + Message + "\n\n" + "Do you still want to assign the call?", MB_ICONQUESTION | MB_YESNO) != IDYES)
+				return;
+			break;
+		case ANALYST_STATUS_ONHOLIDAY:
+			if(MessageBox(AssignToAnalyst + " is on holiday.\n\n" + Message + "\n\n" + "Do you still want to assign the call?", MB_ICONQUESTION | MB_YESNO) != IDYES)
+				return;
+			break;
+		case ANALYST_STATUS_INAMEETING:
+			if(MessageBox(AssignToAnalyst + " is in a meeting.\n\n" + Message + "\n\n" + "Do you still want to assign the call?", MB_ICONQUESTION | MB_YESNO) != IDYES)
+				return;
+			break;
+		case ANALYST_STATUS_OUTOFOFFICE:
+			if(MessageBox(AssignToAnalyst + " is currently out of the office.\n\n" + Message + "\n\n" + "Do you still want to assign the call?", MB_ICONQUESTION | MB_YESNO) != IDYES)
+				return;
+			break;
+		case ANALYST_STATUS_DONOTDISTURB:
+				if(MessageBox(AssignToAnalyst + " has requested not to be disturbed.\n\n" + Message + "\n\n" + "Do you still want to assign the call?", MB_ICONQUESTION | MB_YESNO) != IDYES)
+				return;
+			break;
+
+		case ANALYST_STATUS_AVAILABLE:
+		default:
+			break;
+		}
+
+		if(nMaxAssignedCalls > 0) // Only 
+		{
+			SqlRecordSetObj = new SqlQuery;
+			SqlRecordSetObj.Query("select count(*) as ct from opencall where status < 16 AND status != " + CS_RESOLVED + " and owner = '" + AssignToAnalyst + "'", "sw_systemdb");
+			
+			if(SqlRecordSetObj.Fetch())
+			{
+				var nCount = SqlRecordSetObj.GetValueAsNumber(0);
+				if(nCount >= nMaxAssignedCalls)
+				{
+					MessageBox("The Maximum Call Assignment count has been reached for this analyst. No call assignment possible.", MB_ICONSTOP);
+					SqlRecordSetObj.Reset();
+					return;
+				}
+			}
+			
+			SqlRecordSetObj.Reset();
+		}
+	}
+	
+	var hdcon = new HelpdeskSession;
+	
+	if(hdcon.Connect())
+	{
+		var nCallRef = _swdoc.Callrefs[0]; 
+		var SLAtext = (_swdoc.Callrefs.length > 1) ? "" : SLA.text;
+	
+		if(!_swdoc.bAllowResponse)
+			checkMarkSLAResponse.text = "0";
+			
+		// We start a new transaction to update the specified call (complex req)
+		if(hdcon.BeginUpdateCall(_swdoc.CallrefsCommaString))
+		{   
+			var bSendSuccess = hdcon.SendTableValues(_swdoc.GetDataPtr(), "updatedb");
+  			
+    		if(bSendSuccess && hdcon.SendNumber("backdateperiod", nBackdatePeriod) &&
+		    	hdcon.SendBoolean("_acceptmode", _swdoc.bAcceptMode) &&
+		    	hdcon.SendNumber("_targetfixtime", Target.text) &&
+		    	hdcon.SendBoolean("markslaresponse", checkMarkSLAResponse.text) &&
+		    	hdcon.SendBoolean("publicupdate", checkUpdatePublic.text) &&
+		    	hdcon.SendString("priority", SLAtext) &&
+		    	hdcon.SendString("assignto", AssignTo))
+		    {
+		    	for(i=0; i<AttachsList.rowCount();i++)
+		    	{
+    				if(!hdcon.SendFile("attach", AttachsList.GetItemText(i,0), AttachsList.GetItemText(i,3)))
+    					return;
+    			}
+       			
+    			if(hdcon.Commit())
+    			{
+    				if(!hdcon.GetResult())
+    					return;
+    					
+    				
+    				
+    				var SessionFilesInfo = "";
+    				if(checkEmailCustomer.text && app.global.IsConnectedToMailServer() && AttachsList.rowCount())
+    					SessionFilesInfo = hdcon.GetSessionFileInfo();
+    					
+    				//app.global.Sleep(500);
+    					
+    				if(_swdoc.taskid)
+    				{
+    					var ReturnData = hdcon.GetReturnDataStr();
+    					a = ReturnData.split(".");
+    					
+    					TempCallRef 		= a[0];
+    					CallUpdateIndex 	= a[1];
+    					
+    					if(hdcon.BeginCompleteTask())
+						{
+							if(!hdcon.SendNumber("callref", _swdoc.Callrefs[0]) ||
+						   	!hdcon.SendNumber("taskid", _swdoc.taskid) ||
+						   	!hdcon.SendNumber("callupdateindex", CallUpdateIndex))
+							{
+								MessageBox("Error writing data during work item completion", MB_ICONSTOP);
+								return;
+							}
+	
+							if(!hdcon.Commit())
+							{
+								MessageBox("Error completing work item", MB_ICONSTOP);
+								return;
+							}
+						}
+    				}
+    				
+    				hdcon.StoreEmailAuditTrailJs(_swdoc.Callrefs[0], _swdoc.MessageSource);
+    				
+    				if(checkEmailCustomer.text == "1")
+					{
+						// OK, we are going to send the customer(s) an e-mail message to confirm the 
+						// call closure. If we have uploaded file attachments, we can ask the session
+						// for a list of the files. If available, the session variables will include
+						// a _serverpath variable for each file. The returned list, is a list of 
+						// strings that is suitable for passing to the compose message function
+						
+						EmailUpdate(_swdoc.CallrefsCommaString,
+									Description.text, 
+									SessionFilesInfo, TimeSpent.text,
+									"UpdateCallMailTemplate", 
+									TEMPLATE_UPDATECALL );
+						
+						
+					
+					}
+					
+					_swdoc.CloseForm();
+    			}	
+		    }
+		}
+		// We have finished with the connection, close it.    
+		hdcon.Close();
+	}*/
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnAdd_OnPressed</name>
+						<code>
+							<![CDATA[btnAdd_OnPressed()
+{
+	// TODO: Add your event handler code here
+	AttachsList.newFile = InvokeCallAttachmentFileDialog();
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnRemove_OnPressed</name>
+						<code>
+							<![CDATA[btnRemove_OnPressed()
+{
+	// remove the highlighted attachment from the list
+    for(var i=0; i<AttachsList.rowCount();i++)
+    {
+    	if(AttachsList.IsRowSelected(i))
+    		AttachsList.RemoveRow(i);
+    }
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>(User Defined Functions)</name>
+						<code>
+							<![CDATA[
+]]>
+						</code>
+					</method>
+					<method>
+						<name>MenuButton1_OnPressed</name>
+						<code>
+							<![CDATA[MenuButton1_OnPressed()
+{
+	// TODO: Add your event handler code here
+	MessageBox("Hello");
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>SLA_OnValueChanged</name>
+						<code>
+							<![CDATA[SLA_OnValueChanged(strValue)
+{
+	var str = new String (SLA.pickList);
+	var strNew = new String (strValue + "|");
+	
+	if(str.toLowerCase().indexOf( strNew.toLowerCase() ) == -1)
+	{
+		if(IsAdministrator())
+		{
+			if( MessageBox("The SLA name you have selected is not valid. Do you want to add a new SLA with that name?", 
+			MB_ICONQUESTION | MB_YESNO) == IDYES)
+			{
+				if(Sys_AddNewSLA(strValue))
+					SLA.pickList = str + strNew;
+				else
+				{
+					app._ete(SLA , "");
+				}
+			}
+		}
+		else
+		{
+			MessageBox("The SLA name you have selected is not valid.");
+			app._ete(SLA , "");
+		}	
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>dtDateOfUpdate_OnValueChanged</name>
+						<code>
+							<![CDATA[dtDateOfUpdate_OnValueChanged(strValue)
+{
+
+	/*
+	var dIn	= new Date();
+    var currentTime	= Math.round(dIn.getTime()/1000);
+	var updateDateTime = DateOfUpdate.text;
+	nBackdatePeriod = currentTime - updateDateTime;
+		
+	if(nBackdatePeriod < 0)
+	{
+		var message = "You have attempted to forward date this call update which is not allowed.\n\nDo you want to use the current date and time to update this call.";
+		if(MessageBox(message, MB_ICONQUESTION | MB_YESNO) != IDYES)
+			return;
+		
+		nBackdatePeriod = 0;
+	}
+		
+	if(!IsAllowedToBackDateCallUpdate() && nBackdatePeriod > 0)
+	{
+		var message = "You have attempted to backdate this call update but you do not have sufficient privileges to do so\n\nDo you want to use the current date and time to update this call?"
+		if(MessageBox(message, MB_ICONQUESTION | MB_YESNO) != IDYES)
+			return;
+		nBackdatePeriod = 0;
+	}
+	else
+	if(nBackdatePeriod > GetMaximumBackdatePeriodAllowed())
+	{
+		var dTime	= new Date();
+		dTime = (currentTime - GetMaximumBackdatePeriodAllowed()) * 1000;
+		var message = "You have attempted to backdate this call update further than you have sufficient privileges to do so.\n\nDo you want to use the oldest date/time that you are allowed: ";
+		if(MessageBox(message + dTime.toLocalString(), MB_ICONQUESTION | MB_YESNO) != IDYES)			//SwGetInternalDateTimeFormat
+			return;
+			
+		nBackdatePeriod = GetMaximumBackdatePeriodAllowed();
+	}
+		var CommaSeperatedCallrefs = _swdoc.Callrefs;
+	SqlRecordSetObj = new SqlQuery;
+	
+	SqlRecordSetObj.Query("SELECT max(updatetimex) AS udtime FROM updatedb WHERE callref IN (" + CommaSeperatedCallrefs + ")", "sw_systemdb");
+	if(SqlRecordSetObj.Fetch())
+	{
+		var tLastUpdate = SqlRecordSetObj.GetValueAsNumber(0);
+		
+		if(tLastUpdate > updateDateTime)
+		{
+			var dTime	= new Date();
+			dTime = tLastUpdate;
+			var message = "You have chosen to backdate this action \nto a time before than the last action was carried out against one of the selected calls. This is not allowed!\n\n\nThe last action was carried out on ";
+			MessageBox(message + dTime.toLocalString(), MB_ICONQUESTION | MB_OK);
+						
+			return;
+		}
+	}
+*/
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>dt_updatedate_OnValueChanged</name>
+						<code>
+							<![CDATA[dt_updatedate_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+
+	// Find out what time the date/time is being changed.  This number will be used to make sure that the analyst is
+	// not trying to change the update to a time in the future.
+	// The time the form was opened will be checked against the user's maximum backdate period
+	// to make sure that they are not trying to backdate this update too far.  The reason for this is that the analyst
+	// may ostensibly backdate from the max period before the form was opened, but for checking times in the future,
+	// this would error if they spend any time editing the form.  
+	
+	// Get the backdate period that the analyst is trying to backdate to
+	var dtBackdatePeriod = _swdoc.dtCurrentTime.getTime() - (dt_updatedate.value * 1000);
+	// calculate the actual time the analyst can backdate to, based on current time - maximum backdate period
+	
+	var dtMaxBDTime = new Date();
+		
+	// GetMaxiumumBackdatePeriodAllowed is stored in seconds.  Convert to milliseconds to obtain actual
+	// maximum backdate time.
+	dtMaxBDTime.setTime(_swdoc.dtCurrentTime.getTime() - (GetMaximumBackdatePeriodAllowed() * 1000));
+	
+
+	// ensure that the backdate time entered is not in the future
+	if(dt_updatedate.value > app.global.GetCurrentEpocTime())
+	{
+		var message = "Forwarding call updates is not permitted.";
+		MessageBox(message, MB_ICONEXCLAMATION | MB_OK);
+		app._eva(dt_updatedate , app.global.GetCurrentEpocTime());
+		return;
+	}
+
+	// ensure that the backdate period does not exceed the analyst's rights
+
+	if((dtBackdatePeriod/1000) > GetMaximumBackdatePeriodAllowed())
+	{
+		
+		var message = "The earliest time to which you can backdate calls is "+dtMaxBDTime.toLocaleString()+".\n\nDo you want to use this time and date?";
+		if(MessageBox(message, MB_ICONQUESTION | MB_YESNO) == 6){ // 6 = YES
+			app._eva(dt_updatedate , dtMaxBDTime.getTime()/1000);
+			return;
+		}
+		else{	
+			app._eva(dt_updatedate , app.global.GetCurrentEpocTime());
+		}
+	}
+	// make sure that the backdate time is not prior to the last previous update time for any of the calls being updated
+	SqlRecordSetObj = new SqlQuery;
+	
+	SqlRecordSetObj.Query("SELECT max(updatetimex) AS dtthemaxtime FROM updatedb WHERE callref IN (" + _swdoc._form["callrefs"] + ")", "sw_systemdb");
+	if(SqlRecordSetObj.Fetch())
+	{
+		var dtLastUpdate = new Date();
+		dtLastUpdate.setTime(SqlRecordSetObj.GetValueAsNumber(0));
+		
+		if(dtLastUpdate > (dt_updatedate.value * 1000))
+		{
+			var message = "You have chosen to backdate this action \nto a time before than the last action was carried out against one of the selected calls. This is not allowed!\n\n\nThe last action was carried out on ";
+			MessageBox(message + dtLastUpdate.toLocaleString(), MB_ICONQUESTION | MB_OK);
+						
+			return;
+		}
+	}
+
+
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

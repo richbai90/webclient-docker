@@ -1,0 +1,13 @@
+<datatable dsn="swdata"  onrowclick="" onrowdblclick="" onmouseover="return false;" onmouseout="return false;">
+<columns>
+	<column id="equipid" dbtable="equipmnt" conversion="asset"></column>
+	<column id="serialno" dbtable="equipmnt" conversion=""></column>
+	<column id="asset_no" dbtable="equipmnt" conversion=""></column>
+	<column id="manufactur" dbtable="equipmnt" conversion="manufact"></column>
+	<column id="model" dbtable="equipmnt" conversion=""></column>
+	<column id="generic" dbtable="equipmnt" conversion=""></column>
+</columns>
+<from>equipmnt</from>
+<where>owner = '![PrepareForSql(gv('userdb_keysearch'))]!'</where>
+<orderby>manufactur desc</orderby>
+</datatable>

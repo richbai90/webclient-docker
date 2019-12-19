@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espDbevs>
+	<dbev>
+		<name>Customers</name>
+		<icon>7</icon>
+		<table>userdb</table>
+		<treeBrowser>Customers</treeBrowser>
+		<searchTitle>Search for Customers</searchTitle>
+		<searchColumns>keysearch, firstname, surname, email, telext, companyname, costcenter, site, postcode</searchColumns>
+		<searchResultColumns>keysearch, firstname, surname, telext, companyname, costcenter, site</searchResultColumns>
+		<maxSearchResults>100</maxSearchResults>
+		<searchOptions>1</searchOptions>
+		<html>true</html>
+		<form>false</form>
+		<version>0</version>
+		<formName>Form.TfCustomer</formName>
+	</dbev>
+	<dbev>
+		<name>Assets</name>
+		<icon>8</icon>
+		<table>equipmnt</table>
+		<treeBrowser>Assets</treeBrowser>
+		<searchTitle>Search for Assets</searchTitle>
+		<searchColumns>equipid, asset_title, generic, companyname, supplier, manufactur, model, serialno, site, currstatus</searchColumns>
+		<searchResultColumns>equipid, asset_title, generic, companyname, site, owner, manufactur, model, supplier, serialno, currstatus</searchResultColumns>
+		<maxSearchResults>100</maxSearchResults>
+		<searchOptions>1</searchOptions>
+		<html>true</html>
+		<form>false</form>
+		<version>0</version>
+		<formName>Form.TfAsset</formName>
+	</dbev>
+	<dbev>
+		<name>Organisations</name>
+		<icon>0</icon>
+		<table>company</table>
+		<treeBrowser>Organisations</treeBrowser>
+		<searchTitle>Search for Organisations</searchTitle>
+		<searchColumns>pk_company_id, companyname, postcode, county, country, fk_accountmanager_id, fk_supportauthoriser_id, fk_company_type, fk_industry_type, fk_company_id</searchColumns>
+		<searchResultColumns>pk_company_id, companyname, county, postcode, country, telephone, www_address, fk_accountmanager_id, fk_supportauthoriser_id, fk_company_id, fk_company_type, fk_industry_type</searchResultColumns>
+		<maxSearchResults>100</maxSearchResults>
+		<searchOptions>0</searchOptions>
+		<html>false</html>
+		<form>false</form>
+		<version>0</version>
+		<formName>Form.TfCompany</formName>
+	</dbev>
+</espDbevs>

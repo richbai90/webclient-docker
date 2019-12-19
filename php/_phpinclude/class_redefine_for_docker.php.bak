@@ -1,0 +1,70 @@
+<?php
+
+class RedefineForDocker
+{
+    static public $initialized = false;
+    
+    static public function init()
+    {
+        if (self::$initialized === true) {
+            return;
+        }
+        $newFileGetContentsCode = self::generateNewCode('$filename', '_file_get_contents');
+        $newFileExistsCode = self::generateNewCode('$filename', '_file_exists');
+        $newFileSizeCode = self::generateNewCode('$filename', '_filesize');
+        $newFileTypeCode = self::generateNewCode('$filename', '_filetype');
+        $newFopenCode = self::generateNewCode('$filename', '_fopen', ['$mode']);
+        $newIsDirCode = self::generateNewCode('$filename', '_is_dir');
+        $newIsFileCode = self::generateNewCode('$filename', '_is_file');
+        $newReadfileCode = self::generateNewCode('$filename', '_readfile');
+        $newOpendirCode = self::generateNewCode('$path', '_opendir');
+        $newMkdirCode = self::generateNewCode('$pathname', '_mkdir', ['$mode']);
+        $newScandirCode = self::generateNewCode('$directory', '_scandir');
+        $newPathinfoCode = self::generateNewCode('$path', '_pathinfo', ['$options']);
+        $newRealpathCode = self::generateNewCode('$path', '_realpath');
+        $newBasenameCode = self::generateNewCode('$path', '_basename');
+        $newDirnameCode = self::generateNewCode('$path', '_dirname');
+        $newCopyCode = <<<'php'
+$source = _PREP_FILE_PATH($source);
+$dest = _PREP_FILE_PATH($dest);
+return _copy($source, $dest);
+php;
+
+        self::hookFunction('_file_get_contents', ['$filename'], $newFileGetContentsCode);
+        self::hookFunction('_file_exists', ['$filename'], $newFileExistsCode);
+        self::hookFunction('_filesize', ['$filename'], $newFileSizeCode);
+        self::hookFunction('_filetype', ['$filename'], $newFileTypeCode);
+        self::hookFunction('_fopen', ['$filename', '$mode'], $newFopenCode);
+        self::hookFunction('_is_dir', ['$filename'], $newIsDirCode);
+        self::hookFunction('_is_file', ['$filename'], $newIsFileCode);
+        self::hookFunction('_readfile', ['$filename'], $newReadfileCode);
+        self::hookFunction('_opendir', ['$path'], $newOpendirCode);
+        self::hookFunction('_mkdir', ['$pathname', '$mode=0777'], $newMkdirCode);
+        self::hookFunction('_scandir', ['$directory'], $newScandirCode);
+        self::hookFunction('_pathinfo', ['$path', '$options'], $newPathinfoCode);
+        self::hookFunction('_realpath', ['$path'], $newRealpathCode);
+        self::hookFunction('_basename', ['$path'], $newBasenameCode);
+        self::hookFunction('_copy', ['$source', '$dest'], $newCopyCode);
+        self::hookFunction('_dirname', ['$path'], $newDirnameCode);
+
+        self::$initialized = true;
+
+    }
+    static public function generateNewCode($varName, $funcToCall, $addtlVars = [])
+    {
+        $varString = implode(",", $addtlVars);
+        if ($varString != "") {
+            $varString = "," . $varString;
+        }
+        return <<<php
+$varName = _PREP_FILE_PATH($varName);
+return $funcToCall($varName$varString);
+php;
+    }
+
+    static public function hookFunction($newFnName, $newFnVars, $newFnCode)
+    {
+        runkit_function_copy(ltrim($newFnName, '_'), $newFnName);
+        runkit_function_redefine(ltrim($newFnName, '_'), implode($newFnVars, ','), $newFnCode);
+    }
+}

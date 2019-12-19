@@ -1,0 +1,74 @@
+<toolbars>
+	<toolbar id='cdf' handler="top._toolbar_action">
+		<item iid="save" img="call-update.png" disabled="1">Save</item>
+		<item iid="callupdate" img="call-update.png" disabled="0" toolbartext="0">Update</item>
+		<item iid="callassign" img="call-assign.png" disabled="0" toolbartext="0">Assign</item>
+		<item iid="callaccept" img="call-accept.png" disabled="0" toolbartext="0">Accept</item>
+		<item iid="callhold"   img="call-onhold.png" disabled="0" toolbartext="0">Place OnHold</item>
+		<item iid="calloffhold" img="call-offhold.png" disabled="0" toolbartext="0">Take OffHold</item>
+		<item iid="callresolve" img="call-resolve.png" disabled="0" toolbartext="0">Resolve/Close</item>
+		<item iid="callcancel" img="call-cancel.png" disabled="0" toolbartext="0">Cancel</item>
+		<item iid="split" disabled="1"></item>
+		<item iid="callwatch" img="call-watch.gif" imgdis='call-watch-d.gif' disabled="0" toolbartext="0">Watch this request</item>
+		<item iid="callunwatch" img="call-unwatch.gif" imgdis='call-unwatch-d.gif' disabled="0" toolbartext="0">Un-watch this request</item>
+		<item iid="split" disabled="1"></item>
+		<item iid="swprint" img="print.gif" imgdis='print-d.gif' disabled="1" toolbartext="0">Print preview..</item>
+		<item iid="split" disabled="1"></item>
+		<item iid="swtasks" img="task-update.png" disabled="1"  type='menu' mnuhandler="top._workflow_action">
+			<label>Workflow</label>
+			<mitem iid="wfnewitem"  disabled="1">Add New Work Item</mitem>
+			<mitem iid="wfmanage"  disabled="1">Add New Worklist</mitem>
+			<mitem iid="split"  disabled="1"></mitem>
+			<mitem img="task-complete.png" iid="wfm_complete"  disabled="1">Complete Work Item</mitem>
+		</item>
+		<item iid="split" disabled="1"></item>
+		<item iid="attach" img="attachment.png" disabled="0"></item>
+		<item iid="unattach" img="removeattachment.png" disabled="1"></item>
+	</toolbar>
+	<toolbar id='lcf' handler="top._toolbar_action">
+		<item iid="qlc"  img="call-lognew.png" enhanced='1' disabled="0" type='menu' tooltip='Quick Log Call' mnuhandler="top._qlc_saveas" jsenchancedloader='_apptoolbar__get_quicklog_list'>
+			<label>.</label>
+			<mitem iid="saveqlc"  disabled="1">Save Quicklog</mitem>
+		</item>
+		<item iid="calllog" img="call-lognew.png" disabled="0">Log</item>
+		<item iid="callassign" img="call-assign.png" disabled="0">Log &amp; Assign</item>
+		<item iid="callaccept" img="call-accept.png" disabled="0">Log &amp; Accept</item>
+		<item iid="calltake" img="call-accept.png" disabled="0">Log &amp; Take</item>
+		<item iid="callresolve" img="call-resolve.png" disabled="0">Log &amp; Resolve/Close</item>
+		<item iid="split" disabled="1"></item>
+		<item iid="swtasks" img="task-update.png" disabled="1"  type='menu' mnuhandler="top._workflow_action">
+			<label>Workflow</label>
+			<mitem iid="wfnewitem"  disabled="1">Add New Work Item</mitem>
+			<mitem iid="wfnewlist"  disabled="1">Add New Worklist</mitem>
+			<mitem iid="split"  disabled="1"></mitem>
+			<mitem iid="wfaddtemplate"  disabled="1">Add Workflow from Template</mitem>
+			<mitem iid="wfaddlist"  disabled="1">Add Worklist From Template</mitem>
+			<mitem iid="split"  disabled="1"></mitem>
+			<mitem iid="wfdelete"  disabled="1">Delete Work Item/Worklist</mitem>
+			<mitem iid="wfrename"  disabled="1">Rename Worklist</mitem>
+			<mitem iid="split"  disabled="1"></mitem>
+			<mitem iid="wftoggle"  disabled="1">Toggle Worklist Sequential/Open</mitem>
+			<mitem iid="split"  disabled="1"></mitem>
+			<mitem iid="wfup"  disabled="1">Move Up</mitem>
+			<mitem iid="wfdown"  disabled="1">Move Down</mitem>
+		</item>
+		<item iid="split" disabled="1"></item>
+		<item iid="attach" img="attachment.png" disabled="0"></item>
+		<item iid="unattach" img="removeattachment.png" disabled="1"></item>
+	</toolbar>
+	<toolbar id='stf' handler="top._toolbar_action">
+		<item iid="save" img="call-lognew.png" disabled="1">Save</item>
+		<item iid="split" disabled="1"></item>
+		<item iid="swprint" img="print.gif" imgdis='print-d.gif' disabled="1" toolbartext="0">Print preview..</item>
+	</toolbar>
+	<toolbar id='manage_multiclip' handler="_multiclip_toolbar_action">
+		<item iid="newblock" img="call-lognew.png" disabled="1">New Block</item>
+		<item iid="newgroup" img="call-edit.png" disabled="1">New Group</item>
+		<item iid="split" disabled="1"></item>
+		<item iid="save" img="call-update.png" disabled="1">Save</item>
+		<item iid="rename" img="open-form.png" disabled="1">Rename</item>
+		<item iid="delete" disabled="1" img="call-cancel.png">Delete</item>
+	</toolbar>
+
+</toolbars>
+

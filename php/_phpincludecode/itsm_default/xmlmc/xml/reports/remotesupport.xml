@@ -1,0 +1,21 @@
+<report title="Remote Support" reportstyle="api" uid="itsm" pwd="hornbill" location="https://hornbill.bomgar.com/api/reporting.ns">
+	<columns>
+		<column dbname="session_type" dbtable="opencall"  level="1">Session Type</column>
+		<column dbname="lseq" dbtable="opencall" graph="1" level="1">LSEQ</column>
+	</columns>
+	<tables>
+		<table name="opencall" type="master"/>
+	</tables>
+	<criteria>
+		<userinput type="daterange" binding="start_time" int="1" op="=">
+			<prompt>Requests logged on and between</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.fk_company_id" dsn="swdata" dbtable="opencall" keycol="fk_company_id" txtcol="companyname" filter=" where fk_company_id IS NOT NULL  and fk_company_id &lt;&gt;'' group by opencall.fk_company_id,opencall.companyname" int="0" op="=">
+			<prompt>Organisation</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.owner" dsn="swdata" dbtable="opencall" keycol="owner" txtcol="owner" filter=" where opencall.owner IS NOT NULL and opencall.owner &lt;&gt;''  group by opencall.owner   " int="0" op="=">
+			<prompt>Analyst</prompt>
+		</userinput>
+		<static></static>
+	</criteria>
+</report>

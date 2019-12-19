@@ -1,0 +1,260 @@
+
+.toolbar
+{
+	height:22px;
+/*
+	background-color:#efefef;
+	background-color:#D8E7FC;
+*/
+
+	background-color:#F5F5F5; /* whitesmoke */
+	background-color:#efefef;
+
+
+	padding:1px 2px 1px 2px;
+
+}
+.toolbar td
+{
+	font-size:11px;
+	color:#808080;
+}
+
+
+.toolbar-item
+{
+	*font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	float:left;
+	margin-right:5px;
+	height:17px;
+	*height:24px;
+
+	background-color:#efefef;
+	border:1px solid #efefef;
+
+/*	background-color:#D8E7FC;
+	border:1px solid #D8E7FC;
+	background-color:#A4C2F5;
+	border:1px solid #A4C2F5;
+*/
+
+/* whitesmoke */	
+/*
+	background-color:#F5F5F5; 
+	border:1px solid #F5F5F5;
+*/
+	padding:2px 5px 2px 2px;
+
+	cursor:pointer;
+}
+
+.toolbar-item-high
+{
+	*font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+
+	float:left;
+	margin-right:5px;
+	height:17px;
+	*height:24px;
+	background-color:#FFC663;
+	
+	padding:2px 5px 2px 2px;
+
+	border-style:solid solid solid solid;
+	border-width:1px 1px 1px 1px;
+	border-color:#ffffff #808080 #808080 #ffffff; 
+	border-color:#FFBD69 #FFBD69 #FFBD69 #FFBD69;
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF5CC', endColorstr='#FFDB75'); 
+	background: -webkit-gradient(linear, left top, left bottom, from(#FFF5CC), to(#FFDB75)); 
+	background: -moz-linear-gradient(top,  #FFF5CC,  #FFDB75);
+	background: -ms-linear-gradient(top,  #FFF5CC,  #FFDB75);
+
+
+	cursor:pointer;
+}
+
+
+.toolbar-item-select
+{
+	*font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+
+	float:left;
+	margin-right:5px;
+	height:17px;
+	*height:24px;
+	
+	background-color:#efefef;
+	ackground-color:#D8E7FC;
+
+
+
+	padding:2px 5px 2px 2px;
+
+	border-style:solid solid solid solid;
+	border-width:1px 1px 1px 1px;
+	border-color:#808080 #ffffff #ffffff #808080; 
+
+	cursor:pointer;
+}
+
+.toolbar-item-disable
+{
+	*font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+
+	float:left;
+	margin-right:5px;
+	height:18px;
+	*height:24px;
+
+	background-color:#efefef;
+	border:1px solid #efefef;
+
+	
+	padding:2px 5px 2px 2px;
+
+	cursor:default;
+}
+
+.toolbar-split
+{
+	*font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size:100%;	
+	height:24px;
+	width:8px;
+	
+
+	float:left;
+	cursor:none;
+	
+	ackground-image:url(toolbarimages/split-blue.png);
+	background-image:url(toolbarimages/split-gray.png);
+
+	background-repeat: no-repeat;
+	background-position:center center;
+
+
+}
+
+.toolbar-item-disable td
+{
+	color:#D2D2D2;
+}
+
+
+/* menu items */
+.menu-holder
+{
+	z-Index:9999;
+	display:none;
+	position:absolute;
+	top:0;
+	left:0;
+	border-style:solid;
+	border-width:1px;
+	border-color:#808080;
+	background-color:#F9F8F7;
+	width:auto;
+	*width:1%;
+
+}
+
+.iframe-shimmer
+{
+	z-Index:9998;
+	display:none;
+	position:absolute;
+	top:0;
+	left:0;
+	border-style:solid;
+	border-width:0px;
+	border-color:#808080;
+	background-color:#F9F8F7;
+
+}
+
+.mnu-icon
+{
+	height:22px;
+	width:20px;
+	border-style:solid;
+	border-width:0px 1px 0px 0px;
+	border-color:#808080;
+	background-color:#DBD8D1;
+	cursor:pointer;
+	z-index:9999999999999999;
+}
+
+.mnu-text
+{
+	white-space:noWrap;
+	height:16px;
+	font-size:11px;
+	*height:20px;
+	padding:1px 2px 0px 4px;
+	cursor:pointer;
+	z-index:9999999999999999;
+	display:inline;
+}
+
+.mnu-ctrl
+{
+	white-space:noWrap;
+	width:20px;
+	height:22px;
+	cursor:pointer;
+	z-index:9999999999999999;
+}
+
+.mnu-child
+{
+	white-space:noWrap;
+	width:20px;
+	height:22px;
+
+	background-image:url(menuimages/arr_right.gif);
+	background-repeat: no-repeat;
+	background-position:8 8;
+	*background-position:8 5;
+	cursor:pointer;
+	z-index:9999999999999999;
+}
+
+.mnu-nochild
+{
+	white-space:noWrap;
+	width:20px;
+	height:22px;
+	z-index:9999999999999999;
+}
+
+.mnu-highlighter
+{
+	border-style:solid;
+	border-width:1px;
+	border-color:#000000;
+	background-color:#B6BDD2;
+	color:#ffffff;
+	z-index:9999999999999999;
+}
+
+.mnu-splitter
+{
+	*font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size:0px;	
+	height:1px;
+	width:95%;
+	border-style:solid solid solid solid;
+	border-width:1px 0px 0px 0px;
+	border-color:#808080;
+	cursor:none;
+	z-index:9999999999999999;
+}
+
+.mnu-row-split
+{
+	*font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size:0px;	
+	height:1px;
+	z-index:9999999999999999;
+}

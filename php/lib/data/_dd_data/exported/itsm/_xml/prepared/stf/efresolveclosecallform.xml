@@ -1,0 +1,3696 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>EfResolveCloseCallForm</name>
+			<title>Resolve Close Call Form</title>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>true</showMenubar>
+				<showToolbar>false</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>updatedb</name>
+				<type>Main Details Table</type>
+				<flags>5</flags>
+				<assignments>
+				</assignments>
+			</table>
+			<table>
+				<name>opencall</name>
+				<type>Extended Details Table</type>
+				<mainDetailsColumn>callref</mainDetailsColumn>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>OnFormLoading</name>
+					<code>
+						<![CDATA[OnFormLoading(strFormName, strClass)
+{
+	//-- If the analyst does not have permissions to modify the status of call
+	//-- then they should not be able to resolve/close a call
+	if (!app.session.HaveRight(ANALYST_RIGHT_A_GROUP,ANALYST_RIGHT_A_CANMODIFYCALLS))
+	{
+    	MessageBox("You do not have sufficient privileges to modify calls.  Please contact your system administrator",MB_ICONSTOP);
+    	return false;
+	}
+	
+	//-- make sure user is allowed to resolve or close calls
+	if( (!app.session.HaveRight(ANALYST_RIGHT_A_GROUP,ANALYST_RIGHT_A_CANCLOSECALLS)) && (!app.session.HaveRight(ANALYST_RIGHT_A_GROUP,ANALYST_RIGHT_A_CANRESOLVECALLS)) )
+	{
+		MessageBox("You do not have sufficient privileges to resolve or close calls.  Please contact your system administrator",MB_ICONSTOP);	
+		return false;
+	}
+	//-- returns true or false - true keeps form open / false will close form
+	var boolRetVal = _swdoc.setup_document_variables();
+	
+	_swdoc.resetData();
+
+	return boolRetVal;
+	
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnFormClosing</name>
+					<code>
+						<![CDATA[OnFormClosing()
+{
+	//-- Check for Changes to any of the data fields
+	if(_swdoc.boolFormFieldChanged)
+	{
+		
+				//-- are we running in webclient
+				if(app && app._wc_version)
+				{
+					//-- return object that contains save message and the code to execute if the user chooses to leave the page
+					var o = {};
+					o.message = "You have unsaved data on this form.";
+					o.onclosexecute = function()
+							  {
+								app.global.UnlockCalls(_swdoc._form["callrefs"]);
+								_swdoc.ResetData();
+							  }
+					return o;
+				}
+
+				if(MessageBox("You have unsaved data on this form. Do you still want to close this form?", MB_ICONQUESTION | MB_YESNO) == IDNO)
+				
+			
+		return false;
+	}
+	
+	if(!_swdoc.CallrefsCommaString.length)
+	{	
+		_swdoc.ResetData();
+		return true;
+	}
+		
+	app.global.UnlockCalls(_swdoc.CallrefsCommaString);
+
+	_swdoc.resetData();
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>(User Defined Functions)</name>
+					<code>
+						<![CDATA[	/*
+		Created by Hornbill Systems
+		
+		Updates
+		
+		
+		Bug		Date		Author					Description
+		----------------------------------------------------------------------------
+		56943	14/05/07	Ivan Nicholas Dorosh	Ability to set default value for survey.
+	
+	
+	*/
+
+var boolLogMode = false; //-- boolean - is the form being displayed in a logcall forn
+var boolClosing = false; //-- boolean - is the call action to close calls/s (if false resolving)
+var boolCloseOnly = false;
+var boolResolveOnly = false; //-- boolean - is the call for resolving only (not allowed to close)
+
+var arrCallrefs = new Array(); //-- array - holds the callrefs we want to close or resolve
+var CallrefsCommaString = "";  //-- string - comma delimted callrefs
+var strIssueref = "";		   //-- string - has issue refs in it if we are closing an issue
+	
+var arrSurveyNameSurvIDs = new Array(); //-- array - holds list of survey ids 
+var arrCallStatuss 		 = new Array(); //-- array - holds list of the all the calls status
+var arrCallOpenTasks 	 = new Array(); //-- araray - holds list of all the calls tasks
+
+var boolFormFieldChanged = false;	//-- boolean - set to true when formfield is changed. Used when closing form
+
+var boolSourceEmail = false; //-- from opened from email
+var boolHaveSubject = false; //-- Is there a subject
+var boolHaveSurveys = false; //-- are there surveys available
+
+var boolMixedFTF = false;
+var boolMixedCallClasses = false; //-- boolean are we working with mixed call classes
+var boolHavePendingCalls = false; //-- we have calls that are pending
+var boolHaveResolvedCalls = false; //-- we have calls that are resolved
+var boolMultipleCalls = false; //-- we are working with multiple calls
+
+var boolClosingIssue = false; //-- boolean are we closing calls as part of an issue
+var boolMixedCallStatus  = false  //-- boolean are we working with a mixtuer of call states
+
+var nBackdatePeriod = 0;
+
+//-- reset bound record so we dont get messages when leaving
+function resetData()
+{
+	_swdoc.ResetModiedFlag("updatedb");
+	_swdoc.ResetModiedFlag("opencall");
+}
+
+//-- validate form data that user has set
+function ValidateForm()
+{
+	if((_swdoc.updatedb.timespent < 1 || _swdoc.updatedb.timespent > 60000) && (mainform.tb_timespent.mandatory))
+	{
+		MessageBox("You must enter the amount of time you spent on this action", MB_OK);
+		return false;	// Make sure that the time spent is within range
+	}
+
+	if(_swdoc.updatedb.updatetxt == "")
+	{
+		MessageBox("You must enter a description in the Action Description tab.", MB_OK | MB_ICONINFORMATION );
+		return false;	// Make sure we have some update text
+	}
+
+	//-- check other required fields
+	if (!_swdoc.check_mandatory_fields("updatedb",mainform))return false;		
+	if (!_swdoc.check_mandatory_fields("opencall",mainform))return false;
+	
+	return TRUE;
+}
+
+
+//-- 08.02.2007 - NWJ - Check mandatory fields on the form for a given table
+//--					alert user if need be and return false						
+function check_mandatory_fields(strTable,oForm)
+{
+    for (var x = 0; x<oForm.elements.length;x++)
+    {
+        var element = oForm.elements[x];
+        if ((element.mandatory) && (element.text ==""))
+        {
+            var colName = "";
+            var fieldName = "(not specified)";
+            if(element.dataRef!="")
+            {
+            	var arrInfo = element.dataRef.split(".");
+            	var strTable = arrInfo[0];
+            	var colName = arrInfo[1];
+            	var fieldName = dd.tables[strTable].columns[colName.toLowerCase()].DisplayName;
+            }
+            MessageBox("The field '" + fieldName + "' is a mandatory field and must be completed.");
+            return false;
+        }
+    }
+    return true;
+}
+
+function setup_call_action()
+{
+	//-- should list box be selectatable
+	//-- closing
+	
+	if ((_swdoc.boolCloseOnly) || (_swdoc.boolClosing))
+	{
+		if(_swdoc.boolCloseOnly)_swdoc.boolClosing = true;
+		//ind01 Ivan Nicholas Dorosh 02/04/07 - Set the text regardless of what the form is set to
+		app._ete(mainform.cb_callaction , "Close Call");
+		
+		//-- closing
+		//-- If closing call do not allow user to select fix code profile
+		//-- due to core product server restrictions
+		//ind02 mainform.btnBrowseProfile.enable=_swdoc.boolMixedCallStatus;
+		//ind02 mainform.btnGetProfileText.enable = false;		
+		//ind02 This code just didn't make sense.  Checked with AndreiT, and confirmed
+		// That this should not be enabled for Mixed Call Statuses only.
+		app._een(mainform.btnBrowseProfile,(_swdoc.boolMixedCallStatus==false));
+		app._een(mainform.btnGetProfileText , (_swdoc.boolMixedCallStatus==false));		
+		
+		var boolEnableFTF = dd.GetGlobalParamAsNumber("Application Settings\EnableFirstTimeFixWhenClosing", 0);
+		app._een(mainform.flg_ftf , ((boolEnableFTF) && (!_swdoc.boolMixedFTF)));
+	}
+	else
+	{
+	
+		//ind01 Ivan Nicholas Dorosh 02/04/07 - Set the text regardless of what the form is set to
+		app._ete(mainform.cb_callaction , "Resolve Call");
+		
+	
+		//ind02 //-- resolving or could be closing
+		//ind02 mainform.btnBrowseProfile.enable=true;
+		
+		//ind02 This code just didn't make sense.  Checked with AndreiT, and confirmed
+		// That this should not be enabled for Mixed Call Statuses only.
+		app._een(mainform.btnBrowseProfile, (_swdoc.boolMixedCallStatus==false));
+		app._een(mainform.btnGetProfileText , (_swdoc.boolMixedCallStatus==false));	
+		
+	}
+	
+	//-- set menu shortcut
+	strAppends = (_swdoc.boolMultipleCalls)?"s":"";
+	app._emt(mainform.btnResolveClose , "&" + mainform.cb_callaction.text + strAppends);
+	app._ete(mainform.btnResolveClose , mainform.cb_callaction.text + strAppends);
+
+	//-- setup other flags based on call action	
+	_swdoc.setup_charge_flag();
+	_swdoc.setup_kbase_flag()	
+}
+
+function setup_form_mode()
+{
+	//-- always make sure fixcode desc is disabled
+	app._een(mainform.tb_fixcodedescription,false);	
+	app._evi(mainform.btnResolveClose , true);
+	
+		
+	var bResolveByDefault = app.session.IsDefaultOption(ANALYST_DEFAULT_RESOLVEBYDEFAULT);			
+	//-- if user does not have the right to close calls then only allow resolve
+	if(!app.session.HaveRight(ANALYST_RIGHT_A_GROUP,ANALYST_RIGHT_A_CANCLOSECALLS))
+	{
+		app._een(mainform.cb_callaction,false);
+		bResolveByDefault = true;
+	}
+
+	//-- do they have option to resolve
+	if(!app.session.HaveRight(ANALYST_RIGHT_A_GROUP,ANALYST_RIGHT_A_CANRESOLVECALLS))
+	{
+		app._een(mainform.cb_callaction,false);
+		bResolveByDefault = false;
+	}
+	
+	_swdoc.boolClosing = !bResolveByDefault;
+	
+	//-- set the default selection for the call action pick list based on the DD entry 
+	if((bResolveByDefault) && (!_swdoc.boolHaveResolvedCalls))
+	{
+		app._ete(mainform.cb_callaction , "Resolve Call");
+	}
+	else
+	{
+		app._ete(mainform.cb_callaction , "Close Call");
+	}		
+	
+	//--
+	//-- disable / enable form fields
+	app._een(mainform.cb_callaction , (!_swdoc.boolHaveResolvedCalls));	
+	app._een(mainform.dt_actiontime , (app.session.CanBackdateCallActions())); //-- can backdate ?
+
+	//-- link passed in file attachments and set user perm to add
+	_swdoc.setup_file_attachments();
+}
+
+function setup_file_attachments()
+{
+	//--read the passed in attachemnets
+	var x=0;
+	while(_swdoc._form["attach"+x])
+	{
+		mainform.fl_attachments.AddAttachment(_swdoc._form["Attach" + x]);
+		x++;
+	}
+	if (!app.session.HaveRight(ANALYST_RIGHT_A_GROUP,ANALYST_RIGHT_A_CANATTACHFILESTOCALLS,false))
+	{
+		if(_swdoc._form["Attach1"])
+		{
+			app._evi(mainform.btnAddFile , false);
+			app._evi(mainform.btnRemoveFile , false);
+		}
+		else
+		{
+			mainform.Tab1.ShowTabItem(1,false);
+		}
+	}
+}
+
+//-- 08.02.2007 - NWJ - One function to handle which standard check boxes should be enabled/disabled
+//--					checked or unchecked, as old code fglas were set all over the place
+function setup_public_flag()
+{
+	app._een(mainform.flg_updatepublic,true);
+	app._ete(mainform.flg_updatepublic , app.session.IsDefaultOption(ANALYST_DEFAULT_CLOSEPRIVATE) ? "1":"0");
+
+	if (_swdoc.boolClosing)
+	{
+		//-- closing
+	}
+	else
+	{
+		//-- resolving
+	}
+}
+
+function setup_kbase_flag()
+{
+	//- -does the user have the right to add to the kbase or we are worknig with multiple calls so dont add
+	if((!app.session.HaveRight(ANALYST_RIGHT_C_GROUP,ANALYST_RIGHT_C_CANADDTOKNOWLEDGEBASE)) || (_swdoc.boolMultipleCalls))
+	{
+		app._ete(mainform.flg_addKBase 	, "0");
+		app._een(mainform.flg_addKBase , false);
+		return;
+	}
+
+	//-- We need to check whether this call has been added to the knowledge
+	//-- base when it was resolved.	
+     if(app.global.IsCallInKnowledgeBase(_swdoc.arrCallrefs[0]))
+     {
+		app._ete(mainform.flg_addKBase , "0");
+        app._een(mainform.flg_addKBase , false);
+     }
+     else
+     {
+        app._ete(mainform.flg_addKBase , app.session.IsDefaultOption(ANALYST_DEFAULT_CLOSEKNOWLEDGEBASE) ? "1":"0");
+        app._een(mainform.flg_addKBase,true);
+     }
+}
+
+function setup_charge_flag()
+{
+	if (_swdoc.boolClosing)
+	{
+		//-- closing
+		app._een(mainform.flg_chargeable,true);
+		app._ete(mainform.flg_chargeable , app.session.IsDefaultOption(ANALYST_DEFAULT_CLOSECHARGABLE) ? "1":"0");		
+	}
+	else
+	{
+		//-- resolving
+		app._een(mainform.flg_chargeable,false);
+		app._ete(mainform.flg_chargeable,0);		
+	}
+}
+
+function setup_email_flag()
+{
+	//--
+	//-- if we have a mailserver and can send mail set flg
+	if(app.global.IsConnectedToMailServer() && app.global.CanSendMail())
+	{
+		app._een(mainform.flg_emailcustomer , true);
+		app._ete(mainform.flg_emailcustomer , (app.session.IsDefaultOption(ANALYST_DEFAULT_CLOSESENDEMAIL)) ? "1":"0");
+	}
+	else
+	{
+		app._een(mainform.flg_emailcustomer , false);
+		app._ete(mainform.flg_emailcustomer , "0");
+	}
+}
+
+//--
+//-- initialise the surveys options
+function setup_survey_options()
+{
+	//-- if they do not have surveys hide options
+	if(!app.global.IsSurveyModuleEnabled())
+	{
+		app._ete(mainform.flg_customersurvey , "0");	
+		app._evi(mainform.flg_customersurvey , false);
+		app._evi(mainform.cb_surveys , false);
+	}
+	else
+	{
+		//-- get survey options
+		_swdoc.load_survey_list();	
+
+		//-- if we dont have surveys on the system then hide
+		if(!_swdoc.boolHaveSurveys)	
+		{
+			app._ete(mainform.flg_customersurvey , "0");	
+			app._een(mainform.flg_customersurvey , false);				
+			app._evi(mainform.cb_surveys , false);		
+			return false;
+		}
+		
+		//-- have to set to true because if you set to hidden in code and then dev form it saves the state
+		app._evi(mainform.flg_customersurvey , true);						
+		app._evi(mainform.cb_surveys , true);	
+			
+		//-- not allowed to change send survey options or there arent any surveys to send
+		if(app.session.IsDefaultOption(ANALYST_DEFAULT_DISABLESENDSURVEY)) 
+		{
+			//--code change DavidJH 09.06.05
+			app._een(mainform.flg_customersurvey , false);
+			app._ete(mainform.flg_customersurvey,"0");
+			return false;
+		}
+		else
+		{
+			app._een(mainform.flg_customersurvey , true);
+		}
+		
+		//-- default ticked setting
+		if(app.session.IsDefaultOption(ANALYST_DEFAULT_SETSENDSURVEY))
+		{
+			app._ete(mainform.flg_customersurvey , "1");
+			app._een(mainform.cb_surveys , true);						
+		}
+		else
+		{
+			app._ete(mainform.flg_customersurvey , "0");
+			app._een(mainform.cb_surveys , false);						
+		}
+	}
+}
+
+function load_survey_list()
+{
+	//-- empty the picklist
+	mainform.cb_surveys.pickList = "";
+	
+	//-- select all of the system mailboxes and add all shared mailboxes to an array
+	var SqlRecordSetObj	= new SqlQuery;
+	
+	//-- select all of the surveys and the mailbox they are associated to
+	SqlRecordSetObj.Reset();
+	SqlRecordSetObj.InvokeStoredQuery("form/resolvecloseform/getsurveys","");
+		
+	var str = "";
+	var selected = "";
+	var strTemps = new Array();
+	bselecteddefaultsurvey = false;
+	
+	//-- loop through the surveys and and match those associated to shared mailboxes
+	//-- for each survey add it into an array and to the pick list string and when the 
+	//-- first survey is found identify it as the default option for the survey picklist
+	while(SqlRecordSetObj.Fetch())
+	{
+		//-- get the recordset value for survey name and id
+		var surveyname = SqlRecordSetObj.GetValueAsString("surveyName");
+		var surveyid = SqlRecordSetObj.GetValueAsString("surveyid");
+		
+		//-- add the survey name/id pair into the array
+		_swdoc.arrSurveyNameSurvIDs[surveyname] = surveyid;
+		
+		//-- build the picklist	options string	
+		str += surveyname + "|";
+		//MessageBox(surveyname)
+		_swdoc.boolHaveSurveys=true;
+		//-- identify the default survey (currently the first one added)
+		for(ID in _swdoc.arrSurveyNameSurvIDs)
+		{
+			
+			if(_swdoc.arrSurveyNameSurvIDs[ID])
+			{
+				/* 56943-1 Not required, set in form.
+				if(!bselecteddefaultsurvey)
+				{
+					bselecteddefaultsurvey = true;
+					selected = surveyname;
+				}
+				*/
+			}
+		}
+			
+	}
+	
+	//-- populate the surveys pick list
+	mainform.cb_surveys.pickList = str;
+	
+	//-- set the default selected survey
+	//56943-1 mainform.cb_surveys.text = selected;
+}
+
+
+function setup_profile_selection()
+{
+
+}
+
+function setup_resolution_profile()
+{
+	//-- disable profile text button
+	app._een(mainform.btnGetProfileText,false);
+
+	//-- if we have pending calls dont bother
+	if (_swdoc.boolHavePendingCalls) return;
+	if (!_swdoc.boolHaveResolvedCalls) return;
+
+	//-- DJH
+	//-- 24.01.2006 
+	//-- if the call is resolved, pull the resolution text and prepopulate the boxes with this text.
+	var aRSfixcodes	= new SqlQuery;
+	
+	//-- NWJ -  24.01.2006
+	//--		Get distinct profile codes for passed in calls
+	var strParams = "crfs="+app.pfu(_swdoc.CallrefsCommaString);
+	if (!aRSfixcodes.InvokeStoredQuery("form/resolvecloseform/get_fixcodes",strParams))
+    {
+		MessageBox("Unable to query call fixcode values. Please contact your Supportworks Administrator.", MB_ICONSTOP);
+	}
+	else
+	{
+		//-- NWJ - 24.01.2006
+		//-- 	   See if we have more than 1 fixcode
+		var strFixCode 	= ""
+		var strFixText	= "";
+		var intFixCodeCount = 0;
+		while(aRSfixcodes.Fetch())
+		{
+			intFixCodeCount++;			
+			//-- we have multiple fixcodes
+			if (intFixCodeCount > 1) 
+			{
+				strFixCode = "";
+				strFixText = "<multiple profiles>";
+				break;
+			}
+			strFixCode = aRSfixcodes.GetValueAsString("fixcode");
+		}
+		
+		//-- if we have one fix code we should load this profile
+		if (intFixCodeCount == 1)
+		{
+			var objFix = app.global.GetResolutionProfileDescription(strFixCode);
+			strFixText = objFix.strCodeDesc;	
+			//-- nwj if it has a dec text enable button to copy
+			app._een(mainform.btnGetProfileText,(objFix.strDescription!=""));
+	
+		}
+
+		//-- set text desc of code and then set actual code against opencall record
+		app._ete(mainform.tb_fixcodedescription , strFixText);
+		_swdoc.opencall.fixcode = strFixCode;		
+			
+	}//end else query was successful
+
+}
+
+//-- 09.02.2007 - NWJ - initialise the _swdoc variables and state
+function setup_document_variables(boolLogging)
+{
+	//-- store callrefs string and create array
+	_swdoc.CallrefsCommaString = _swdoc._form["callrefs"];
+	_swdoc.arrCallrefs = _swdoc.CallrefsCommaString.split(",");
+	_swdoc.boolMultipleCalls = (_swdoc.arrCallrefs.length>1);
+	
+	//-- arrays to hold call info
+	_swdoc.arrSurveyNameSurvIDs 	= new Array();
+	_swdoc.arrCallStatuss 		= new Array();
+	_swdoc.arrCallOpenTasks 		= new Array();
+				
+	//-- do we have an issue reference
+	if(_swdoc._form["issueref"])
+	{
+		_swdoc.boolClosingIssue = true;
+		//MessageBox("Issue Ref " + _swdoc._form["issueref"])
+		_swdoc.strIssueref = _swdoc._form["issueref"];
+	}
+
+	//-- if the call does not have active tasks then its ok to lock them - otherwise close form
+	var strTaskMsg = _swdoc.check_call_has_active_tasks(_swdoc.CallrefsCommaString);
+	if(strTaskMsg!="")
+	{
+		MessageBox(strTaskMsg,MB_ICONSTOP);
+		app.global.UnlockCalls(_swdoc.CallrefsCommaString);
+		return false;
+	}
+	else
+	{
+		//-- lock selected calls for close activity	
+		if(!app.global.LockCalls(_swdoc.CallrefsCommaString, "CLOSE"))
+		{
+			//-- Failed to lock close the form
+			return false;
+		}
+
+				
+		//- got get call states and classes - so user can choose what to do if they are different.
+		if(!_swdoc.check_call_states_and_classes(_swdoc.CallrefsCommaString))	
+		{
+			app.global.UnlockCalls(_swdoc.CallrefsCommaString);
+			return false;
+		}
+		else
+		{
+			
+			//-- create form title
+			_swdoc.create_form_title();
+				
+			//-- are we resolving only
+			_swdoc.boolResolveOnly = (_swdoc._form["resolve"] == "1");
+				
+			//-- did we come from an email
+			_swdoc.boolSourceEmail = (_swdoc._form["_source_email"] == "true");
+		
+			//-- do we have a subject		
+			_swdoc.boolHaveSubject = (_swdoc._form["subject"] == "true");
+				
+			//--- set update text
+			_swdoc.strUpdateText = _swdoc._form["updatetext"];
+		}		
+		
+	}//-- if(strTaskMsg!="")
+
+	return TRUE;
+}
+
+//-- 09.02.2007 - NWJ - Check if call/s have any active tasks - if so return message.
+function check_call_has_active_tasks(strCheckCallrefs)
+{
+	
+	var returnMessage = "";
+	var aRS	= new SqlQuery;
+
+	//-- perform a sql check to see if we have any open calltasks
+	var strParams = "crfs="+app.pfu(strCheckCallrefs);
+	if(!aRS.InvokeStoredQuery("form/resolvecloseform/cnt_calltasks_by_callref", strParams))
+    {
+		if(_swdoc.strIssueref.length == 0)
+     	{
+     		returnMessage = "Unable to query call task status values. Please contact your Supportworks Administrator.";
+     	}
+    }
+	else
+	{
+		_swdoc.arrCallOpenTasks.length = 0;
+			
+		while(aRS.Fetch())
+		{
+				var nCount =  aRS.GetValueAsString("ct");
+				var calref =  aRS.GetValueAsString("callref");
+				_swdoc.arrCallOpenTasks[calref] = nCount;
+		}
+		
+		var nLength = _swdoc.arrCallOpenTasks.length;
+		if(nLength)
+		{
+			var Ref = "";
+			var Message = "";
+			if(nLength > 1)
+			{
+				for(ID in _swdoc.arrCallOpenTasks)
+				{
+					//-- 30.01.2006 - DJH code to add comma between call refs when dealing with multiple calls
+					var Value = dd.tables["opencall"].columns["callref"].FormatValue(ID);
+					if(Ref != "")Ref += ",";
+					Ref += Value;
+				}
+				returnMessage = "The following calls still have outstanding work items assigned to them and can not be closed:-\n\n" + Ref; //Removed  + "1" from end
+			}
+			else
+			{
+				for(ID in _swdoc.CallOpenTaskMap)
+				{
+						returnMessage = "The call " + ID + " still has " + _swdoc.arrCallOpenTasks[ID] + " outstanding work item(s) and can not be closed.";
+						break;
+				}
+			}//--if(nLength > 1)		
+		}//-- if(nLength)
+	}//-- if(!aRS.invokestoredquery)
+	
+ 	return returnMessage;
+}
+
+//-- 09.02.2007 - NWJ - Construct form title based on state etc
+function create_form_title()
+{
+	//-- start to contruct form title (call local function to format callrefs and finish title)
+	var strFormTitle = (_swdoc.arrCallrefs.length > 1) ? "Resolve/Close Calls " : "Resolve/Close Call ";
+
+	//-- loop through array and format callrefs	
+	for(var i=0;i<_swdoc.arrCallrefs.length; i++)
+	{
+		if( i > 0) strFormTitle += ", ";
+		strFormTitle += dd.tables["opencall"].columns["callref"].FormatValue(_swdoc.arrCallrefs[i]);
+	}
+
+	//-- if we are closing an issue and to title
+	if(_swdoc.strIssueref.length) strFormTitle += " Closing issue " + _swdoc.strIssueref
+			
+	//-- set the title
+	_swdoc.SetTitle(strFormTitle);
+}
+
+//-- 09.02.2007 - NWJ - check the state and callclass for the action calls - true / false (false = close down)
+function check_call_states_and_classes(strCheckCallrefs)
+{
+	//-- get the status and class for our callref/s
+    var aRScallstate = new SqlQuery;
+	
+   var strParams = "crfs="+app.pfu(strCheckCallrefs);
+   if(!aRScallstate.InvokeStoredQuery("form/resolvecloseform/get_calls_for_status_check", strParams))
+   {
+     	//-- failed - check if we have an issue
+     	if(_swdoc.strIssueref.length == 0)
+     	{
+     		MessageBox("Unable to query call status values. Please contact your Supportworks Administrator..", MB_ICONSTOP);
+     		return false;
+     	}
+    }
+    else
+    {
+		//--
+		//-- loop through our returned rows and get state and classes
+		
+		var strCurrentCallClass = "";
+		var strLastCallClass = "";					
+		var strCurrFTF = -1;
+		var strLastFTF = -1;
+		
+		
+		var nPendingStatus = 0;
+		var nResolvedStatus = 0;
+		var nOtherStatus = 0;
+		
+		while(aRScallstate.Fetch())
+		{			
+			//-- get status and callref and add info an array
+			var iStatus =  aRScallstate.GetValueAsNumber("status");
+			var iCalref =  aRScallstate.GetValueAsNumber("callref");
+			_swdoc.arrCallStatuss[iCalref] = iStatus;
+						
+			//-- get call class and check if it same as others
+			//-- simply want to check if we have selected to resolve or close perate call classes
+			strCurrentCallClass = aRScallstate.GetValueAsString("callclass");
+			if ((strLastCallClass != "") && (!_swdoc.boolMixedCallClasses))
+			{
+				_swdoc.boolMixedCallClasses = (strLastCallClass != strCurrentCallClass);
+			}
+			strLastCallClass = strCurrentCallClass;
+			
+			//-- NWJ - 23.11.2007 - check first time fix
+			strCurrFTF = aRScallstate.GetValueAsNumber("flg_firsttimefix");			
+			if((strLastFTF!=-1)&&(strLastFTF!=strCurrFTF))
+			{
+				_swdoc.boolMixedFTF=true;
+			}
+			strLastFTF = strCurrFTF;
+			
+			switch(iStatus)
+			{
+				case CS_PENDING:
+					nPendingStatus++;
+					break;
+				case CS_RESOLVED:
+					nResolvedStatus++;
+					break;
+				default:
+					nOtherStatus++;
+					break;
+			}
+		}
+		aRScallstate.Reset();//-- reset recordset object
+	
+		
+		//-- we have different call classes and not working with an issue prompt use as to what to do
+		if((_swdoc.boolMixedCallClasses) && (_swdoc.strIssueref.length == 0))
+		{
+			var Message = "The calls you have selected to resolve or close have different call classes, so any resolution profile you may specify will not be applied if you continue. Do you want to continue?\n\n(If you want resolution profiles to apply, you should click No and resolve/close each call separately)";
+			if(MessageBox(Message, MB_ICONSTOP | MB_ICONQUESTION | MB_YESNO) != IDYES)
+			{
+				return false;
+			}
+		}
+	
+		//--- if not pending or resolved && not dealing with issue
+		if((nOtherStatus) &&(_swdoc.strIssueref.length == 0))
+		{			
+			MessageBox("One or more selected calls can not be closed because they have a status other than Pending or Resolved.", MB_ICONSTOP);
+			return false;
+		}
+	
+		_swdoc.boolHavePendingCalls = (nPendingStatus);
+		_swdoc.boolHaveResolvedCalls = (nResolvedStatus);
+		_swdoc.boolCloseOnly = (nResolvedStatus);		
+		//-- we have pending and resolved callss	
+		if(nPendingStatus && nResolvedStatus)
+		{
+			_swdoc.boolMixedCallStatus = true;
+			if(_swdoc.strIssueref.length == 0)
+			{
+				var Message = "The calls you have selected have a mixture of 'Pending' and 'Resolved' statuses. As resolved calls have already been attributed a resolution profile, the resolution profile selected for closing these calls will only be applied to the calls that currently have a status of 'Pending'. The 'Resolved' calls will be completed leaving the previously applied resolution profile. \n\nDo you want to continue?";
+				if(MessageBox(Message, MB_ICONQUESTION | MB_YESNO) != IDYES)
+				{
+					return false;
+				}
+			}
+		}
+	} //-- if(!aRScallstate.invokestoredquery)
+	
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnExecuteAction</name>
+					<code>
+						<![CDATA[OnExecuteAction(nAction)
+{
+	//-- trigger an action from a menu bar (shortcusts)
+	
+	//-- closing call
+	MessageBox(nAction);
+	if(nAction == CLOSE_CALL_ACTION) return mainform.ResolveClose();
+		
+	//-- attaching a call to the action.
+	if(nAction == ATTACHFILETOCALL_ACTION)
+	{
+		mainform.btnAddFile_OnPressed();
+		return true;
+	}
+
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnValidate</name>
+					<code>
+						<![CDATA[OnValidate()
+{
+	//-- validate the form
+	if(!_swdoc.ValidateForm())return VALIDATE_FAIL;
+		
+	return VALIDATE_DEFAULT;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[//-- ALL vars and funcs are in the userdefined js area]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>561</width>
+				<height>434</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>tb_updatetext</name>
+						<type>Field</type>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>0</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>272</top>
+							<left>17</left>
+							<right>542</right>
+							<bottom>412</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>updatedb.updatetxt</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>true</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>4</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>CaptionPanel2</name>
+						<type>CaptionBar</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>true</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>1</index>
+						<caption>Details</caption>
+						<backgroundColor>#f1f1f1</backgroundColor>
+						<foregroundColor>#003366</foregroundColor>
+						<font  size="10" bold="1">Trebuchet (MS)</font>
+						<alignment>Left</alignment>
+						<fillStyle>Vertical Gradient</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>29</top>
+							<left>3</left>
+							<right>394</right>
+							<bottom>205</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#d8d8d8</backgroundColor2>
+							<imageHSpace>10</imageHSpace>
+							<slope>12</slope>
+							<borderColor>#d3c9b6</borderColor>
+							<headerHeight>23</headerHeight>
+							<hasBorder>1</hasBorder>
+							<panelBorderColor>#d3c9b6</panelBorderColor>
+							<fillStyle>0</fillStyle>
+							<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+							<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>dt_actiontime</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>2</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>73</top>
+							<left>11</left>
+							<right>218</right>
+							<bottom>91</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>25</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>updatedb.updatetimex</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Date/Time Control</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<colorDateIndicator>false</colorDateIndicator>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<dateFormatMode>0</dateFormatMode>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_timespent</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>3</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>73</top>
+							<left>227</left>
+							<right>286</right>
+							<bottom>91</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>25</left>
+							<right>25</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>updatedb.timespent</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Minute Time Period</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>5</defaultValue>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>cb_actionsource</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>4</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>110</top>
+							<left>11</left>
+							<right>218</right>
+							<bottom>128</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>25</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>updatedb.udsource</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>true</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<defaultValue>Telephone</defaultValue>
+							<distinctTable>updatedb</distinctTable>
+							<distinctColumn>udsource</distinctColumn>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_actiontype</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>5</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>110</top>
+							<left>227</left>
+							<right>388</right>
+							<bottom>128</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>25</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>updatedb.udcode</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>true</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<defaultValue>General Update</defaultValue>
+							<listItems>General Update|Called Customer|E-mailed Customer|</listItems>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnBrowseProfile</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>6</index>
+						<caption>...</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>156</top>
+							<left>362</left>
+							<right>388</right>
+							<bottom>177</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<commands>-1</commands>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_fixcodedescription</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>7</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>158</top>
+							<left>11</left>
+							<right>364</right>
+							<bottom>176</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_emailcustomer</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>8</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>76</top>
+							<left>409</left>
+							<right>525</right>
+							<bottom>95</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<flagItems>E-mail customer^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_updatepublic</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>9</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>57</top>
+							<left>409</left>
+							<right>538</right>
+							<bottom>75</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<flagItems>Update to be public^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_chargeable</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>10</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>96</top>
+							<left>409</left>
+							<right>550</right>
+							<bottom>114</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<flagItems>Call to be chargeable^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<defaultValue>0</defaultValue>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_addKBase</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>11</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>116</top>
+							<left>409</left>
+							<right>551</right>
+							<bottom>135</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<flagItems>Add to KnowledgeBase^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_customersurvey</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>12</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>158</top>
+							<left>409</left>
+							<right>567</right>
+							<bottom>179</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<flagItems>Send customer survey:^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>cb_surveys</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>13</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>181</top>
+							<left>413</left>
+							<right>543</right>
+							<bottom>199</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<listItems>First Survey|Second Survey|Third Survey|</listItems>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>cb_callaction</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>14</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>4</top>
+							<left>226</left>
+							<right>387</right>
+							<bottom>22</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>25</left>
+							<right>25</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<listItems>Close Call|Resolve Call|Close Call|Resolve Call|</listItems>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnGetProfileText</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>15</index>
+						<caption>Add Profile Text</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#0000ff</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>213</top>
+							<left>458</left>
+							<right>550</right>
+							<bottom>234</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Tab1</name>
+						<type>TabControl</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>16</index>
+						<caption>Tab1</caption>
+						<backgroundColor>#ded7ce</backgroundColor>
+						<foregroundColor>#ffffff</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>241</top>
+							<left>7</left>
+							<right>553</right>
+							<bottom>422</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<tabStyle>Top</tabStyle>
+					<tabSize>19</tabSize>
+					<items>
+						<item>
+							<name>Description</name>
+							<properties>56=#d1e0ee|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#d1e0ee</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>File Attachment</name>
+							<properties>56=#ffcc66|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#ffcc66</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+					</items>
+					<selectedTextFont  size="8">Arial</selectedTextFont>
+					<selectedTextColor>#000000</selectedTextColor>
+					<deselectedTextColor>#000000</deselectedTextColor>
+					<tabSlopeLeft>2</tabSlopeLeft>
+					<tabSlopeRight>2</tabSlopeRight>
+					<deselectedTabHeightOffset>1</deselectedTabHeightOffset>
+					<tabSpacing>0</tabSpacing>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<tabStyle>0</tabStyle>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fl_attachments</name>
+						<type>FileListTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>true</autoLoad>
+							<allowMultiSelect>true</allowMultiSelect>
+						</flags>
+						<group>Tab1:1</group>
+					</general>
+					<appearance>
+						<index>17</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>269</top>
+							<left>15</left>
+							<right>473</right>
+							<bottom>413</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+							</properties>
+							<name>File Name</name>
+							<width>160</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+							</properties>
+							<name>Size</name>
+							<width>80</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+							</properties>
+							<name>Last Modified</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+							</properties>
+							<name>Full Local Path</name>
+							<width>100</width>
+							<image>-1</image>
+							<dataColumn>3</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>16</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#00008b</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<content>NAME=css-bug-raising.gif;PATH=C:\Documents and Settings\NeilWJ\My Documents\css\css-bug-raising.gif;SIZE=18746;LASTMODIFIED=1091525370</content>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnAddFile</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:1</group>
+					</general>
+					<appearance>
+						<index>18</index>
+						<caption>Add</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>266</top>
+							<left>481</left>
+							<right>545</right>
+							<bottom>290</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<commands>74</commands>
+							<eventButtonIcon>74</eventButtonIcon>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnRemove</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:1</group>
+					</general>
+					<appearance>
+						<index>19</index>
+						<caption>Remove</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>296</top>
+							<left>481</left>
+							<right>545</right>
+							<bottom>320</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnResolveClose</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>true</toolbarButtonStyle>
+							<cache>true</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>20</index>
+						<caption>Resolve Calls</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>1</top>
+							<left>7</left>
+							<right>103</right>
+							<bottom>24</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<eventButtonIcon>ImageList=Helpdesk Tools;IconIndex=6</eventButtonIcon>
+							<eventButtonIconAlign>0</eventButtonIconAlign>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>21</index>
+						<caption>Action Source</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>94</top>
+							<left>9</left>
+							<right>82</right>
+							<bottom>106</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>updatedb.udsource</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>LabelCode</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>22</index>
+						<caption>Action Type</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>94</top>
+							<left>225</left>
+							<right>291</right>
+							<bottom>106</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>25</left>
+							<right>25</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>updatedb.udcode</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text1</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>23</index>
+						<caption>Date/Time of Action</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>57</top>
+							<left>8</left>
+							<right>120</right>
+							<bottom>71</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label2</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>24</index>
+						<caption>Time Spent</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>57</top>
+							<left>225</left>
+							<right>289</right>
+							<bottom>71</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>25</left>
+							<right>25</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>updatedb.timespent</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>ResolProfile</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>25</index>
+						<caption>Resolution Profile</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>140</top>
+							<left>8</left>
+							<right>208</right>
+							<bottom>154</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnAddFile</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>true</toolbarButtonStyle>
+							<cache>true</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>26</index>
+						<caption>Attach File</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>1</top>
+							<left>457</left>
+							<right>538</right>
+							<bottom>24</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<commands>74</commands>
+							<eventButtonIcon>74</eventButtonIcon>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect1</name>
+						<type>Rectange</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>true</toolbarButtonStyle>
+							<cache>true</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>27</index>
+						<backgroundColor>#d4d0c8</backgroundColor>
+						<foregroundColor>#dddddd</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>0</top>
+							<left>-1</left>
+							<right>565</right>
+							<bottom>25</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>LabelAction</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>28</index>
+						<caption>Call Action:</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>2</top>
+							<left>161</left>
+							<right>223</right>
+							<bottom>25</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>25</left>
+							<right>25</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>cp_summary</name>
+						<type>CaptionBar</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>true</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>29</index>
+						<caption>Other Information</caption>
+						<backgroundColor>#f1f1f1</backgroundColor>
+						<foregroundColor>#003366</foregroundColor>
+						<font  size="10" bold="1">Trebuchet (MS)</font>
+						<alignment>Left</alignment>
+						<fillStyle>Vertical Gradient</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>212</top>
+							<left>3</left>
+							<right>557</right>
+							<bottom>428</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#d8d8d8</backgroundColor2>
+							<imageHSpace>10</imageHSpace>
+							<slope>12</slope>
+							<borderColor>#d3c9b6</borderColor>
+							<headerHeight>23</headerHeight>
+							<hasBorder>1</hasBorder>
+							<panelBorderColor>#d3c9b6</panelBorderColor>
+							<fillStyle>0</fillStyle>
+							<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+							<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>CaptionPanel3</name>
+						<type>CaptionBar</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>true</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>30</index>
+						<caption>Options</caption>
+						<backgroundColor>#f1f1f1</backgroundColor>
+						<foregroundColor>#003366</foregroundColor>
+						<font  size="10" bold="1">Trebuchet (MS)</font>
+						<alignment>Left</alignment>
+						<fillStyle>Vertical Gradient</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>29</top>
+							<left>403</left>
+							<right>557</right>
+							<bottom>205</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#d8d8d8</backgroundColor2>
+							<imageHSpace>10</imageHSpace>
+							<slope>12</slope>
+							<borderColor>#d3c9b6</borderColor>
+							<headerHeight>23</headerHeight>
+							<hasBorder>1</hasBorder>
+							<panelBorderColor>#d3c9b6</panelBorderColor>
+							<fillStyle>0</fillStyle>
+							<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+							<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_resolvelinked_calls1</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>31</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>183</top>
+							<left>6</left>
+							<right>392</right>
+							<bottom>200</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<content>#eeeeee</content>
+							<flagItems>Apply this action to related requests (incident / known errors etc)^1|</flagItems>
+							<defaultValue>1</defaultValue>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_ftf</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>32</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>137</top>
+							<left>409</left>
+							<right>551</right>
+							<bottom>156</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>opencall.flg_firsttimefix</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<flagItems>First time fix achieved^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded()
+{
+	//-- NWJ - setup mainform properties and elements
+	app._ete(tb_fixcodedescription, "");
+		
+	_swdoc.setup_form_mode();
+	
+	_swdoc.setup_call_action();
+		
+	_swdoc.setup_email_flag()
+
+	_swdoc.setup_public_flag();
+
+	_swdoc.setup_survey_options();
+
+	//-- reset call actions list
+	//-- then populate with options based on analyst permissions
+
+	//-- set updatetime	
+	_swdoc.updatedb.updatetimex = app.global.GetCurrentEpocTime();
+		
+	//-- if we have update text (from an email i guess) apply it
+	if(_swdoc.strUpdateText.length) _swdoc.updatedb.updatetxt = _swdoc.strUpdateText;
+	
+	//-- if came from E-mail set source as email
+	if(_swdoc.boolSourceEmail)
+	{
+		_swdoc.updatedb.udsource = 'E-mail'; 
+	}
+	
+	
+	_swdoc.UpdateFormFromData();
+	_swdoc.setup_resolution_profile();
+		
+
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnBrowseProfile_OnPressed</name>
+						<code>
+							<![CDATA[btnBrowseProfile_OnPressed()
+{
+	//-- get resolution profile filter
+	
+	//-- NWJ - 29.06.2006 - get close filter or resolve filter depending on call closure option (requested by Dan 47766)
+	if (cb_callaction.text == "Resolve Call")
+	{
+		var Filter = dd.GetGlobalParamAsString("Close Call Form/ResolveProfileFilter");
+	}
+	else if (cb_callaction.text == "Close Call")
+	{
+		var Filter = dd.GetGlobalParamAsString("Close Call Form/CloseProfileFilter");
+	}
+	else
+	{
+		var Filter = dd.GetGlobalParamAsString("Close Call Form/ProfileCodeFilter");
+	}
+	
+	var pc = new ChooseProfileCodeDialog;
+	//-- default analyst permission to auto fill the resolution text on resolve/close call is set
+
+    pc.useDescriptionText =  app.session.IsDefaultOption(ANALYST_DEFAULT_AUTOFILLRESOLUTIONTEXT); 
+    
+    if(pc.Open(true, true, _swdoc.opencall.fixcode, Filter) == IDOK)
+    {
+        //-- Get the fix code and split it into an array
+        var strCodeDesc = pc.codeDescription;
+        var strCode = pc.code;
+        
+        //-- If no codes are found then stop or same as current code
+        if((strCode=="")||(strCode==_swdoc.opencall.fixcode)) return;
+        
+        //-- Set the text in the resolution profile text box
+        //-- 08.02.2007 - NWJ - set the opencall record value instead of the element name 
+		_swdoc.opencall.fixcode = strCode;       
+        app._ete(tb_fixcodedescription , strCodeDesc);
+        
+        //-- Attempt to add the resolution profile description to the Action Description box if the
+        //-- default analyst permission to auto fill the resolution text on resolve/close call is set
+        if(pc.useDescriptionText)
+        {
+        	//-- 08.02.2007 - NWJ - set the opencall record value instead of the element name 
+        	var strCurrentUpdateText = _swdoc.updatedb.updatetxt;
+           	
+        	if(pc.description.length)
+        	{
+        		//if(tb_updatetext.text.length)
+        		if(strCurrentUpdateText.length)
+				{
+					var Message = "You have chosen to transfer the default profile text into the description field of the close call form. However, you have already entered some text into this field. Do you want to append the text you have typed?\n\nTo append the default text to the text you have already typed, click Yes\nTo transfer the default text and overwrite what you have already typed, click No\nTo ignore the default text and leave the text you have typed alone, click Cancel";
+					switch(MessageBox(Message, MB_ICONQUESTION | MB_YESNOCANCEL))
+					{
+					case IDYES:
+						if(_swdoc.updatedb.updatetxt.length)
+						{
+							 //-- add a line feed
+							 strCurrentUpdateText += "\r\n";
+							 //tempText = _swdoc.updatedb.updatetxt + "\r\n"; 
+						}
+						strCurrentUpdateText += pc.description;
+						break;
+					case IDNO:
+						strCurrentUpdateText = pc.description;
+						break;
+					case IDCANCEL:
+						break;
+					}
+				}
+				else
+				{
+					strCurrentUpdateText = pc.description;
+				}
+        	}
+        	
+        	//-- add back to update record
+        	_swdoc.updatedb.updatetxt = strCurrentUpdateText;
+        	_swdoc.UpdateFormFromData();
+        	
+        }
+
+		//-- if we are working with webclient
+		if(app.bWebClient)
+		{
+			app._een(btnGetProfileText , false);
+		}
+		else
+		{
+	    	//-- enable / disable button if it has text
+        	app._een(btnGetProfileText ,(pc.description!=""));
+
+		//	btnGetProfileText.enable = (_swdoc.updatedb.updatetxt? true:false);
+		}
+    }
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnAddFile_OnPressed</name>
+						<code>
+							<![CDATA[btnAddFile_OnPressed()
+{
+	//-- add files
+	//fl_attachments.newFile = InvokeCallAttachmentFileDialog();
+	fl_attachments.AddFiles();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnRemove_OnPressed</name>
+						<code>
+							<![CDATA[btnRemove_OnPressed()
+{
+	// -- remove selected files
+	for(i=fl_attachments.rowCount()-1; i>=0;i--)
+    {
+    	if(fl_attachments.IsRowSelected(i))
+    	{
+    		//-- remove
+    		fl_attachments.RemoveRow(i);
+    	}
+    }
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnGetProfileText_OnPressed</name>
+						<code>
+							<![CDATA[btnGetProfileText_OnPressed()
+{
+	if(_swdoc.updatedb.updatetxt.length)
+	{
+		if(MessageBox("If you retrieve the default text description from the profile database you will overwrite the current Action Description text.\n\nDo you wish to continue?", MB_ICONQUESTION | MB_YESNO) != IDYES)
+		return;
+	}
+	
+	//-- get resolution profile description	
+	var currentResProfileDesc = app.global.GetResolutionProfileDescription(_swdoc.opencall.fixcode);
+	_swdoc.updatedb.updatetxt = currentResProfileDesc.strDescription;
+	_swdoc.UpdateFormFromData();
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>checkCustomerSurvey_OnValueChanged</name>
+						<code>
+							<![CDATA[checkCustomerSurvey_OnValueChanged(strValue)
+{
+	var bChecked = checkCustomerSurvey.text == "1";
+	app._een(Surveys , bChecked);
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>(User Defined Functions)</name>
+						<code>
+							<![CDATA[
+//-- function to check that user has selected correct number of profile codes
+function check_profile_levels()
+{
+	//-- get the number of profile levels the analyst HAS to choose
+	var nLevelNeeded = app.session.GetCloseProfileLevelRequired();
+
+	//-- determine the number of Profile levels the user has selected
+	//-- NWJ - can we turn this into a app.global.i.e. app.global.returnProfileLevelCount(strProfileCode);
+	var strTempProfileCodes = new String(_swdoc.opencall.fixcode);
+	var nLevels = 0;
+	while(strTempProfileCodes.indexOf('-') != -1)
+	{
+		nLevels++;
+		strTempProfileCodes = strTempProfileCodes.substr((strTempProfileCodes.indexOf('-')+1),strTempProfileCodes.length);
+	}
+	
+	if(strTempProfileCodes.length)nLevels++;
+	
+	//-- If insufficient profile levels are specified then alert the user
+	if(nLevels < nLevelNeeded)
+	{
+		MessageBox("You must profile this call resolution. Your access control rights require you to choose at least " + nLevelNeeded + " profile level(s)", MB_ICONSTOP);
+		return false;
+	}
+	
+	return true;
+}
+
+//-- prompt user to confirm resolution or closure
+function confirm_resolve_close()
+{
+	//-- resolving		
+	if(!_swdoc.boolClosing)
+	{
+		if(MessageBox(_swdoc.arrCallrefs.length >1 ? "Are you sure you want to resolve these calls?" : "Are you sure you want to resolve this call?" , MB_YESNO| MB_ICONINFORMATION ) != IDYES)
+		return false;
+	}
+	else
+	{
+		//-- closing
+		var MsgTmp = "";
+		if(_swdoc.strIssueref.length)
+		{
+			if(_swdoc.arrCallrefs.length > 1)
+				MsgTmp = "Are you sure you want to close these calls, and the issue they belong to?";
+			else
+				MsgTmp = "Are you sure you want to close this call, and the issue it belongs to?";
+		}
+		else
+		{
+			if(_swdoc.arrCallrefs.length > 1)
+				MsgTmp = "Are you sure you want to close these calls?";
+			else
+				MsgTmp = "Are you sure you want to close this call?";
+		}
+
+		if(MessageBox(MsgTmp, MB_YESNO | MB_ICONINFORMATION ) != IDYES)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+//-- add call to kbase
+function add_call_to_knowledgebase()
+{
+	var strProbText = "";
+	var strProbCode = "";
+	var nFirstCallref = _swdoc.arrCallrefs[0];
+	//-- get the problem text and problem code from updatedb/opencall
+	
+	var aRSInfo = new SqlQuery;
+	var strParams = "crf="+app.pfu(nFirstCallref);
+	var aRSInfo = app.g.get_sqrecordset("form/resolvecloseform/get_details_for_kb",strParams);
+	if(aRSInfo.Fetch())
+	{
+		strProbText = aRSInfo.GetValueAsString(0);
+		strProbCode = aRSInfo.GetValueAsString(1);		
+	}
+	aRSInfo.Reset();	
+	
+	//-- call api
+	//MessageBox("Add KB " + _swdoc.updatedb.updatetxt)
+   	app.global.AddResolutionToKnowledgeBase(strProbText, strProbCode, _swdoc.updatedb.updatetxt, _swdoc.opencall.fixcode, nFirstCallref);
+}
+
+//--
+//-- resolve or close the call
+function ResolveClose()
+{	
+	//-- validate the form
+	if(!_swdoc.ValidateForm())return false;
+	
+	//-- check profile levels
+	if(!mainform.check_profile_levels())	return false;
+	
+	//-- confirm
+	if(!mainform.confirm_resolve_close()) return false;
+		
+	//-- determine status
+	var nStatus = CS_CLOSED;
+	if(!_swdoc.boolClosing)
+	{
+		nStatus = CS_RESOLVED;
+	}
+	else
+	{
+		if(flg_chargeable.text == "1")	nStatus = CS_CLOSEDCHARGABLE;
+	}
+	
+	//sandra 21/08/2007 Bug 60018 
+	//-- make sure user is allowed to resolve 
+	if ((nStatus == CS_RESOLVED) && (!app.session.HaveRight(ANALYST_RIGHT_A_GROUP,ANALYST_RIGHT_A_CANRESOLVECALLS)))
+	{
+		MessageBox("You do not have sufficient privileges to resolve calls.  Please contact your system administrator",MB_ICONSTOP);	
+		return false;
+	}
+	
+	//-- make sure user is allowed to close calls
+	if (((nStatus == CS_CLOSED) ||( nStatus == CS_CLOSEDCHARGABLE)) && (!app.session.HaveRight(ANALYST_RIGHT_A_GROUP,ANALYST_RIGHT_A_CANCLOSECALLS)))
+	{
+		MessageBox("You do not have sufficient privileges to close calls.  Please contact your system administrator",MB_ICONSTOP);	
+		return false;
+	}	
+	//-- end sandra	
+		
+	//-- handle web client - any reason for this ??
+	if((app.bWebClient && app.global==undefined)&&(_swdoc.boolClosing))
+	{
+	 	nStatus = CS_CLOSED;
+	 	flg_chargeable.text == "0"
+	}
+		
+
+	//-- create a new HD connection and connection
+	var hdcon = new HelpdeskSession;
+	if(!hdcon.Connect())return false;
+
+	//-- check if we are sending a survey
+	var bSendSurveyToCustomer = false;
+	var SurveyID = 0;
+	var SurveyName = "";
+	if(app.global.IsSurveyModuleEnabled() && flg_customersurvey.text == "1" && cb_surveys.text.length)
+	{
+		//-- get surveyid from the SurveyNameSurvIdMap
+		SurveyName = cb_surveys.text;		
+		SurveyID = _swdoc.arrSurveyNameSurvIDs[SurveyName]; 
+		if(SurveyID!=undefined)bSendSurveyToCustomer = true;
+	
+		//-- send survey request to the server			
+		if (bSendSurveyToCustomer)
+		{
+			hdcon.SendCustomerSurvey(SurveyID, _swdoc.CallrefsCommaString);
+		}
+	}
+	
+	//-- If we're in an issue we wan't to dissassociate the calls with the issue before we close the call.
+	if(_swdoc.strIssueref.length)
+	{
+		//-- send HD call to remove calls from an issue
+		if(!hdcon.RemoveCallFromIssueStr(_swdoc.strIssueref, _swdoc.CallrefsCommaString))
+		MessageBox("There were problems removing the call(s) from the issue they're associated with.\n\nError: " + hdcon.GetLastErrorStr());
+	}
+
+	
+
+	//-- NWJ - 08.02.2007 - We might want to update call values before closing i.e. for customisation
+	//-- update opencall fields - we need to do this by looping through form elements	
+	//-- problem is BeginCallValueUpdates doesnt accept multiple callrefs so have to do a call update per callref
+	var arrUpdateCallValues = new Array();
+	var boolCallUpdates = false;
+	var rec = _swdoc.GetRecord("opencall");			
+	if(rec)
+	{
+		var nColCount = rec.GetCount();
+		for(x=0; x<nColCount; x++)
+		{
+			if(!rec.IsModified(x))continue;
+			boolCallUpdates = true;
+			arrUpdateCallValues[rec.GetColumnName(x)] = rec.GetValue(x);
+		}
+
+		
+		//-- if we have opencall values to update
+		if(boolCallUpdates)
+		{
+			for(var refcount = 0; refcount < _swdoc.arrCallrefs.length;refcount++)
+			{
+				//-- start to update this call
+				if(hdcon.BeginCallValueUpdates(_swdoc.arrCallrefs[refcount],"Before ResolveClose Call"))
+				{
+					//-- for each opencall field that needs updating send
+					for (fieldName in arrUpdateCallValues)
+					{
+						hdcon.SendValue("opencall." + fieldName, arrUpdateCallValues[fieldName]);
+					}
+        			hdcon.Commit();					
+				}
+			}
+		}
+	}
+	
+	//-- We start a new transaction to update the specified call (complex req)
+	if(hdcon.BeginCloseCall(_swdoc.CallrefsCommaString))
+	{   
+    	var bSendSuccess = true;
+    	
+       	//-- send update db values
+		var rec = _swdoc.GetRecord("updatedb");			
+		if(rec)
+		{
+			var nColCount = rec.GetCount();
+			for(x=0; x<nColCount; x++)
+			{
+				if(!rec.IsModified(x))continue;
+				
+				if(!hdcon.SendValue("updatedb." + rec.GetColumnName(x), rec.GetValue(x)))
+				{
+					bSendSuccess = false;
+					break;
+				}
+			}
+		}
+	
+		//-- if send of info worked  			
+    	if(bSendSuccess && hdcon.SendNumber("status", nStatus) && 
+			hdcon.SendText("fixcode", _swdoc.opencall.fixcode) &&    	
+	 		hdcon.SendNumber("backdateperiod", _swdoc.nBackdatePeriod) &&
+	   		hdcon.SendBoolean("publicupdate", flg_updatepublic.text) &&
+	   		hdcon.SendBoolean("delaycacheflush", flg_emailcustomer.text) &&
+	   		hdcon.SendNumber("timespent", mainform.tb_timespent.value))
+		{
+		
+			//-- send attachments
+			for(i=0; i<fl_attachments.rowCount();i++)
+		    {
+    			if(!hdcon.SendFile("attach", fl_attachments.GetItemText(i,0), fl_attachments.GetItemText(i,3)))
+    				return false;
+    		}
+    			
+    		//-- commit our data send
+    		if(hdcon.Commit())
+    		{
+    			//-- failed HD
+    			if(!hdcon.GetResult()) return false;
+    			
+   			
+    					
+    			//-- The returned data is in the format "updateref=<callref>.<udindex>"
+    			//-- The following regex will put the callref into arrCallInfo[1] and the udindex
+    			//-- into arrCallInfo[2]
+    			var arrCallInfo = hdcon.GetCallUpdateResultData();	
+    			
+    			// If we have been invoked to update a call from an e-mail message, this update will 
+					// only relate to a single call. We can only handle e-mail audit trail if we are working
+					// on a single-call update.
+					if(_swdoc.arrCallrefs.length == 1 && 			// Are we only dealing with a single call refernce?
+						_swdoc._form["messagesource"] && 	// Are we woring from an e-mail message?
+						dd.GetGlobalParamAsNumber("Email Audit Trail/StoreEmailAuditTrail")) // Are we configured?
+					{
+						// The message source string contains the "mailbox name\message id". We need 
+						// to split these out for the following function
+						var arrMsgInfo = _swdoc._form["messagesource"].split('\\');
+						
+						// Check config to see if we need to include the file attachments in the message too
+						var bIncludeAttachments = dd.GetGlobalParamAsNumber("Email Audit Trail/IncludeAttachmentsInMessage");
+						
+						// We need to specify the folder to which the message should be moved to based
+						// on the options set in the DD. 
+						var strMoveMessageToFolder = "";
+												
+						// Next, see if we have specified a specific folder to move the message to
+						strMoveMessageToFolder = dd.GetGlobalParamAsString("Mail Move Folders/CloseCallMailFolder");
+						
+						if (strMoveMessageToFolder.length == 0)
+						{
+							// First we see if the config tells us to move the message to the deleted items folder
+							if(dd.GetGlobalParamAsNumber("Email Audit Trail/MoveToDeletedItems"))
+							{
+								strMoveMessageToFolder = "Deleted Items";
+							}
+						}
+						
+						
+						// As we are going to use the Email Subject in the name of the audit trail file we are saving
+						// we need to check it for characters that are invalid in a filename and replace them with "-"
+							var strEmailSubject = "";
+							if(_swdoc._form["subject"])
+							{
+								strEmailSubject = replaceIllegalFileCharacters(_swdoc._form["subject"]);
+							}
+						
+						// The following function does a number of things. It tells the server to encode
+						// and attach the specified message to the call. It sets the state icon of the 
+						// call update to "mail-received" in this instace. If the strMoveMessageToFolder
+						// contains a valid folder, it will move the specified mail message to the folder
+						if(!app.global.AttachMessageToCall(arrMsgInfo[0], 								// Mailbox name
+												arrMsgInfo[1], 								// Message ID
+												"Received-" + strEmailSubject + ".swm", 	// File name
+												_swdoc.arrCallrefs[0], 							// Call reference
+												arrCallInfo[_swdoc.arrCallrefs[0]],				// UdIndex
+												"mail-received",							// Indicate that this is a received message
+												bIncludeAttachments,						// Include File attachments?
+												strMoveMessageToFolder))					// Move the message to this folder
+						{
+				    		MessageBox("There was an error attaching the originating e-mail to this call.");
+						}
+						else
+						{
+							app.global.CloseMailMessageWindow(arrMsgInfo[1]);
+						}
+				    }
+
+    			
+       			//-- add knowledge base	but only if we have one call
+    			if((flg_addKBase.text == "1") && (_swdoc.arrCallrefs.length == 1))
+    			{
+    				add_call_to_knowledgebase();
+    			}
+    			    			
+    			//-- we are updating an issue		
+    			if(_swdoc.strIssueref.length)
+				{
+						if(!_swdoc.boolClosing){
+							hdcon.BeginResolveIssue(_swdoc.strIssueref);
+							if(!hdcon.Commit())
+								{
+									MessageBox("There were problems resolving the issue.\n\nError: " + hdcon.GetLastErrorStr());
+									return;
+								}
+						}else{				
+ 
+							if(hdcon.BeginUpdateIssue(_swdoc.strIssueref))
+							{
+								var dIn	= new Date();
+								hdcon.SendNumber("status",ISSUE_STATUS_CLOSED);
+								hdcon.SendText("closeby", app.session.analystId);
+								hdcon.SendDate("closetimex",dIn.getTime());
+								if(!hdcon.Commit())
+								{
+									MessageBox("There were problems closing the issue.\n\nError: " + hdcon.GetLastErrorStr());
+									return;
+								}
+							}
+						}
+				}
+				
+				//-- NWJ - ITSM - resolve related calls
+				if(flg_resolvelinked_calls.text=="1")
+				{
+					//-- get related children calls for all calls we are resolving
+					var strRelatedChildCalls = "";
+					for(var refcount = 0; refcount < _swdoc.arrCallrefs.length;refcount++)
+					{
+						if(strRelatedChildCalls!="")strRelatedChildCalls+=",";
+						var strAddCalls = app.g.get_slave_calls(_swdoc.arrCallrefs[refcount],"");
+						if(strAddCalls!="0")
+						{
+							strRelatedChildCalls+=strAddCalls;
+						}
+					}
+				
+					if(strRelatedChildCalls!="")
+					{
+						//--- update relaTED CALLS					
+						if(hdcon.BeginCloseCall(strRelatedChildCalls))
+						{   
+    						var bSendSuccess = true;
+    						
+    						_swdoc.updatedb.updatetxt += " \n" + "This request was resolved (or closed) as part of the following parent requests (" + _swdoc.strCallrefFormatted + ")";
+       						//-- send update db values
+							var rec = _swdoc.GetRecord("updatedb");			
+							if(rec)
+							{
+								var nColCount = rec.GetCount();
+								for(x=0; x<nColCount; x++)
+								{
+									if(!rec.IsModified(x))continue;
+									
+									if(!hdcon.SendValue("updatedb." + rec.GetColumnName(x), rec.GetValue(x)))
+									{
+										bSendSuccess = false;
+										break;
+									}
+								}
+							}
+						
+							//-- if send of info worked  			
+    						if(bSendSuccess && hdcon.SendNumber("status", nStatus) && 
+								hdcon.SendText("fixcode", _swdoc.opencall.fixcode) &&    	
+	 							hdcon.SendNumber("backdateperiod", _swdoc.nBackdatePeriod) &&
+	   							hdcon.SendBoolean("publicupdate", flg_updatepublic.text) &&
+	   							hdcon.SendBoolean("delaycacheflush", "0") &&
+	   							hdcon.SendNumber("timespent", mainform.tb_timespent.value))
+							{
+								if(hdcon.Commit())
+					     		{
+    								//-- failed HD
+    								if(!hdcon.GetResult()) return false;
+								}
+							}//-- BIG IF					
+						}//-- if(hdcon.BeginCloseCall(strRelatedChildCalls))
+					}//-- if(strRelatedChildCalls!="")			
+				}
+				
+							
+					//-- if we want to send an email to the customer AND there are file attachments, obtain the 
+    				//-- attachments to attach to the email as well	
+					if(mainform.flg_emailcustomer.value && app.global.IsConnectedToMailServer())
+   					{
+    					//-- OK, we are going to send the customer(s) an e-mail message to confirm the 
+						//-- call closure. If we have uploaded file attachments, we can ask the session
+						//-- for a list of the files. If available, the session variables will include
+						//-- a _serverpath variable for each file. The returned list, is a list of 
+						//-- strings that is suitable for passing to the compose message function	
+						app.global.ComposeCallUpdateEmail(arrCallInfo,			//Array: Call Reference-UdIndex
+															tb_updatetext.text, 		//Message Text
+															hdcon.GetSessionFileInfo(), //File Attachments
+															tb_timespent.text,			//Time spent on Last Action
+															"CloseCallMailTemplate", 	//Template Name
+															TEMPLATE_CLOSECALL );		//Template Type
+					}
+				    
+    			hdcon.Close();	
+    			_swdoc.boolFormFieldChanged = false;		
+				_swdoc.resetData();    			
+    			_swdoc.CloseForm();
+    			return true;	
+    		}
+		    else
+		    {
+		    	MessageBox(hdcon.GetLastErrorStr());
+		    }//-- if(hdcon.Commit())
+		}
+		else
+		{
+		    	MessageBox(hdcon.GetLastErrorStr());
+		}//-- if send of info worked  			
+	}
+	
+	//-- if we got here we failed
+	hdcon.Close();
+	return false;
+}
+
+function getReadableDatefromEpoch(dt_epochdate)
+{
+	var strFormattedDate = "";
+	var theDate = new Date(dt_epochdate);
+	dateString = theDate.toString();
+	arrDateStr = dateString.split(" ");
+	strFormattedDate = arrDateStr[2] + "/" + getNumericMonth(arrDateStr[1]) + "/" + arrDateStr[3] + " " + arrDateStr[4].substr(0,2) + ":";
+	strFormattedDate += arrDateStr[4].substr(3,2) + ":" + arrDateStr[4].substr(6,2);
+	return strFormattedDate;
+}
+
+function getNumericMonth(strMonth)
+{
+	var arrMonth = new Array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
+	for(i=0; i<arrMonth.length; i++)
+	{
+		if(strMonth == arrMonth[i])
+			return i+1;
+	}
+}
+
+function replaceIllegalFileCharacters(strText)
+{
+	//-- This function is used to replace characters in the passed in string that 
+	//-- are not suitable for use in filenames and return the modified string 
+	
+	strOutput = strText;
+	strReplacement = "-";
+	var i = 0;
+	
+	while(i < strOutput.length)
+	{
+		strOutput = strOutput.replace('/', strReplacement);
+		strOutput = strOutput.replace(':', strReplacement);
+		strOutput = strOutput.replace('*', strReplacement);
+		strOutput = strOutput.replace('?', strReplacement);
+		strOutput = strOutput.replace('"', strReplacement);
+		strOutput = strOutput.replace('\'', strReplacement);
+		strOutput = strOutput.replace('<', strReplacement);
+		strOutput = strOutput.replace('>', strReplacement);
+		
+		i++;
+	}
+	
+	return strOutput;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>cb_callaction_OnValueChanged</name>
+						<code>
+							<![CDATA[cb_callaction_OnValueChanged(strValue)
+{
+	//-- set mode and then setup defaults for that mode
+	_swdoc.boolClosing = (strValue!="Resolve Call");
+	_swdoc.setup_call_action();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>flg_customersurvey_OnValueChanged</name>
+						<code>
+							<![CDATA[flg_customersurvey_OnValueChanged(strValue)
+{
+	//-- enable disable
+	var bChecked = flg_customersurvey.text == "1";
+	app._een(cb_surveys , bChecked);
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>OnFieldValueChanged</name>
+						<code>
+							<![CDATA[OnFieldValueChanged(strName, strValue)
+{
+	//-- This value is set when a field value has been changed.
+	//-- We check this variable on from closing to see if there are any data changes that need to be saved.
+	_swdoc.boolFormFieldChanged = true;
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>dt_actiontime_OnValueChanged</name>
+						<code>
+							<![CDATA[dt_actiontime_OnValueChanged(strValue)
+{
+
+	//-- NWJ - 09.02.2007 - Back date call
+	var nBackdatePeriod = 0;
+	
+	//--Calculate the BackDate Period
+    var currentTime	= app.global.GetCurrentEpocTime() ;
+	var updateDateTime = dt_actiontime.text;
+	nBackdatePeriod = currentTime - updateDateTime;
+			
+	//-- If attempted to forward date then deny
+	if(nBackdatePeriod < 0)
+	{
+		MessageBox("You have attempted to forward date this call update which is not allowed.");
+		nBackdatePeriod=0;	
+	}
+	else
+	{
+	
+		//-- If backdate period > the analyst max backdate period then prompt to use current time or cancel
+		if(nBackdatePeriod > app.session.GetMaxBackdatePeriodAllowed())
+		{
+			var dTime	= new Date();
+			dTime = (currentTime - app.session.GetMaxBackdatePeriodAllowed()) * 1000;
+			var message = "You have attempted to backdate this call update further than you have sufficient privileges to do so.\n\nDo you want to use the oldest date/time that you are allowed: ";
+			if(MessageBox(message + getReadableDatefromEpoch(dTime), MB_ICONQUESTION | MB_YESNO) != IDYES)	
+			{
+				nBackdatePeriod = 0;
+			}
+			else
+			{
+				//-- update field
+				nBackdatePeriod = app.session.GetMaxBackdatePeriodAllowed();
+				_swdoc.updatedb.updatetimex = app.global.GetCurrentEpocTime() - nBackdatePeriod;				
+			}
+		}
+	}		
+	
+	//Set the _swdoc level variable for use in the resolve/close and return true
+	if(nBackdatePeriod==0)
+	{
+		_swdoc.updatedb.updatetimex = app.global.GetCurrentEpocTime();	
+	}
+	
+	_swdoc.nBackdatePeriod = nBackdatePeriod;
+	_swdoc.UpdateFormFromData();
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnResolveClose_OnPressed</name>
+						<code>
+							<![CDATA[btnResolveClose_OnPressed()
+{
+	mainform.ResolveClose();
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

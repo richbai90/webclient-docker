@@ -1,0 +1,39 @@
+<?php
+	IncludeApplicationPhpFile("itsm.helpers.php");
+	$auth_state = $_POST['auth_state'];
+	$comments = $_POST['comments'];
+	$callRef = $_POST['callRef'];
+	$authorname = $_POST['authorname'];
+	$fk_auth_id = $_POST['fk_auth_id'];
+	$epoch = time();
+	$flg_sts = $_POST['flg_sts'];
+	$arc = 0;
+	
+	$oRS = new SqlQuery();
+	$oRS->Query("SELECT pk_auth_id FROM bpm_oc_auth  JOIN opencall on opencall.callref = bpm_oc_auth.fk_callref AND opencall.bpm_stage_id = bpm_oc_auth.fk_stage_id WHERE fk_auth_id = '$fk_auth_id' AND callref = $callRef");
+	while($oRS->Fetch()) {
+		while (list($colName,$pk_auth_id) = each($oRS->row)) {
+			$updateValues = array(
+				"status" => $auth_state,
+				"flg_status" => $flg_sts,
+				"comments" => $comments,
+				"actionbyname" => $authorname,
+				"actionby" => $fk_auth_id,
+				"actiondatex" => $epoch,
+				"pk_auth_id" => $pk_auth_id,
+				"authorsource" => "Selfservice"
+			);
+			
+			$arc = xmlmc_updateRecord("bpm_oc_auth",$updateValues);
+			error_log($arc);
+			if(is_string($arc) || $arc == 0)
+			{
+				throwProcessErrorWithMsg("Failed to set authorization decision. Please contact your Administrator.");
+				exit(0);
+			}
+		}
+	}
+	
+	error_log($arc);
+	
+	throwRowCountResponse($arc);

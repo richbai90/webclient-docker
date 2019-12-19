@@ -1,0 +1,185 @@
+<smartform>
+	<menu>
+		<leftaction>
+			<title>Home</title>
+			<action noparse="1">_process_navigation('[:_swm_app_path]/views/home.xml')</action>
+		</leftaction>
+		<centeraction>
+			<title>Reports</title>
+		</centeraction>
+		<rightaction>
+		</rightaction>
+	</menu>
+	<!-- have as many layers as you want - they get processed in order -->
+	<content>
+		<layer type='localrowlist'>
+			<includes>
+				<!-- define any files to include i.e is you have bespoke complexconversion functions -->
+				<include>[:_swm_app_path]/_helpers/myphpincludefile.php</include>
+			</includes>
+			<list>
+				<rows>
+					<!--<row>
+						<leftimage>client/_system/images/icons/assets.jpg</leftimage>
+						<title>Requests</title>
+						<rstext>Active</rstext>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<recordcount>select count(callref) as cnt from opencall where owner='[:_swm_sqlprep_aid]' and status not in (6,8,16,17,18,19) and callclass IN ('Incident','Problem','Change Request','Service Request')
+						</recordcount>
+						<target>[:_swm_app_path]/views/servicedesk/requests.xml</target>
+						<db>sw_systemdb</db>
+					</row>
+					<row>
+						<leftimage>client/_system/images/icons/tasks.jpg</leftimage>
+						<title>Tasks</title>
+						<rstext>Incomplete</rstext>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<recordcount>select count(callref) as cnt from opencall where callclass='B.P Task' and owner='[:_swm_sqlprep_aid]' and status not in (6,8,16,17,18,19)</recordcount>
+						<db>syscache</db>
+						<target>[:_swm_app_path]/views/tasks/tasks.xml</target>
+					</row>
+					<row>
+						<leftimage>client/_system/images/icons/Authorise.jpg</leftimage>
+						<title>Authorisations</title>
+						<rstext>Pending</rstext>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<recordcount>select count(callref) as cnt from opencall,bpm_oc_auth where callref = fk_callref and opencall.status &lt; 15 and opencall.bpm_stage_id = bpm_oc_auth.fk_stage_id and bpm_waitingauth=1 and '[:_swm_sqlprep_aid]' = fk_auth_id and bpm_oc_auth.status='Pending authorisation' and bpm_oc_auth.authortype IN ('Analyst')</recordcount>
+						<db>swdata</db>
+						<target>[:_swm_app_path]/views/authorisations/authorisations.xml</target>
+					</row>
+					<row>
+						<leftimage>client/_system/images/icons/contact.jpg</leftimage>
+						<title>Customers</title>
+						<rstext></rstext>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<recordcount></recordcount>
+						<db>swdata</db>
+						<target>[:_swm_app_path]/views/customer/search.xml</target>
+					</row>
+					<row>
+						<leftimage>client/_system/images/icons/assets.jpg</leftimage>
+						<title>Configuration Items</title>
+						<rstext></rstext>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<recordcount></recordcount>
+						<db>swdata</db>
+						<target>[:_swm_app_path]/views/assets/search.xml</target>
+					</row>-->
+					<row>
+						<leftimage>client/_system/images/icons/tasks.jpg</leftimage>
+						<title>Open Calls</title>
+						<rstext></rstext>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<recordcount></recordcount>
+						<db>swdata</db>
+						<target>[:_swm_app_path]/views/reports/opencalls.xml</target>
+					</row>
+					<row>
+						<leftimage>client/_system/images/icons/tasks.jpg</leftimage>
+						<title>Assigned Calls</title>
+						<rstext></rstext>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<recordcount></recordcount>
+						<db>swdata</db>
+						<target>[:_swm_app_path]/views/reports/assignedcalls.xml</target>
+					</row>
+					<row>
+						<leftimage>client/_system/images/icons/tasks.jpg</leftimage>
+						<title>Incidents affecting Services</title>
+						<rstext></rstext>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<recordcount></recordcount>
+						<db>swdata</db>
+						<target>[:_swm_app_path]/views/reports/incidentsbyservice.xml</target>
+					</row>
+					<!--<row>
+						<leftimage>client/_system/images/icons/tasks.jpg</leftimage>
+						<title>Calls Nearing Breach</title>
+						<rstext></rstext>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<recordcount></recordcount>
+						<db>swdata</db>
+						<target>[:_swm_app_path]/views/reports/callsnearingbreach.xml</target>
+					</row>-->
+					<row>
+						<leftimage>client/_system/images/icons/tasks.jpg</leftimage>
+						<title>My SLA Performance</title>
+						<rstext></rstext>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<recordcount></recordcount>
+						<db>swdata</db>
+						<target>[:_swm_app_path]/views/reports/myslaperformance.xml</target>
+					</row>
+					<row>
+						<leftimage>client/_system/images/icons/tasks.jpg</leftimage>
+						<title>Group SLA Performance</title>
+						<rstext></rstext>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<recordcount></recordcount>
+						<db>swdata</db>
+						<target>[:_swm_app_path]/views/reports/groupslaperformance.xml</target>
+					</row>
+					<!--<row>
+						<leftimage>client/_system/images/icons/tasks.jpg</leftimage>
+						<title>Analyst Calls By Status</title>
+						<rstext></rstext>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<recordcount></recordcount>
+						<db>swdata</db>
+						<target>[:_swm_app_path]/views/reports/analystcallsbystatus.xml</target>
+					</row>
+					<row>
+						<leftimage>client/_system/images/icons/tasks.jpg</leftimage>
+						<title>Calls By Priority</title>
+						<rstext></rstext>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<recordcount></recordcount>
+						<db>swdata</db>
+						<target>[:_swm_app_path]/views/reports/callsbypriority.xml</target>
+					</row>-->
+					<metaData>
+						<leftimage></leftimage>
+						<title></title>
+						<rstext></rstext>
+						<rscount></rscount>
+						<rightimage></rightimage>
+						<recordcount></recordcount>
+						<target></target>
+						<db/>
+					</metaData>
+					<complexconversions>
+						<!-- pointers to php functions that will return converted values for given column.tagname i.e. condition.color -->
+						<recordcount>
+							<sql>_get_rs_count</sql>
+						</recordcount>
+						<target>
+							<parsed>_swm_parse_string</parsed>
+						</target>
+					</complexconversions>
+				</rows>
+				<output>
+					<rowoutput><![CDATA[
+						<table class="homepage" width="100%">
+						<tr style="cursor:pointer;" xmldefinitionpath="[:rs.target.value]" onclick="_process_row_link(this);">
+						<td class="nmlfontsize blackfont">[:rs.title.value]
+						</td>
+						<td align="right" class="count">[:rs.recordcount.sql] [:rs.rstext.value]
+						</td>
+						<td width="3%" align="right"><img src="[:rs.rightimage.value]">
+						</td>
+						</tr>
+						<tr>
+						<td colspan="3">
+						<div class="seperator"><div style="display:none;"></div></div>
+						</td>
+						</tr>
+						</table>]]>
+					</rowoutput>
+					<rowaction>
+						<target>[:rs.target.value]</target>
+					</rowaction>
+				</output>
+			</list>
+		</layer>
+	</content>
+</smartform>

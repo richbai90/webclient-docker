@@ -1,0 +1,1 @@
+var _swwc_image_lists=new Array();_swwc_image_lists["Mail Compose Messages"]=new Array();_swwc_image_lists["Mail Compose Messages"]["4"]=app._root+"client/images/";

@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<workflow>
+  <Recordset table="bpm_workflow">
+    <Record>
+      <ext_db_table></ext_db_table>
+      <ext_sw_form></ext_sw_form>
+      <fk_default_sla>Analysis Request</fk_default_sla>
+      <title></title>
+      <fk_firststage_id>182</fk_firststage_id>
+      <flg_active>1</flg_active>
+      <description>Please follow the process to register and update the sickness absence</description>
+      <pk_workflow_id>Sickness Absence</pk_workflow_id>
+      <callclass>HR Query</callclass>
+      <fk_default_sla_name>Human Resources Agreement</fk_default_sla_name>
+      <fk_default_sla_new>7</fk_default_sla_new>
+      <flg_sla_apply></flg_sla_apply>
+      <flg_sla_enforce></flg_sla_enforce>
+      <flg_requireci></flg_requireci>
+      <appcode>itsm</appcode>
+      <graphxml></graphxml>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_progress"/>
+  <Recordset table="bpm_stage">
+    <Record>
+      <rej_weighting>100</rej_weighting>
+      <auth_weighting>100</auth_weighting>
+      <flg_addcalltasks>0</flg_addcalltasks>
+      <flg_addcallauths>0</flg_addcallauths>
+      <swauthreq_email></swauthreq_email>
+      <authreq_mbox></authreq_mbox>
+      <custauthreq_email></custauthreq_email>
+      <set_tasksok_status>TASKSOK</set_tasksok_status>
+      <set_tasksfail_status>TASKSFAIL</set_tasksfail_status>
+      <set_taskfail_status></set_taskfail_status>
+      <fk_workflow_id>Sickness Absence</fk_workflow_id>
+      <swdataform></swdataform>
+      <swwordtemplate></swwordtemplate>
+      <flg_seqtasks>0</flg_seqtasks>
+      <flg_hastasks>0</flg_hastasks>
+      <flg_authorisation>0</flg_authorisation>
+      <pk_stage_id>182</pk_stage_id>
+      <title>Review Details</title>
+      <description>Review Details of sickness request</description>
+      <flg_update_access>0</flg_update_access>
+      <flg_visible_access>0</flg_visible_access>
+      <set_allauth_status></set_allauth_status>
+      <set_allmixed_status></set_allmixed_status>
+      <set_allrej_status></set_allrej_status>
+      <flg_custmanagerauth>0</flg_custmanagerauth>
+      <set_onrej_status></set_onrej_status>
+      <swdataform_table></swdataform_table>
+      <set_onauth_status></set_onauth_status>
+      <seq>1</seq>
+      <flg_unanimous_auth>0</flg_unanimous_auth>
+      <flg_disable_manual>0</flg_disable_manual>
+      <flg_auth_via_email></flg_auth_via_email>
+      <flg_requireci></flg_requireci>
+      <aba_authreq_email></aba_authreq_email>
+      <notif_template></notif_template>
+      <notif_mailbox></notif_mailbox>
+      <notif_email></notif_email>
+      <notif_days></notif_days>
+      <edit_level_reqd></edit_level_reqd>
+      <flg_releaseready></flg_releaseready>
+      <servownauthreq_email></servownauthreq_email>
+      <techownauthreq_email></techownauthreq_email>
+      <ciownauthreq_email></ciownauthreq_email>
+      <flg_enable_change_control></flg_enable_change_control>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_ctrl_fields"/>
+  <Recordset table="bpm_audit_fields"/>
+  <Recordset table="bpm_stage_auth"/>
+  <Recordset table="bpm_stage_task"/>
+  <Recordset table="bpm_stage_sts">
+    <Record>
+      <fk_workflow_id>Sickness Absence</fk_workflow_id>
+      <pk_auto_id>321</pk_auto_id>
+      <status>Review in Progress</status>
+      <fk_stage_id>182</fk_stage_id>
+    </Record>
+    <Record>
+      <fk_workflow_id>Sickness Absence</fk_workflow_id>
+      <pk_auto_id>322</pk_auto_id>
+      <status>Review Complete</status>
+      <fk_stage_id>182</fk_stage_id>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_cond">
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition> '&amp;[new_opencall.bpm_status_id]'='Review Complete'</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>115</set_stage>
+      <set_workflow>ABS14 - Sickness absence</set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status>Review Complete</set_status>
+      <fk_stage_id>182</fk_stage_id>
+      <fk_workflow_id>Sickness Absence</fk_workflow_id>
+      <pk_condition_id>256</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>0</flg_runatstart>
+      <title>Review Complete</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt>Review Complete Proceed to Scan in Documents</updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>1</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>1</updatepublic>
+      <set_progress>0</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new>0</set_call_sla_new>
+      <flg_remwatch></flg_remwatch>
+      <flg_addwatch></flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile></set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched></flg_copysched>
+      <flg_releaseready></flg_releaseready>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_cond_vpme"/>
+</workflow>

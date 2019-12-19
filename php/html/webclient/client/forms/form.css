@@ -1,0 +1,424 @@
+/* form container styles */
+*
+{
+	font-size:100%;font-family:Verdana,sans-serif;
+	resize: none;
+}
+
+body
+{
+	padding:0px;
+	margin:0px;
+	overflow:hidden;
+	border-width:0px;
+}
+
+.ISIE .td-iframe-holder
+{
+	height:100%;
+}
+
+button
+{
+	cursor:default;
+}
+
+div#botright
+{    
+	padding-left:5px;
+	display:none;
+	font-size:10px;
+	/*set the div in the bottom right corner*/    
+	position:absolute;    
+	bottom:0;    
+	right:0;    
+	width:250px;        
+	/*give it some background and border*/    
+	background:#eee;    
+	border:1px solid #ddd;  
+}
+
+#imgloader
+{
+	position:absolute;
+	top:0px;
+	left:0px;
+	padding-top:100px;
+	text-align:center;
+	width:100%;
+
+
+	height:100%;
+	z-Index:9999999;
+	font-size:80%;
+
+	background-color:#ffffff;
+}
+
+
+.iframe_form
+{
+	position:absolute;
+	width:100%;
+	height:100%;
+	z-index:1;
+}
+
+.ISIE .iframe_form
+{
+	position:absolute;
+	width:100%;
+	height:100%;
+	z-index:1;
+}
+
+#if_mainform
+{
+	z-index:100;
+}
+
+/* toolbar styles - grey */
+
+.toolbar
+{
+	height:18px;
+	background-color:#efefef;
+	padding:1px 2px 1px 2px;
+	*font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+
+
+.toolbar-item
+{
+	*font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size:60%;	
+	float:left;
+	margin-right:5px;
+/*	height:17px;
+	*height:18px;*/
+	background-color:#efefef;
+	border:1px solid #efefef;
+	padding:1px 5px 1px 2px;
+
+	cursor:default;
+}
+
+.toolbar-item td
+{
+	color:#000000;
+}
+
+.toolbar-item-high
+{
+	*font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size:60%;		
+
+	float:left;
+	margin-right:5px;
+/*	height:17px;
+	*height:18px;*/
+	background-color:#efefef;
+	background-color:#FFC663; /* orange*/
+
+	padding:2px 5px 2px 2px;
+	padding:1px 5px 1px 2px;
+
+	border-style:solid solid solid solid;
+	border-width:1px 1px 1px 1px;
+	border-color:#000000 #000000 #000000 #000000;
+	/*border-color:#ffffff #808080 #808080 #ffffff; */
+
+	cursor:default;
+}
+.toolbar-item-high td
+{
+	color:#000000;
+}
+
+.toolbar-item-select
+{
+	*font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size:60%;	
+
+	float:left;
+	margin-right:5px;
+/*	height:17px;
+	*height:18px;*/
+	background-color:#efefef;
+	padding:2px 5px 2px 2px;
+	padding:1px 5px 1px 2px;
+
+	border-style:solid solid solid solid;
+	border-width:1px 1px 1px 1px;
+	border-color:#808080 #ffffff #ffffff #808080; 
+
+	cursor:default;
+}
+
+.toolbar-item-disable
+{
+	*font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size:60%;	
+
+	float:left;
+	margin-right:5px;
+/*	height:18px;
+	*height:19px;*/
+	color:#808080;
+	background-color:#efefef;
+	border:1px solid #efefef;
+	padding:2px 5px 2px 2px;
+	padding:1px 5px 1px 2px;
+
+	cursor:default;
+}
+
+.toolbar-split
+{
+	*font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size:100%;	
+	height:24px;
+	width:8px;
+
+	float:left;
+	cursor:none;
+	
+	background-image:url(images/controls/split-gray.png);
+	background-repeat: no-repeat;
+	background-position:center 3;
+
+}
+
+.toolbar-item-disable td
+{
+	color:#808080;
+}
+
+
+/* menu items */
+.menu-holder
+{
+	z-Index:99999;
+	display:none;
+	position:absolute;
+	top:0;
+	left:0;
+	border-style:solid;
+	border-width:1px;
+	border-color:#808080;
+	background-color:#F9F8F7;
+	*width:1%;
+
+}
+
+.iframe-shimmer
+{
+	z-Index:99998;
+	display:none;
+	position:absolute;
+	top:0;
+	left:0;
+	border-style:solid;
+	border-width:1px;
+	border-color:#808080;
+	background-color:#F9F8F7;
+
+}
+
+.mnu-icon
+{
+	height:22px;
+	width:20px;
+	font-size:70%;
+	border-style:solid;
+	border-width:0px 1px 0px 0px;
+	border-color:#808080;
+	background-color:#DBD8D1;
+	cursor:pointer;
+	z-index:9999999999999999;
+}
+
+.mnu-disabled
+{
+	color:#808080;
+}
+
+
+.mnu-text
+{
+	font-size:70%;
+	white-space:noWrap;
+	height:16px;
+	*height:20px;
+	padding:3px 2px 0px 4px;
+	cursor:pointer;
+	z-index:9999999999999999;
+}
+
+.mnu-ctrl
+{
+	font-size:70%;
+	white-space:noWrap;
+	width:20px;
+	height:22px;
+	cursor:pointer;
+	z-index:9999999999999999;
+}
+
+.mnu-child
+{
+	font-size:70%;
+	white-space:noWrap;
+	width:20px;
+	height:22px;
+
+	background-image:url(images/controls/arr_right.gif);
+	background-repeat: no-repeat;
+	background-position:center center;
+	cursor:pointer;
+	z-index:9999999999999999;
+}
+
+.mnu-nochild
+{
+	font-size:70%;
+	white-space:noWrap;
+	width:20px;
+	height:22px;
+	z-index:9999999999999999;
+}
+
+.mnu-highlighter
+{
+	border-style:solid;
+	border-width:1px;
+	border-color:#000000;
+	background-color:#B6BDD2;
+	color:#ffffff;
+	z-index:9999999999999999;
+}
+
+.mnu-splitter
+{
+	*font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size:0px;	
+	height:1px;
+	width:95%;
+	border-style:solid solid solid solid;
+	border-width:1px 0px 0px 0px;
+	border-color:#808080;
+	cursor:none;
+	z-index:9999999999999999;
+}
+
+.mnu-row-split
+{
+	*font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size:0px;	
+	height:1px;
+	z-index:9999999999999999;
+}
+/* eof toolbar styles */
+
+
+
+/* tab control */
+.tabcontrol
+{
+	padding:4px 2px 0px 5px;
+	border-bottom:1px solid #D5D4DF;
+	font-size:70%;
+	height:24px;
+	cursor:default;
+}
+
+.tab
+{
+	position:relative;
+	float:left;
+	top:0px;
+	*top:1px;
+
+	padding:5px;
+	margin-right:10px;
+	border:1px solid #D5D4DF;
+
+	background-color:#F6F6F8;
+	color:#696969;
+}
+
+.tab-selected
+{
+	position:relative;
+
+	float:left;
+	padding:5px;
+	top:0px;
+	*top:1px;
+	
+	margin-right:10px;
+	border:1px solid #D5D4DF;
+	border-bottom:1px solid #ffffff;
+
+	cursor:default;
+
+	background-color:#FFFFFF;
+	color:#696969;
+
+}
+
+.tab-hidden
+{
+	position:relative;
+	float:left;
+	top:0px;
+	*top:1px;
+		
+	padding:5px;
+	margin-right:10px;
+	border:1px solid #D5D4DF;
+
+	background-color:#F6F6F8;
+	color:#696969;
+
+	display:none;
+}
+
+.ISIE.ABOVE9 .tab-selected
+{
+	top:-1px !important;
+}
+.ISIE.ABOVE9 .tab,.ISIE.ABOVE9 .tab-hidden
+{
+	top:-1px !important;
+}
+
+
+/* mozialla only */
+@-moz-document url-prefix() 
+{
+	.tab
+	{
+		top:-2px;
+	}
+
+	.tab-selected
+	{
+		top:-2px;
+	}
+
+	.tab-hidden
+	{
+		top:-2px;
+	}
+}
+
+.ISIE .tab-iframe-holder
+{
+	height:100%;
+}
+
+#_tr_tabbar_td
+{
+	width:100% !important;
+}

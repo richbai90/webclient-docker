@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espPickListForms>
+	<pickListForm>
+		<name>Customer</name>
+		<title>Choose Customer</title>
+		<table>userdb</table>
+		<propertiesForm>Form.TfCustomer</propertiesForm>
+		<newRecordForm>Form.TfCustomer</newRecordForm>
+		<help>This is help on the customer pick list</help>
+		<visibleColumns>keysearch, firstname, surname, companyname, site, telext, email</visibleColumns>
+		<size width="500" height="240" />
+		<formActions>
+		</formActions>
+	</pickListForm>
+	<pickListForm>
+		<name>Charge Center</name>
+		<title>Charge Center Pick List</title>
+		<table>costcent</table>
+		<propertiesForm>EasyForm.Charge Center</propertiesForm>
+		<newRecordForm>EasyForm.Charge Center</newRecordForm>
+		<visibleColumns>costcenter, department</visibleColumns>
+		<size width="500" height="240" />
+		<formActions>
+		</formActions>
+	</pickListForm>
+	<pickListForm>
+		<name>Site</name>
+		<title>Site Browser</title>
+		<table>site</table>
+		<propertiesForm>EasyForm.Site</propertiesForm>
+		<newRecordForm>EasyForm.Site</newRecordForm>
+		<size width="500" height="240" />
+		<formActions>
+		</formActions>
+	</pickListForm>
+	<pickListForm>
+		<name>Business Process</name>
+		<title>Business Process Pick List</title>
+		<table>bpm_workflow</table>
+		<propertiesForm>Form.bpm_workflows</propertiesForm>
+		<newRecordForm>Form.bpm_workflows</newRecordForm>
+		<visibleColumns>pk_workflow_id, title, description, fk_default_sla</visibleColumns>
+		<size width="500" height="240" />
+		<formActions>
+		</formActions>
+	</pickListForm>
+	<pickListForm>
+		<name>Company</name>
+		<title>Choose Company</title>
+		<table>company</table>
+		<propertiesForm>Form.TfCompany</propertiesForm>
+		<newRecordForm>Form.TfCompany</newRecordForm>
+		<visibleColumns>pk_company_id, companyname, telephone, address_1, address_2, address_3, town, county, postcode, country</visibleColumns>
+		<size width="500" height="240" />
+		<formActions>
+		</formActions>
+	</pickListForm>
+</espPickListForms>

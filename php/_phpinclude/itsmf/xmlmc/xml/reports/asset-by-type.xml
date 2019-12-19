@@ -1,0 +1,18 @@
+<report title="Assets by Type" reportstyle="list" dsn="swdata" uid="" pwd="">
+	<columns>
+		<column dbname="generic" dbtable="equipmnt" level="1">Asset Type</column>
+		<freetext dbname="Count_of_CIs" graph='1' level="1" conversion="">count(equipmnt.generic)</freetext>
+		<column dbname="equipid" dbtable="equipmnt" conversion="" level="2">Asset ID</column>
+		<column dbname="asset_no" dbtable="equipmnt" conversion="" level="2">Asset No</column>
+		<column dbname="currstatus" dbtable="equipmnt" conversion="" level="2">Status</column>
+		<column dbname="asset_title" dbtable="equipmnt" conversion="" level="2">Description</column>
+		<column dbname="fk_company_id" dbtable="equipmnt" conversion="" level="2">Organisation</column>
+	</columns>
+	<tables>
+		<table name="equipmnt" type="master"/>
+	</tables>
+	<criteria>
+		<order dbname="generic)'" dbtable="'count(equipmnt" order="desc"></order>
+		<static>equipmnt.appcode='ITSM-F' order by 2</static>
+	</criteria>
+</report>

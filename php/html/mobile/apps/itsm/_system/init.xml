@@ -1,0 +1,42 @@
+<settings>
+	<loginfail><!-- xml or php file to processes if login fails --></loginfail>
+	<top class='standard'>
+		<title>Supportworks</title>
+		<actionsleft>
+			<action>
+				<icon>swm-notifications</icon>
+				<target>[:_swm_app_path]/notifications.xml</target>
+			</action>
+		</actionsleft>
+		<actionsright>
+			<action>
+				<icon>swm-search</icon>
+				<target>[:_swm_app_path]/search.xml</target>
+			</action>
+			<action>
+				<icon>swm-logout</icon>
+				<target>[:_swm_service_path]/session/logout.php</target>
+			</action>
+		</actionsright>
+	</top>
+	<navigation class='standard'>
+		<linkcontrol initialtab='1'>
+			<link>
+				<label>Home</label>
+				<target>[:_swm_app_path]/views/home.xml</target>
+			</link>
+			<link>
+				<label>Service Desk</label>
+				<target>[:_swm_app_path]/views/servicedesk/servicedesk.xml</target>
+			</link>
+			<link>
+				<label>Search</label>
+				<target>[:_swm_app_path]/views/search/search.xml</target>
+			</link>
+			<link>
+				<label>E-Mail</label>
+				<target>[:_swm_app_path]/views/mail/mail.xml</target>
+			</link>
+		</linkcontrol>
+	</navigation>
+</settings>

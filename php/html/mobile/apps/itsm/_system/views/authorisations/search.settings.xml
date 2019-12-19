@@ -1,0 +1,111 @@
+<settings>
+	<menu>
+		<leftaction>
+			<title>Authorisations</title>
+			<action noparse="1">_process_navigation('[:_swm_app_path]/authorisations/authorisations.xml')</action>
+		</leftaction>
+		<centeraction>
+			<title>Authorisations Search</title>
+		</centeraction>
+		<rightaction>
+			<title></title>
+			<action noparse="1"></action>
+		</rightaction>
+	</menu>
+	<searchvalues>
+		<itsm_title type='textbox' title='Summary'></itsm_title>
+		<opencall.status type='status_dropdown' title='Status'>1</opencall.status>
+	</searchvalues>
+	<sortvalues>
+		<fixbyx title='Fix Date'></fixbyx>
+		<logdatex title='Log Date'></logdatex>
+	</sortvalues>
+	<content>
+	<layer type='searchpage'>
+		<list>
+			<type>xml</type>
+			<data>
+				<rspointer>rs</rspointer>
+				<db>swdata</db>
+				<formatted>true</formatted><!-- return formatted values as well - have to do 2 sql calls -->
+				<sql>
+					<std>select opencall.h_formattedcallref, opencall.callclass,opencall.callref, opencall.cust_id, opencall.cust_name,opencall.status, opencall.priority, opencall.logdatex, opencall.fixbyx, opencall.itsm_title,  opencall.h_condition, opencall.escalation from opencall, bpm_oc_auth where bpm_oc_auth.fk_auth_id='[:_swm_sqlprep_aid]' and bpm_oc_auth.authortype='Analyst' and bpm_oc_auth.status='Pending Authorisation' and bpm_oc_auth.fk_callref=opencall.callref</std>
+					<ora></ora>
+					<ms></ms>
+				</sql>
+				<orderby>callref</orderby>
+				<complexconversions>
+					<!-- pointers to php functions that will return converted values for given column.tagname i.e. condition.color -->
+					<condition>
+						<styling>_get_oc_condition_styling</styling>
+						<level>_get_oc_condition_level</level>
+					</condition>
+					<escalation>
+						<progressbar>_get_oc_escalation_progressbar</progressbar>
+					</escalation>
+				</complexconversions>
+			</data>
+			<!-- html markup to output data - note the embedded data rs.<column>.<columnproperty> -->
+			<outputprocessor>
+				<!-- could show a header -->
+				<nodataoutput><![CDATA[<div class='grptitle'><span class='grptitlecontainer'><span class='grptitle' width='100%'>Incidents</span></span></div><center><div class='datanormal'><br>There are no BP Tasks matching this search</div></center>]]></nodataoutput>
+				<headeroutput><![CDATA[<div class='grptitle'><span class='grptitlecontainer'><span class='grptitle' width='100%'>Search Results</span></span></div>
+				]]></headeroutput>
+				<rowprocessor>
+					<!-- define exclusions by testing data ?? no implemented yet-->
+					<exclusions>
+						<excludeif>rs.itsm_title==''</excludeif>
+					</exclusions>
+
+					<!-- define if we want to get any other record data to be used (i.e. related or extended table info) -->
+					<relateddata>
+						<data>
+						</data>
+					</relateddata>
+
+					<!-- how to echo out the row data -->
+					<rowoutput><![CDATA[
+						<div class='listrow' style="cursor:pointer;" >
+							<!-- callref + title + mini cols + actions-->
+							<table border='0' width="100%">
+								<tr>
+									<!-- summary -->
+									<td width="75%">
+										<table border='0' width="100%">
+											<tr>
+												<!-- summary -->
+												<td width="75%">
+													<span  class='datanormal'><a href="#" callref="[:rs.h_formattedcallref.htmlvalue]" callreffmt="[:rs.h_formattedcallref.formattedvalue]" onclick="_open_call_details(this);" xmlpath='[:_swm_app_path]/views/authorisations/call.details.xml' class="callhyperlink">[:rs.h_formattedcallref.formattedvalue]</a></span>
+													<span style="color:#3B59AA; font-size:14px;"><a href="#" xmlpath='[:_swm_app_path]/views/authorisations/customer.details.xml' keysearch="[:rs.cust_id.htmlvalue]" onclick="_open_cust_details(this);">[:rs.cust_name.formattedvalue]</a></span>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<span  class='datanormal'>
+														[:rs.callclass.htmlvalue] - [:rs.itsm_title.htmlvalue]
+													</span>
+												</td>
+											</tr>
+										</table>
+									</td>
+									<td width="20%" align="right">
+											[:rs.status.formattedvalue]
+									</td>
+									<td width="5%" align="right">
+										<img src="client/_system/images/icons/arrow.jpg">
+									</td>
+								</tr>
+							</table>
+						<div class='listrow-splitter'>[:rs.escalation.progressbar]</div>
+						</div>]]>
+					</rowoutput>
+					<rowaction>
+						<target>[:_swm_app_path]/views/servicedesk/call.detail.php</target>
+					</rowaction>
+				</rowprocessor>
+				<footeroutput><![CDATA[]]></footeroutput>
+			</outputprocessor>
+		</list>
+	</layer>
+	</content>
+</settings>

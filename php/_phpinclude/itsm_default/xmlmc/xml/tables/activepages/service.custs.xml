@@ -1,0 +1,12 @@
+<datatable dsn="swdata" keycol="callref" keyvar="in_callref" urlvars="callclass,status" onrowclick="" onrowdblclick="" action="" url="">
+	<columns>
+		<column id="fk_me_display" conversion="">Subscriber</column>
+		<column id="type" conversion="">Subscription Type</column>
+		<column id="flg_chargable" conversion="1_0_TO_Y_N">Is Chargable?</column>
+		<column id="subscription_price" conversion="">Subscription Price</column>
+		<column id="request_price" conversion="">Request Price</column>
+	</columns>
+	<from>sc_subscription</from>
+	<where>fk_service =![$GLOBALS['pk_auto_id']]! and rel_type='SUBSCRIPTION'</where>
+	<orderby></orderby>
+</datatable>

@@ -1,0 +1,189 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<link rel="stylesheet" href="form.canvas.css" type="text/css" />
+
+<script src='../js/jquery-1.11.1.min.js'></script>
+<script>
+
+	var _top = this;
+	var _swform = null;
+	var _swdoc = top;
+
+	//-- pointers to app items
+	var app = top.info.__app;
+	var jqDoc = null;
+	var jqTopDoc = null;
+	var dd = app.dd;
+	var _form=null;
+
+	document.PassedInFilter = "";
+
+	function _onshow()
+	{
+		document.body.style.display="inline";
+		if(_first_time_init())
+		{
+			fl_files._align();
+			if(top._formtype=="cdf")fl_files._getcallattachments();
+		}
+	}
+
+	var iBodyWidth = 0;
+	var iBodyHeight = 0;
+	function _resize_form()
+	{
+			if(document.getElementById("fl_files")!=null)
+			{
+				//-- 91965 - adjust processing for ie10 and above
+				if(!app.isIE || app.isIE10Above)
+				{
+					var intAdjust = (app.isSafari || app.isIE10Above)?6:5;
+					document.getElementById("fl_files").style.height = document.body.clientHeight - intAdjust;
+					document.getElementById("fl_files").style.width = document.body.clientWidth-2;
+				}
+				else
+				{
+
+					document.getElementById("fl_files").style.height = document.body.offsetHeight-4;
+					document.getElementById("fl_files").style.width = document.body.clientWidth;
+				}
+				fl_files._align();
+			}
+	}
+
+	function _onhide()
+	{
+
+	}
+
+	function _load_form_canvas()
+	{
+		_swform = top._swdoc._load_alt_sysform("_wc_sys_fileattachments","fileattachments","files");
+		if(_swform)
+		{
+			for(strID in _swform)
+			{
+				try
+				{
+					_top[strID] = _swform[strID];
+					document[strID] = _swform[strID];					
+				}
+				catch (e)
+				{
+				}
+			}
+		
+			_swform._draw();
+
+			//-- create table structure
+			var bespokeColumns = new Array();
+			bespokeColumns[bespokeColumns.length++] = 'File Name';
+			bespokeColumns[bespokeColumns.length++] = 'Size';
+			bespokeColumns[bespokeColumns.length++] = 'Type';
+			bespokeColumns[bespokeColumns.length++] = 'Attached On';
+			bespokeColumns[bespokeColumns.length++] = 'Attached By';
+			fl_files._create_bespoke_xmlcols(bespokeColumns,false);
+
+			//-- add any form file attachments that may have been passed in
+			if(_swdoc._form['PreloadType']==1 && top._formtype==top._LCF)
+			{
+				var index = 0;
+		        while(_swdoc._form["attach"+index]) 
+			    {
+				      fl_files.AddAttachment(_swdoc._form["attach" + index]);
+					  index++;
+				}
+			}
+		}
+	}
+
+	var bInit = false;
+	function _first_time_init()
+	{
+		bInit=true;
+		if(document.getElementById("fl_files")==null)
+		{
+			_load_form_canvas();
+		}
+
+		if(!app.isIE)
+		{
+			var intAdjust = (app.isSafari)?8:5;
+			document.getElementById("fl_files").style.height = document.body.clientHeight-intAdjust;
+			document.getElementById("fl_files").style.width = document.body.clientWidth-2;
+		}
+		else
+		{
+
+			document.getElementById("fl_files").style.height = document.body.offsetHeight-4;
+			document.getElementById("fl_files").style.width = document.body.clientWidth;
+		}	
+
+		return true;
+	}
+
+	//-- called when lcf or cdf file attachment is uploaded
+	function fl_files_OnFileUploaded(strFileName,strFileType, strFileSize,strFileDate)
+	{
+
+	}
+
+	function fl_files_OnHeaderItemClicked(strOrder,nCol)
+	{
+		if(top._formtype=="cdf")fl_files._getcallattachments();
+	}
+
+	function fl_files_OnItemSelected(nRow)
+	{
+		if(top._formtype=="cdf")
+		{
+			if(top.document.opencall.status == top._CANCELLED || top.document.opencall.status == top._CLOSEDCHARGE || top.document.opencall.status == top._CLOSED)
+			{
+				app.toolbar_item_dore(top._formtype, "unattach" , false, top.document);
+				return;
+			}
+		}
+
+		app.toolbar_item_dore(top._formtype, "unattach" , true, top.document);
+	}
+
+	function _handle_drag_drop(ev)
+	{
+		app.stopEvent(ev);
+		return false;
+	}
+
+	function onloadEvents()
+	{
+	
+		jqDoc = $(document); //-- so can use jquery		
+		jqTopDoc = top.jqDoc;
+		
+		//-- add browser class to body
+		if(top.app.browserClassName!="")
+		{
+			jqDoc.find("body").addClass(top.app.browserClassName);
+		}
+	}	
+	
+
+</script>
+
+
+<!-- main js -->
+<script src='js/min/swjs.classes.js'></script>
+<body  onload="onloadEvents()" style='display:none;overflow:hidden;background-color:#efefef;' oncontextmenu="return false;" ondrop="return _handle_drag_drop(event);" ondragover="return _handle_drag_drop(event);" ondragenter="return _handle_drag_drop(event);">
+
+<form name="form_viewfile" action="" method="POST" target="_new" style='display:none;'>
+<input name="_callref" type='text'>
+<input name="_swsessionid" type='text'>
+<input name="_formtype" type='text'>
+<input name="_filename" type='text'>
+<input name="_fileid" type='text'>
+</form>
+
+</body>
+</html>

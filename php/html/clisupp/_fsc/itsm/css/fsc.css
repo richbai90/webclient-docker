@@ -1,0 +1,321 @@
+@CHARSET "UTF-8";
+
+.fsc-container {
+    width: 100%;
+    clear: both;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    border-bottom: 1px solid #888;
+    padding-bottom: 1px;
+    font-size: 0.75em;
+}
+
+.fsc-month-even {
+    background-color: #FFFFCC;
+}
+
+.fsc-month-even-weekend {
+    background-color: #EFEFCC;
+}
+
+.fsc-month-odd {
+    background-color: #FFEEAA;
+}
+
+.fsc-month-odd-weekend {
+    background-color: #EFDEAA;
+}
+
+.fsc-week {
+    position: relative;
+    clear: both;
+    height: 10.5em;
+}
+
+.fsc-week-size1 {
+    height: 10.5em;
+}
+
+.fsc-week-size2 {
+    height: 10.5em;
+}
+
+.fsc-week-size3 {
+    height: 10.5em;
+}
+
+.fsc-week-size4 {
+    height: 10.5em;
+}
+
+.fsc-week-size5 {
+    height: 10.5em;
+}
+
+.fsc-week-size6 {
+    height: 12.5em;
+}
+
+.fsc-week-size7 {
+    height: 14.5em;
+}
+
+.fsc-week-size8 {
+    height: 16.5em;
+}
+
+.fsc-week-size9 {
+    height: 18.5em;
+}
+
+.fsc-week-size10 {
+    height: 20.5em;
+}
+
+.fsc-week-size11 {
+    height: 22.5em;
+}
+
+.fsc-week-size12 {
+    height: 24.5em;
+}
+
+.fsc-week-size13 {
+    height: 26.5em;
+}
+
+.fsc-week-size14 {
+    height: 28.5em;
+}
+
+.fsc-week-size15 {
+    height: 30.5em;
+}
+
+.fsc-day {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    width: 14.285714% !important;
+    height: 100%;
+    border-top: 1px solid #888;
+    border-right: 1px solid #888;
+    overflow: visible;
+}
+
+.fsc-day-today {
+    background-color: #FFDDDD; 
+}
+
+.fsc-day-monday {
+    top: 0;
+    left: 0;
+    z-index: 7;
+    border-left: 1px solid #888;
+}
+
+.fsc-day-tuesday {
+    top: 0;
+    left: 14.285714%;
+    z-index: 6;
+}
+
+.fsc-day-wednesday {
+    top: 0;
+    left: 28.571429%;   
+    z-index: 5; 
+}
+
+.fsc-day-thursday {
+    top: 0;
+    left: 42.857143%;
+    z-index: 4;
+}
+
+.fsc-day-friday {
+    top: 0;
+    left: 57.142857%;
+    z-index: 3;
+}
+
+.fsc-day-saturday {
+    top: 0;
+    left: 71.428571%;
+    z-index: 2;
+}
+
+.fsc-day-sunday {
+    top: 0;
+    left: 85.714286%;
+    z-index: 1;
+}
+
+.fsc-daylabel {
+    padding: 2px;
+    text-align: right;
+    color: #888;
+}
+
+.fsc-call {
+    white-space: nowrap;
+    padding: 0;
+    position: absolute;
+}
+
+.fsc-call em {
+    display: block;
+    background: #FFFFFF;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+    padding: 0 2px;
+    margin: 0 2px;
+    font-style: normal;
+    line-height: 1.5em;    
+    text-align: center;
+}
+
+.fsc-call em  {
+    display: block;
+    margin: 0 2px;
+    padding: 0;
+    overflow: hidden;
+}
+
+
+.fsc-call em.fsc-call-start span {
+    display: block;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+	width:100%;
+    background: transparent url('../img/icons/fsc_start.png') 3px 50% no-repeat;
+}
+
+.fsc-call em.fsc-call-finish span {
+    display: block;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+	width:100%;
+}
+
+
+.fsc-call em.fsc-call-start {
+    margin-left: 4px;
+    border-left: 1px solid #000;
+    background: #FFF url('../img/icons/fsc_start.png') 3px 50% no-repeat;
+}
+
+.fsc-call em.fsc-call-finish {
+    border-right: 1px solid #000;
+    background: #FFF url('../img/icons/fsc_finish.png') 99% 50% no-repeat;
+}
+
+.fsc-call a {
+    text-decoration: none;
+}
+
+.fsc-call a:hover {
+    text-decoration: underline;
+}
+
+.fsc-call a.changerequest {
+    
+}
+
+.fsc-call a.releaserequest {
+    color: #F99A00;
+}
+
+.fsc-call a.fsc-call-overdue {
+    color: #CC0000;
+}
+
+.fsc-call-span1 {
+    width: 100%;
+}
+
+.fsc-call-span2 {
+    width: 200%;
+}
+
+.fsc-call-span3 {
+    width: 300%;
+}
+
+.fsc-call-span4 {
+    width: 400%;
+}
+
+.fsc-call-span5 {
+    width: 500%;
+}
+
+.fsc-call-span6 {
+    width: 600%;
+}
+
+.fsc-call-span7 {
+    width: 700%;
+}
+
+.fsc-call-offset0 {
+    top: 2em;
+}
+
+.fsc-call-offset1 {
+    top: 6em;
+}
+
+.fsc-call-offset2 {
+    top: 10em;
+}
+
+.fsc-call-offset3 {
+    top: 14em;
+}
+
+.fsc-call-offset4 {
+    top: 18em;
+}
+
+.fsc-call-offset5 {
+    top: 22em;
+}
+
+.fsc-call-offset6 {
+    top: 26em;
+}
+
+.fsc-call-offset7 {
+    top: 30em;
+}
+
+.fsc-call-offset8 {
+    top: 34em;
+}
+
+.fsc-call-offset9 {
+    top: 38em;
+}
+
+.fsc-call-offset10 {
+    top: 42em;
+}
+
+.fsc-call-offset11 {
+    top: 46em;
+}
+
+.fsc-call-offset12 {
+    top: 50em;
+}
+
+.fsc-call-offset13 {
+    top: 54em;
+}
+
+.fsc-call-offset14 {
+    top: 58em;
+}

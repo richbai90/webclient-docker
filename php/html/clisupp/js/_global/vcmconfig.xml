@@ -1,0 +1,98 @@
+<vcm_config version="2.0">
+<color>
+  <line selected="FF0000" normal="000000"/>
+  <ciobject selected="FF00FF" normal="000000" line="FFFF00" text="000000"/>
+  <grabber normal="0000FF"/>
+</color>
+<settings>
+  <view dragdrop="1" tooltip="1" leveltoshow="1" minobjformgroup="20" zoom="100"/>
+  <ciobject showtext="1" imagesize="32"/>
+  <data>
+    <database 			 name="swdata"/>
+    <config_item		 name="config_item">
+    	<ck_config_item		 name ="ck_config_item"/>
+    	<ck_config_type		 name ="ck_config_type"/>
+    	<fk_cost_center 	 name ="fk_cost_center"/>
+    	<fk_priority_level 	 name ="fk_priority_level"/>
+    	<fk_status_level	 name ="fk_status_level"/>
+    	<fk_manufacturer	 name ="fk_manufacturer"/>
+    	<fk_supplier		 name ="fk_supplier"/>
+    	<fk_userdb		 name ="fk_userdb"/>
+    	<description		 name ="description"/>
+    	<pk_auto_id		 name ="pk_auto_id"/>
+    	<notes			 name ="notes"/>
+    	<owner_name		 name ="owner_name"/>
+    	<iscurrentversion	 name ="iscurrentversion"/>
+    	<ck_bln			 name ="ck_bin"/>
+    	<purchase_order_number	 name ="purchase_order_number"/>
+    	<purchase_date		 name ="purchase_date"/>
+    	<warranty_expires	 name ="warranty_expires"/>
+    	<capital_expenditure	 name ="capital_expenditure"/>
+    	<inventory_tool_id	 name ="inventory_tool_id"/>
+    	<bespoke_version	 name ="bespoke_version"/>
+    	<owner_telephone	 name ="owner_telephone"/>
+    	<fk_site		 name ="fk_site"/>
+    	<ci_is_monitored	 name ="ci_is_monitored"/>
+    	<ci_is_available	 name ="ci_is_available"/>
+    	<ci_is_authorised	 name ="ci_is_authorised"/>
+    	<ci_impact_level	 name ="ci_impact_level"/>
+    	<ci_is_supported_by	 name ="ci_is_supported_by"/>
+    	<ci_support_group	 name ="ci_support_group"/>
+    	<sla_ref		 name ="sla_ref"/>
+    	<ci_support_by_displaytext	name ="ci_support_by_displaytext"/>
+    </config_item>
+    	
+    <config_item_log 		 name="config_item_log">
+    	<pk_auto_id		 name="pk_auto_id"/>
+    	<fk_ci_id		 name="fk_ci_id"/>
+    	<event			 name="event"/>
+    	<analystid		 name="analystid"/>
+    	<datetime		 name="datetime"/>
+    	<notes			 name="notes"/>
+    	<fk_callref		 name="fk_callref"/>
+    	<datetimenum		 name="datetimenum"/>
+    </config_item_log>
+    
+    <config_relation 		 name="config_relation">
+    	<fk_parent_ci_id	 name="fk_parent_ci_id"/>
+    	<fk_child_ci_id		 name="fk_child_ci_id"/>
+    	<pk_auto_id		 name="pk_auto_id"/>
+    	<fk_dependency_type	 name="fk_dependency_type"/>
+    	<child_depends_on	 name="child_depends_on"/>
+    </config_relation>
+    
+    <config_type 		 name="config_type">
+    	<extended_form		 name="extended_form"/>
+    	<type_description	 name="type_description"/>
+    	<pk_config_type		 name="pk_config_type"/>
+    	<extended_table		 name="extended_table"/>
+    	<www_image_path		 name="www_image_path"/>
+    </config_type>
+    
+    <config_type_priority_levels name="config_type_priority_levels">
+    	<description		 name="description"/>
+    	<ck_config_type		 name="ck_config_type"/>
+    	<ck_priority_level	 name="ck_priority_level"/>    	
+    	<pk_auto_id		 name="pk_auto_id"/>
+    </config_type_priority_levels>
+    
+    <config_type_status_levels 	 name="config_type_status_levels">
+    	<description		 name="description"/>
+    	<ck_config_type		 name="ck_config_type"/>
+    	<ck_status_level	 name="ck_status_level"/>
+    	<pk_auto_id		 name="pk_auto_id"/>
+    </config_type_status_levels>
+    
+    <config_dependency_types 	 name="config_dependency_types">
+    	<description		 name="description"/>
+    	<line_colour		 name="line_colour"/>
+    	<pk_dependency_type	 name="pk_dependency_type"/>
+    	<line_style		 name="line_style"/>
+    	<colour_text		 name="colour_text"/>
+    </config_dependency_types>
+  </data>
+</settings>
+</vcm_config>
+
+
+

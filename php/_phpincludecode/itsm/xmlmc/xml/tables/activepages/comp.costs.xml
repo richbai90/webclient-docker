@@ -1,0 +1,12 @@
+<datatable dsn="swdata" keycol="callref" keyvar="in_callref" urlvars="callclass,status" onrowclick="" onrowdblclick="" action="" url="">
+	<columns>
+		<column id="name" conversion="">Component ID</column>
+		<column id="description" conversion="">Name</column>
+		<column id="qty" conversion="">Quantity</column>
+		<column id="comp_cost" conversion="">Cost</column>
+		<column id="comp_price" conversion="">Price</column>
+	</columns>
+	<from>request_comp</from>
+	<where>fk_callref =![$GLOBALS['callref']]!</where>
+	<orderby></orderby>
+</datatable>

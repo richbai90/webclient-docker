@@ -1,0 +1,18 @@
+<report title="Service General Ledger Report" reportstyle="list" dsn="swdata" uid="" pwd="" distinct="1">
+	<columns>
+		<column dbname="ck_config_item" dbtable="config_itemi" level="1">Service</column>
+		<freetext dbname="Count_of_Components" graph='1' level="1" conversion="">count((sc_rels.fk_service))</freetext>
+		<column dbname="description" dbtable="sc_rels" conversion="" level="2">Component</column>
+		<column dbname="gl_code" dbtable="sc_rels" conversion="" level="2">GL Code</column>
+	</columns>
+	<tables>
+		<table name="sc_rels" type="master"/>
+		<table name="config_itemi" type="related" join_type="right" join="sc_rels.fk_service = config_itemi.pk_auto_id"/>
+	</tables>
+	<criteria>
+		<userinput type="dbpicklist" binding="config_itemi.pk_auto_id" dsn="swdata" dbtable="config_itemi" keycol="pk_auto_id" txtcol="description" filter=" where config_itemi.flg_bundle=1" int="1" op="=">
+			<prompt>Service</prompt>
+		</userinput>
+		<static>config_itemi.ck_config_type='ME->SERVICE' and cost_type='Component' and fk_key is not null and config_itemi.appcode IN (![$GLOBALS['datasetfilterlist']]!)</static>
+	</criteria>
+</report>

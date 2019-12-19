@@ -1,0 +1,700 @@
+<?xml version="1.0"?>
+<workflow>
+  <Recordset table="bpm_workflow">
+    <Record>
+      <ext_db_table></ext_db_table>
+      <ext_sw_form></ext_sw_form>
+      <fk_default_sla>Analysis Request</fk_default_sla>
+      <title></title>
+      <fk_firststage_id>34</fk_firststage_id>
+      <flg_active>1</flg_active>
+      <description>This basic process allows customers to request subscription and seek authorisation from their manager and IT manager Dan Matthews</description>
+      <pk_workflow_id>Subscribe to a Service</pk_workflow_id>
+      <callclass>Service Request</callclass>
+      <fk_default_sla_name></fk_default_sla_name>
+      <fk_default_sla_new></fk_default_sla_new>
+      <flg_sla_apply></flg_sla_apply>
+      <flg_sla_enforce></flg_sla_enforce>
+      <flg_requireci></flg_requireci>
+      <appcode>itsm</appcode>
+      <graphxml>&lt;mxGraphModel grid="1" guides="0" tooltips="0" connect="0" fold="0" page="0" pageScale="1" pageWidth="826" pageHeight="1169"&gt;&lt;root&gt;&lt;mxCell id="0"/&gt;&lt;mxCell id="1" parent="0"/&gt;&lt;mxCell id="2" value="Subscribe&amp;#xa;to&amp;#xa;a&amp;#xa;Service" style="shape=mxgraph.flowchart.terminator;fillColor=#FFF2CC;strokeColor=#000000;strokeWidth=2;shadow=1;gradientColor=#FFFFCC" parent="1" vertex="1"&gt;&lt;mxGeometry x="224.783950617284" width="110" height="80" as="geometry"/&gt;&lt;Object type="start" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_2_stage_34" value="" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="2" target="stage_34" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="279.783950617284" y="92"/&gt;&lt;mxPoint x="279.783950617284" y="128"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="stage_34" value="Seek&amp;#xa;Authorisation&amp;#xa;from&amp;#xa;Customer&amp;#xa;Manager" style="shape=mxgraph.flowchart.predefined_process;fillColor=#B5739D;strokeColor=#000000;strokeWidth=2;shadow=1;whiteSpace:wrap;gradientColor=#E6D0DE" parent="1" vertex="1"&gt;&lt;mxGeometry x="224.783950617284" y="140" width="110" height="80" as="geometry"/&gt;&lt;Object type="stage" stagekey="34" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_cond_34_stage_35" value="Authorised by Manager" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="cond_34" target="stage_35" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="256.141975308642" y="372"/&gt;&lt;mxPoint x="155" y="408"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="42" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="stage_35" value="Seek&amp;#xa;Authorisation&amp;#xa;from&amp;#xa;IT&amp;#xa;manager&amp;#xa;or&amp;#xa;Business&amp;#xa;owner" style="shape=mxgraph.flowchart.predefined_process;fillColor=#B5739D;strokeColor=#000000;strokeWidth=2;shadow=1;whiteSpace:wrap;gradientColor=#E6D0DE" parent="1" vertex="1"&gt;&lt;mxGeometry x="100" y="436" width="110" height="80" as="geometry"/&gt;&lt;Object type="stage" stagekey="35" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_stage_35_auth_35" value="" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="stage_35" target="auth_35" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="155" y="544"/&gt;&lt;mxPoint x="155" y="580"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="auth_35" value="Authorisation" style="shape=mxgraph.flowchart.preparation;fillColor=#9AC7BF;strokeColor=#000000;strokeWidth=2;shadow=1;gradientColor=#D5E8D4" parent="1" vertex="1"&gt;&lt;mxGeometry x="100" y="592" width="110" height="80" as="geometry"/&gt;&lt;Object type="auth" stagekey="35" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_cond_35_stage_36" value="Authorised" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="cond_35" target="stage_36" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="130" y="824"/&gt;&lt;mxPoint x="55" y="860"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="44" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="stage_36" value="Subscribe&amp;#xa;user&amp;#xa;to&amp;#xa;service" style="shape=mxgraph.flowchart.predefined_process;fillColor=#B5739D;strokeColor=#000000;strokeWidth=2;shadow=1;whiteSpace:wrap;gradientColor=#E6D0DE" parent="1" vertex="1"&gt;&lt;mxGeometry y="872" width="110" height="80" as="geometry"/&gt;&lt;Object type="stage" stagekey="36" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_cond_36_stage_38" value="CompletedTasks" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="cond_36" target="stage_38" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="30" y="1104"/&gt;&lt;mxPoint x="56.40625" y="1140"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="46" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="stage_38" value="Request&amp;#xa;Approved" style="shape=mxgraph.flowchart.predefined_process;fillColor=#B5739D;strokeColor=#000000;strokeWidth=2;shadow=1;whiteSpace:wrap;gradientColor=#E6D0DE" parent="1" vertex="1"&gt;&lt;mxGeometry x="1.40625" y="1152" width="110" height="80" as="geometry"/&gt;&lt;Object type="stage" stagekey="38" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_stage_38_cond_38" value="" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="stage_38" target="cond_38" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="56.40625" y="1244"/&gt;&lt;mxPoint x="56.40625" y="1280"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="cond_38" value="Completed" style="shape=mxgraph.flowchart.decision;strokeColor=#000000;strokeWidth=2;shadow=1;fillColor=#FF3333;gradientColor=#FFCCCC;" parent="1" vertex="1"&gt;&lt;mxGeometry x="1.40625" y="1292" width="110" height="80" as="geometry"/&gt;&lt;Object type="endnode" stagekey="38" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_cond_36_stage_37" value="Failed Tasks" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="cond_36" target="stage_37" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="80" y="1104"/&gt;&lt;mxPoint x="333.072916666667" y="1140"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="47" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="stage_37" value="Request&amp;#xa;Rejected" style="shape=mxgraph.flowchart.predefined_process;fillColor=#B5739D;strokeColor=#000000;strokeWidth=2;shadow=1;whiteSpace:wrap;gradientColor=#E6D0DE" parent="1" vertex="1"&gt;&lt;mxGeometry x="311.40625" y="1152" width="110" height="80" as="geometry"/&gt;&lt;Object type="stage" stagekey="37" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_stage_37_cond_37" value="" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="stage_37" target="cond_37" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="366.40625" y="1244"/&gt;&lt;mxPoint x="366.40625" y="1280"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="cond_37" value="Completed" style="shape=mxgraph.flowchart.decision;strokeColor=#000000;strokeWidth=2;shadow=1;fillColor=#FF3333;gradientColor=#FFCCCC;" parent="1" vertex="1"&gt;&lt;mxGeometry x="311.40625" y="1292" width="110" height="80" as="geometry"/&gt;&lt;Object type="endnode" stagekey="37" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_stage_36_cond_36" value="" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="stage_36" target="cond_36" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="55" y="964"/&gt;&lt;mxPoint x="55" y="1000"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="cond_36" value="On&amp;#xa;Status&amp;#xa;Change" style="shape=mxgraph.flowchart.decision;strokeColor=#000000;strokeWidth=2;shadow=1;fillColor=#A9C4EB;gradientColor=#D4E1F5;" parent="1" vertex="1"&gt;&lt;mxGeometry y="1012" width="110" height="80" as="geometry"/&gt;&lt;Object type="statuscond" stagekey="36" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_cond_35_stage_37" value="Rejected" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="cond_35" target="stage_37" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="180" y="824"/&gt;&lt;mxPoint x="310" y="842"/&gt;&lt;mxPoint x="310" y="982"/&gt;&lt;mxPoint x="310" y="982"/&gt;&lt;mxPoint x="310" y="1122"/&gt;&lt;mxPoint x="366.40625" y="1138"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="45" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_auth_35_cond_35" value="" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="auth_35" target="cond_35" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="155" y="684"/&gt;&lt;mxPoint x="155" y="720"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="cond_35" value="On&amp;#xa;Status&amp;#xa;Change" style="shape=mxgraph.flowchart.decision;strokeColor=#000000;strokeWidth=2;shadow=1;fillColor=#A9C4EB;gradientColor=#D4E1F5;" parent="1" vertex="1"&gt;&lt;mxGeometry x="100" y="732" width="110" height="80" as="geometry"/&gt;&lt;Object type="statuscond" stagekey="35" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_cond_34_stage_37" value="Rejected by Manager" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="cond_34" target="stage_37" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="306.141975308642" y="372"/&gt;&lt;mxPoint x="510" y="390"/&gt;&lt;mxPoint x="510" y="562"/&gt;&lt;mxPoint x="510" y="562"/&gt;&lt;mxPoint x="510" y="702"/&gt;&lt;mxPoint x="510" y="702"/&gt;&lt;mxPoint x="510" y="842"/&gt;&lt;mxPoint x="510" y="842"/&gt;&lt;mxPoint x="510" y="982"/&gt;&lt;mxPoint x="510" y="982"/&gt;&lt;mxPoint x="510" y="1122"/&gt;&lt;mxPoint x="399.739583333333" y="1140"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="43" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_stage_34_cond_34" value="" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="stage_34" target="cond_34" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="279.783950617284" y="232"/&gt;&lt;mxPoint x="281.141975308642" y="268"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="cond_34" value="On&amp;#xa;Status&amp;#xa;Change" style="shape=mxgraph.flowchart.decision;strokeColor=#000000;strokeWidth=2;shadow=1;fillColor=#A9C4EB;gradientColor=#D4E1F5;" parent="1" vertex="1"&gt;&lt;mxGeometry x="226.141975308642" y="280" width="110" height="80" as="geometry"/&gt;&lt;Object type="statuscond" stagekey="34" as="htl"/&gt;&lt;/mxCell&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;</graphxml>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_progress">
+    <Record>
+      <message_failure>Failed</message_failure>
+      <message_working>In Progress</message_working>
+      <message_complete>Completed</message_complete>
+      <pindex>1</pindex>
+      <description>Awaiting approval of your request from your manager</description>
+      <pk_progid>19</pk_progid>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <title>Awaiting manager approval</title>
+      <percentage>10</percentage>
+    </Record>
+    <Record>
+      <message_failure>Failed</message_failure>
+      <message_working>In Progress</message_working>
+      <message_complete>Complete</message_complete>
+      <pindex>2</pindex>
+      <description>Awaiting IT/Business owner approval</description>
+      <pk_progid>20</pk_progid>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <title>Awaiting IT/Business owner approval</title>
+      <percentage>30</percentage>
+    </Record>
+    <Record>
+      <message_failure>Failed</message_failure>
+      <message_working>In Progress</message_working>
+      <message_complete>Complete</message_complete>
+      <pindex>3</pindex>
+      <description>Awaiting an authorised user to subscribe you to this service</description>
+      <pk_progid>21</pk_progid>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <title>Awaiting Work</title>
+      <percentage>60</percentage>
+    </Record>
+    <Record>
+      <message_failure>Failed</message_failure>
+      <message_working>In Progress</message_working>
+      <message_complete>Complete</message_complete>
+      <pindex>4</pindex>
+      <description>Service subscription approved and subscribed</description>
+      <pk_progid>22</pk_progid>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <title>Delivered</title>
+      <percentage>100</percentage>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_stage">
+    <Record>
+      <rej_weighting>100</rej_weighting>
+      <auth_weighting>100</auth_weighting>
+      <flg_addcalltasks>0</flg_addcalltasks>
+      <flg_addcallauths>0</flg_addcallauths>
+      <swauthreq_email></swauthreq_email>
+      <authreq_mbox>_helpdesk</authreq_mbox>
+      <custauthreq_email>BPM Customer Authorisation</custauthreq_email>
+      <set_tasksok_status>TASKSOK</set_tasksok_status>
+      <set_tasksfail_status>TASKSFAIL</set_tasksfail_status>
+      <set_taskfail_status></set_taskfail_status>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <swdataform></swdataform>
+      <swwordtemplate></swwordtemplate>
+      <flg_seqtasks>0</flg_seqtasks>
+      <flg_hastasks>0</flg_hastasks>
+      <flg_authorisation>1</flg_authorisation>
+      <pk_stage_id>34</pk_stage_id>
+      <title>Seek Authorisation from Customer Manager</title>
+      <description>In order to subscribe to this service, the manager must approve this request.</description>
+      <flg_update_access>0</flg_update_access>
+      <flg_visible_access>0</flg_visible_access>
+      <set_allauth_status></set_allauth_status>
+      <set_allmixed_status></set_allmixed_status>
+      <set_allrej_status></set_allrej_status>
+      <flg_custmanagerauth>1</flg_custmanagerauth>
+      <set_onrej_status>Authorised by Manager</set_onrej_status>
+      <swdataform_table></swdataform_table>
+      <set_onauth_status>Authorised by Manager</set_onauth_status>
+      <seq>1</seq>
+      <flg_unanimous_auth></flg_unanimous_auth>
+      <flg_disable_manual></flg_disable_manual>
+      <flg_auth_via_email></flg_auth_via_email>
+      <flg_requireci></flg_requireci>
+      <aba_authreq_email></aba_authreq_email>
+      <notif_template></notif_template>
+      <notif_mailbox></notif_mailbox>
+      <notif_email></notif_email>
+      <notif_days></notif_days>
+      <edit_level_reqd></edit_level_reqd>
+      <flg_releaseready></flg_releaseready>
+      <servownauthreq_email></servownauthreq_email>
+      <techownauthreq_email></techownauthreq_email>
+      <ciownauthreq_email></ciownauthreq_email>
+      <flg_enable_change_control></flg_enable_change_control>
+    </Record>
+    <Record>
+      <rej_weighting>100</rej_weighting>
+      <auth_weighting>100</auth_weighting>
+      <flg_addcalltasks>0</flg_addcalltasks>
+      <flg_addcallauths>0</flg_addcallauths>
+      <swauthreq_email></swauthreq_email>
+      <authreq_mbox>_helpdesk</authreq_mbox>
+      <custauthreq_email>Analyst Authorisation Email</custauthreq_email>
+      <set_tasksok_status>TASKSOK</set_tasksok_status>
+      <set_tasksfail_status>TASKSFAIL</set_tasksfail_status>
+      <set_taskfail_status></set_taskfail_status>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <swdataform></swdataform>
+      <swwordtemplate></swwordtemplate>
+      <flg_seqtasks>0</flg_seqtasks>
+      <flg_hastasks>0</flg_hastasks>
+      <flg_authorisation>1</flg_authorisation>
+      <pk_stage_id>35</pk_stage_id>
+      <title>Seek Authorisation from IT manager or Business owner</title>
+      <description>Following successful authorisation by the customers manager, the IT owner or business manager must now authorise the request</description>
+      <flg_update_access>0</flg_update_access>
+      <flg_visible_access>0</flg_visible_access>
+      <set_allauth_status></set_allauth_status>
+      <set_allmixed_status></set_allmixed_status>
+      <set_allrej_status></set_allrej_status>
+      <flg_custmanagerauth>0</flg_custmanagerauth>
+      <set_onrej_status>Rejected</set_onrej_status>
+      <swdataform_table></swdataform_table>
+      <set_onauth_status>Authorised</set_onauth_status>
+      <seq>2</seq>
+      <flg_unanimous_auth></flg_unanimous_auth>
+      <flg_disable_manual></flg_disable_manual>
+      <flg_auth_via_email></flg_auth_via_email>
+      <flg_requireci></flg_requireci>
+      <aba_authreq_email></aba_authreq_email>
+      <notif_template></notif_template>
+      <notif_mailbox></notif_mailbox>
+      <notif_email></notif_email>
+      <notif_days></notif_days>
+      <edit_level_reqd></edit_level_reqd>
+      <flg_releaseready></flg_releaseready>
+      <servownauthreq_email></servownauthreq_email>
+      <techownauthreq_email></techownauthreq_email>
+      <ciownauthreq_email></ciownauthreq_email>
+      <flg_enable_change_control></flg_enable_change_control>
+    </Record>
+    <Record>
+      <rej_weighting>100</rej_weighting>
+      <auth_weighting>100</auth_weighting>
+      <flg_addcalltasks>0</flg_addcalltasks>
+      <flg_addcallauths>0</flg_addcallauths>
+      <swauthreq_email></swauthreq_email>
+      <authreq_mbox></authreq_mbox>
+      <custauthreq_email></custauthreq_email>
+      <set_tasksok_status>TASKSOK</set_tasksok_status>
+      <set_tasksfail_status>TASKSFAIL</set_tasksfail_status>
+      <set_taskfail_status></set_taskfail_status>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <swdataform></swdataform>
+      <swwordtemplate></swwordtemplate>
+      <flg_seqtasks>0</flg_seqtasks>
+      <flg_hastasks>1</flg_hastasks>
+      <flg_authorisation>0</flg_authorisation>
+      <pk_stage_id>36</pk_stage_id>
+      <title>Subscribe user to service</title>
+      <description>Add the user to the service they requested subscription for</description>
+      <flg_update_access>0</flg_update_access>
+      <flg_visible_access>0</flg_visible_access>
+      <set_allauth_status></set_allauth_status>
+      <set_allmixed_status></set_allmixed_status>
+      <set_allrej_status></set_allrej_status>
+      <flg_custmanagerauth>0</flg_custmanagerauth>
+      <set_onrej_status></set_onrej_status>
+      <swdataform_table></swdataform_table>
+      <set_onauth_status></set_onauth_status>
+      <seq>3</seq>
+      <flg_unanimous_auth></flg_unanimous_auth>
+      <flg_disable_manual></flg_disable_manual>
+      <flg_auth_via_email></flg_auth_via_email>
+      <flg_requireci></flg_requireci>
+      <aba_authreq_email></aba_authreq_email>
+      <notif_template></notif_template>
+      <notif_mailbox></notif_mailbox>
+      <notif_email></notif_email>
+      <notif_days></notif_days>
+      <edit_level_reqd></edit_level_reqd>
+      <flg_releaseready></flg_releaseready>
+      <servownauthreq_email></servownauthreq_email>
+      <techownauthreq_email></techownauthreq_email>
+      <ciownauthreq_email></ciownauthreq_email>
+      <flg_enable_change_control></flg_enable_change_control>
+    </Record>
+    <Record>
+      <rej_weighting>100</rej_weighting>
+      <auth_weighting>100</auth_weighting>
+      <flg_addcalltasks>0</flg_addcalltasks>
+      <flg_addcallauths>0</flg_addcallauths>
+      <swauthreq_email></swauthreq_email>
+      <authreq_mbox></authreq_mbox>
+      <custauthreq_email></custauthreq_email>
+      <set_tasksok_status>TASKSOK</set_tasksok_status>
+      <set_tasksfail_status>TASKSFAIL</set_tasksfail_status>
+      <set_taskfail_status></set_taskfail_status>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <swdataform></swdataform>
+      <swwordtemplate></swwordtemplate>
+      <flg_seqtasks>0</flg_seqtasks>
+      <flg_hastasks>0</flg_hastasks>
+      <flg_authorisation>0</flg_authorisation>
+      <pk_stage_id>37</pk_stage_id>
+      <title>Request Rejected</title>
+      <description>The Request was Rejected</description>
+      <flg_update_access>0</flg_update_access>
+      <flg_visible_access>0</flg_visible_access>
+      <set_allauth_status></set_allauth_status>
+      <set_allmixed_status></set_allmixed_status>
+      <set_allrej_status></set_allrej_status>
+      <flg_custmanagerauth>0</flg_custmanagerauth>
+      <set_onrej_status></set_onrej_status>
+      <swdataform_table></swdataform_table>
+      <set_onauth_status></set_onauth_status>
+      <seq>4</seq>
+      <flg_unanimous_auth></flg_unanimous_auth>
+      <flg_disable_manual></flg_disable_manual>
+      <flg_auth_via_email></flg_auth_via_email>
+      <flg_requireci></flg_requireci>
+      <aba_authreq_email></aba_authreq_email>
+      <notif_template></notif_template>
+      <notif_mailbox></notif_mailbox>
+      <notif_email></notif_email>
+      <notif_days></notif_days>
+      <edit_level_reqd></edit_level_reqd>
+      <flg_releaseready></flg_releaseready>
+      <servownauthreq_email></servownauthreq_email>
+      <techownauthreq_email></techownauthreq_email>
+      <ciownauthreq_email></ciownauthreq_email>
+      <flg_enable_change_control></flg_enable_change_control>
+    </Record>
+    <Record>
+      <rej_weighting>100</rej_weighting>
+      <auth_weighting>100</auth_weighting>
+      <flg_addcalltasks>0</flg_addcalltasks>
+      <flg_addcallauths>0</flg_addcallauths>
+      <swauthreq_email></swauthreq_email>
+      <authreq_mbox></authreq_mbox>
+      <custauthreq_email></custauthreq_email>
+      <set_tasksok_status>TASKSOK</set_tasksok_status>
+      <set_tasksfail_status>TASKSFAIL</set_tasksfail_status>
+      <set_taskfail_status></set_taskfail_status>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <swdataform></swdataform>
+      <swwordtemplate></swwordtemplate>
+      <flg_seqtasks>0</flg_seqtasks>
+      <flg_hastasks>0</flg_hastasks>
+      <flg_authorisation>0</flg_authorisation>
+      <pk_stage_id>38</pk_stage_id>
+      <title>Request Approved</title>
+      <description>The Request was Approved</description>
+      <flg_update_access>0</flg_update_access>
+      <flg_visible_access>0</flg_visible_access>
+      <set_allauth_status></set_allauth_status>
+      <set_allmixed_status></set_allmixed_status>
+      <set_allrej_status></set_allrej_status>
+      <flg_custmanagerauth>0</flg_custmanagerauth>
+      <set_onrej_status></set_onrej_status>
+      <swdataform_table></swdataform_table>
+      <set_onauth_status></set_onauth_status>
+      <seq>5</seq>
+      <flg_unanimous_auth></flg_unanimous_auth>
+      <flg_disable_manual></flg_disable_manual>
+      <flg_auth_via_email></flg_auth_via_email>
+      <flg_requireci></flg_requireci>
+      <aba_authreq_email></aba_authreq_email>
+      <notif_template></notif_template>
+      <notif_mailbox></notif_mailbox>
+      <notif_email></notif_email>
+      <notif_days></notif_days>
+      <edit_level_reqd></edit_level_reqd>
+      <flg_releaseready></flg_releaseready>
+      <servownauthreq_email></servownauthreq_email>
+      <techownauthreq_email></techownauthreq_email>
+      <ciownauthreq_email></ciownauthreq_email>
+      <flg_enable_change_control></flg_enable_change_control>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_ctrl_fields"/>
+  <Recordset table="bpm_audit_fields"/>
+  <Recordset table="bpm_stage_auth">
+    <Record>
+      <weighting>100</weighting>
+      <authorname>Daniel Matthews [ITSM Admin]</authorname>
+      <authortype>Analyst</authortype>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <fk_auth_id>ITSM</fk_auth_id>
+      <fk_stage_id>35</fk_stage_id>
+      <pk_auto_id>8</pk_auto_id>
+    </Record>
+    <Record>
+      <weighting>50</weighting>
+      <authorname>Keith Archer</authorname>
+      <authortype>Analyst</authortype>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <fk_auth_id>karcher</fk_auth_id>
+      <fk_stage_id>35</fk_stage_id>
+      <pk_auto_id>9</pk_auto_id>
+    </Record>
+    <Record>
+      <weighting>50</weighting>
+      <authorname>Rosemary Matthews</authorname>
+      <authortype>Analyst</authortype>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <fk_auth_id>RMatthews</fk_auth_id>
+      <fk_stage_id>35</fk_stage_id>
+      <pk_auto_id>10</pk_auto_id>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_stage_task">
+    <Record>
+      <fk_stage_id>36</fk_stage_id>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <fk_analyst>ITSM</fk_analyst>
+      <fk_suppgroup>SUPPORT</fk_suppgroup>
+      <sla>P2 - 4 Hour Response</sla>
+      <description>Add the user to the service</description>
+      <title>Subscribe user to service</title>
+      <pk_auto_id>13</pk_auto_id>
+      <seq>1</seq>
+      <predecessor></predecessor>
+      <predecessor_name></predecessor_name>
+      <h_condition></h_condition>
+      <flg_skip_calc></flg_skip_calc>
+      <budgeted_time></budgeted_time>
+      <probcode></probcode>
+      <flg_enable_change_control></flg_enable_change_control>
+      <schedule_task></schedule_task>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_stage_sts">
+    <Record>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <pk_auto_id>49</pk_auto_id>
+      <status>Authorised by Manager</status>
+      <fk_stage_id>34</fk_stage_id>
+    </Record>
+    <Record>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <pk_auto_id>50</pk_auto_id>
+      <status>Rejected by Manager</status>
+      <fk_stage_id>34</fk_stage_id>
+    </Record>
+    <Record>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <pk_auto_id>51</pk_auto_id>
+      <status>Authorised</status>
+      <fk_stage_id>35</fk_stage_id>
+    </Record>
+    <Record>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <pk_auto_id>52</pk_auto_id>
+      <status>Rejected</status>
+      <fk_stage_id>35</fk_stage_id>
+    </Record>
+    <Record>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <pk_auto_id>53</pk_auto_id>
+      <status>Delivered</status>
+      <fk_stage_id>36</fk_stage_id>
+    </Record>
+    <Record>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <pk_auto_id>54</pk_auto_id>
+      <status>Not Delivered</status>
+      <fk_stage_id>36</fk_stage_id>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_cond">
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition> '&amp;[new_opencall.bpm_status_id]'='Authorised by Manager'</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>35</set_stage>
+      <set_workflow>Subscribe to a Service</set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status>Authorised by Manager</set_status>
+      <fk_stage_id>34</fk_stage_id>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <pk_condition_id>42</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>0</flg_runatstart>
+      <title>Authorised by Manager</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt>Request has been authorised by customer's manager</updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>1</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>1</updatepublic>
+      <set_progress>20</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new></set_call_sla_new>
+      <flg_remwatch></flg_remwatch>
+      <flg_addwatch></flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile></set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched></flg_copysched>
+      <flg_releaseready></flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition> '&amp;[new_opencall.bpm_status_id]'='Rejected by Manager'</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>37</set_stage>
+      <set_workflow>Subscribe to a Service</set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status>Rejected by Manager</set_status>
+      <fk_stage_id>34</fk_stage_id>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <pk_condition_id>43</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>0</flg_runatstart>
+      <title>Rejected by Manager</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt>The request was rejected by the customers manager.</updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>1</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>1</updatepublic>
+      <set_progress>19</set_progress>
+      <set_progress_fail>1</set_progress_fail>
+      <set_call_sla_new></set_call_sla_new>
+      <flg_remwatch></flg_remwatch>
+      <flg_addwatch></flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile></set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched></flg_copysched>
+      <flg_releaseready></flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition> '&amp;[new_opencall.bpm_status_id]'='Authorised'</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>36</set_stage>
+      <set_workflow>Subscribe to a Service</set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status>Authorised</set_status>
+      <fk_stage_id>35</fk_stage_id>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <pk_condition_id>44</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>0</flg_runatstart>
+      <title>Authorised</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt></updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>0</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>21</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new></set_call_sla_new>
+      <flg_remwatch></flg_remwatch>
+      <flg_addwatch></flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile></set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched></flg_copysched>
+      <flg_releaseready></flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition> '&amp;[new_opencall.bpm_status_id]'='Rejected'</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>37</set_stage>
+      <set_workflow>Subscribe to a Service</set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status>Rejected</set_status>
+      <fk_stage_id>35</fk_stage_id>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <pk_condition_id>45</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>0</flg_runatstart>
+      <title>Rejected</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt></updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>0</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>20</set_progress>
+      <set_progress_fail>1</set_progress_fail>
+      <set_call_sla_new></set_call_sla_new>
+      <flg_remwatch></flg_remwatch>
+      <flg_addwatch></flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile></set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched></flg_copysched>
+      <flg_releaseready></flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition> '&amp;[new_opencall.bpm_status_id]'='TASKSOK'</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>38</set_stage>
+      <set_workflow>Subscribe to a Service</set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status>Delivered</set_status>
+      <fk_stage_id>36</fk_stage_id>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <pk_condition_id>46</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>0</flg_runatstart>
+      <title>CompletedTasks</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt></updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>0</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>22</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new></set_call_sla_new>
+      <flg_remwatch></flg_remwatch>
+      <flg_addwatch></flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile></set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched></flg_copysched>
+      <flg_releaseready></flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition> '&amp;[new_opencall.bpm_status_id]'='TASKSFAILED'</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>37</set_stage>
+      <set_workflow>Subscribe to a Service</set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status>Not Delivered</set_status>
+      <fk_stage_id>36</fk_stage_id>
+      <fk_workflow_id>Subscribe to a Service</fk_workflow_id>
+      <pk_condition_id>47</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>0</flg_runatstart>
+      <title>Failed Tasks</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt>The work failed for some reason</updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>1</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>21</set_progress>
+      <set_progress_fail>1</set_progress_fail>
+      <set_call_sla_new></set_call_sla_new>
+      <flg_remwatch></flg_remwatch>
+      <flg_addwatch></flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile></set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched></flg_copysched>
+      <flg_releaseready></flg_releaseready>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_cond_vpme"/>
+</workflow>

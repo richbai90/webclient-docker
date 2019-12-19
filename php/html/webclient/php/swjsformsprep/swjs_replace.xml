@@ -1,0 +1,1080 @@
+<?xml version="1.0" encoding="utf-8"?>
+<swcodeReplace>
+
+	<!-- where we no strings will not be in quotes -->
+	<!--<unquotedReplaces>-->
+	<generalReplace>
+
+
+		<prepare>
+			<match>oItem()</match>
+			<replacewith>oSLAD()</replacewith>
+			<limittoforms>
+					<limitform>itsmsp_slad</limitform>
+			</limittoforms>
+		</prepare>
+
+
+		<prepare>
+			<match>function _eva</match>
+			<replacewith>function old_eva</replacewith>
+			<exceptions>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>function _evi</match>
+			<replacewith>function old_evi</replacewith>
+			<exceptions>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>function _ema</match>
+			<replacewith>function old_ema</replacewith>
+			<exceptions>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>function _ete</match>
+			<replacewith>function old_ete</replacewith>
+			<exceptions>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>function _een</match>
+			<replacewith>function old_een</replacewith>
+			<exceptions>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>function _ero</match>
+			<replacewith>function old_ero</replacewith>
+			<exceptions>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>function _eim</match>
+			<replacewith>function old_eim</replacewith>
+			<exceptions>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>function _ecol</match>
+			<replacewith>function old_ecol</replacewith>
+			<exceptions>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>function _emt</match>
+			<replacewith>function old_emt</replacewith>
+			<exceptions>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>function _ewi</match>
+			<replacewith>function old_ewi</replacewith>
+			<exceptions>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>function _slf</match>
+			<replacewith>function old_slf</replacewith>
+			<exceptions>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>function _slraw</match>
+			<replacewith>function old_slraw</replacewith>
+			<exceptions>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>function _flp</match>
+			<replacewith>function old_flp</replacewith>
+			<exceptions>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>function _etab</match>
+			<replacewith>function old_etab</replacewith>
+			<exceptions>
+			</exceptions>
+		</prepare>		
+
+		<prepare>
+			<match>refresh_costs()</match>
+			<replacewith>//-- refresh_costs()</replacewith>
+			<!--
+			<limittoforms>
+					<limitform>portfolio</limitform>
+			</limittoforms>
+			-->
+		</prepare>
+
+		<prepare>
+			<match>oCStatus().class</match>
+			<replacewith>document.ct_statusl["class"]</replacewith>
+		</prepare>		
+	
+		
+		<prepare>
+			<match>mainform,"config_itemi","white",boolAND,false</match>
+			<replacewith>mainform,"config_itemi","#ffffff",boolAND,false</replacewith>
+		</prepare>		
+
+		<prepare>
+			<match><![CDATA[if((app.bWebClient)&&(document.boolClosing))]]></match>
+			<replacewith><![CDATA[if((app.bWebClient && app.global==undefined)&&(document.boolClosing))]]></replacewith>
+			<!--
+			<limittoforms>
+					<limitform>itsmfEfResolveCloseCallForm</limitform>
+					<limitform>itsmEfResolveCloseCallForm</limitform>
+					<limitform>EfResolveCloseCallForm</limitform>
+			</limittoforms>
+			-->
+		</prepare>
+
+		<prepare>
+			<match><![CDATA[if(MessageBox("You have unsaved data on this form. Do you still want to close this form?", MB_ICONQUESTION | MB_YESNO) == IDNO)]]></match>
+			<replacewith><![CDATA[
+				//-- are we running in webclient
+				if(app && app._wc_version)
+				{
+					//-- return object that contains save message and the code to execute if the user chooses to leave the page
+					var o = {};
+					o.message = "You have unsaved data on this form.";
+					o.onclosexecute = function()
+							  {
+								UnlockCalls(document._form["callrefs"]);
+								document.ResetData();
+							  }
+					return o;
+				}
+
+				if(MessageBox("You have unsaved data on this form. Do you still want to close this form?", MB_ICONQUESTION | MB_YESNO) == IDNO)
+				
+			]]></replacewith>
+		</prepare>
+
+		
+		<prepare>
+			<match>alert(</match>
+			<replacewith>MessageBox(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>.rowCount</match>
+			<replacewith>.rowCount()</replacewith>
+		</prepare>
+		<prepare>
+			<match>.dataRef!=undefined</match>
+			<replacewith>.dataRef!=""</replacewith>
+		</prepare>
+		<prepare>
+			<match>.dataRef != undefined</match>
+			<replacewith>.dataRef != ""</replacewith>
+		</prepare>
+		<prepare>
+			<match>.dataRef!= undefined</match>
+			<replacewith>.dataRef!= ""</replacewith>
+		</prepare>
+		<prepare>
+			<match>.dataRef !=undefined</match>
+			<replacewith>.dataRef !=""</replacewith>
+		</prepare>
+		<prepare>
+			<match>var nLoc = strTemp.indexOf("\r\n")</match>
+			<replacewith>var nLoc = strTemp.indexOf("\n")</replacewith>
+			<!--
+			<limittoforms>
+					<limitform>efnewissueform</limitform>
+			</limittoforms>
+			-->
+		</prepare>
+		<prepare>
+			<match>strTemp.substr(nLoc+2, strTemp.length - nLoc+2)</match>
+			<replacewith>strTemp.substr(nLoc+1, strTemp.length - nLoc+1)</replacewith>
+			<!--
+			<limittoforms>
+					<limitform>efnewissueform</limitform>
+			</limittoforms>
+			-->
+		</prepare>
+
+		<prepare>
+			<match>ConvertDateTimeInText(</match>
+			<replacewith>app.global.ConvertDateTimeInText(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		
+		<prepare>
+			<match>SwitchSupportworksView(</match>
+			<replacewith>app.global.SwitchSupportworksView(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>InvokeAddNewSlaDialog(</match>
+			<replacewith>app.global.InvokeAddNewSlaDialog(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>InvokeSlaEditDialog(</match>
+			<replacewith>app.global.InvokeSlaEditDialog(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>Delete3rdPartySupplier(</match>
+			<replacewith>app.global.Delete3rdPartySupplier(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+
+		<prepare>
+			<match>DeleteSla(</match>
+			<replacewith>app.global.DeleteSla(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>SetSla3rdPartyInfo(</match>
+			<replacewith>app.global.SetSla3rdPartyInfo(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>CreateSla(</match>
+			<replacewith>app.global.CreateSla(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>GetCurrentEpocTime(</match>
+			<replacewith>app.global.GetCurrentEpocTime(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+	
+		<prepare>
+			<match>GetResolutionProfileDescription(</match>
+			<replacewith>app.global.GetResolutionProfileDescription(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>GuiFlush(</match>
+			<replacewith>app.global.GuiFlush(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>OpenSqlTreeBrowserForm(</match>
+			<replacewith>app.global.OpenSqlTreeBrowserForm(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>OpenDatabaseSearchView(</match>
+			<replacewith>app.global.OpenDatabaseSearchView(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>GetCallRefValue(</match>
+			<replacewith>app.global.GetCallRefValue(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>OpenEmbeddedURL(</match>
+			<replacewith>app.global.OpenEmbeddedURL(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+
+		<prepare>
+			<match>OpenVCM(</match>
+			<replacewith>app.global.OpenVCM(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>OpenDatabaseSearchView(</match>
+			<replacewith>app.global.OpenDatabaseSearchView(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>ShellExecute(</match>
+			<replacewith>app.global.ShellExecute(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+
+		<prepare>
+			<match>OpenCallDetailsView(</match>
+			<replacewith>app.global.OpenCallDetailsView(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+
+		<prepare>
+			<match>MessageBeep(</match>
+			<replacewith>app.global.MessageBeep(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>LogNewCall(</match>
+			<replacewith>app.global.LogNewCall(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		
+		<prepare>
+			<match>HttpGet(</match>
+			<replacewith>app.global.HttpGet(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>IsSurveyModuleEnabled(</match>
+			<replacewith>app.global.IsSurveyModuleEnabled(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>AttachMessageToCall(</match>
+			<replacewith>app.global.AttachMessageToCall(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>CallStatusString(</match>
+			<replacewith>app.global.CallStatusString(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>CanSendMail(</match>
+			<replacewith>app.global.CanSendMail(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>LoadFileInBase64(</match>
+			<replacewith>app.global.LoadFileInBase64(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>LogInfo(</match>
+			<replacewith>app.global.LogInfo(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>OpenHtmlWindow(</match>
+			<replacewith>app.OpenHtmlWindow(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>GetAsISO8601TimeString(</match>
+			<replacewith>app.global.GetAsISO8601TimeString(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>	
+		<prepare>
+			<match>CloseMailMessageWindow(</match>
+			<replacewith>app.global.CloseMailMessageWindow(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>ComposeCallUpdateEmail(</match>
+			<replacewith>app.global.ComposeCallUpdateEmail(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>DebugPrint(</match>
+			<replacewith>app.global.DebugPrint(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>EpocTimeFromString(</match>
+			<replacewith>app.global.EpocTimeFromString(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>EpocTimeFromStringGmt(</match>
+			<replacewith>app.global.EpocTimeFromStringGmt(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>GetCacheRecordCount(</match>
+			<replacewith>app.global.GetCacheRecordCount(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>GetCallStatusInfo(</match>
+			<replacewith>app.global.GetCallStatusInfo(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>RunHIB(</match>
+			<replacewith>app.global.RunHIB(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>ValidateSLAName(</match>
+			<replacewith>app.global.ValidateSLAName(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>StoredQueryExecute(</match>
+			<replacewith>app.global.StoredQueryExecute(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>SqlExecute(</match>
+			<replacewith>app.global.SqlExecute(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>Sleep(</match>
+			<replacewith>app.global.Sleep(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>ScheduleCallback(</match>
+			<replacewith>app.global.ScheduleCallback(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+			</exceptions>
+		</prepare>
+	
+		<prepare>
+			<match>ResetData(</match>
+			<replacewith>_swdoc.ResetData(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+	
+		<prepare>
+			<match>IsConnectedToMailServer(</match>
+			<replacewith>app.global.IsConnectedToMailServer(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>PrepareForSQL(</match>
+			<replacewith>app.global.PrepareForSQL(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>IsCallInKnowledgeBase(</match>
+			<replacewith>app.global.IsCallInKnowledgeBase(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>AddResolutionToKnowledgeBase(</match>
+			<replacewith>app.global.AddResolutionToKnowledgeBase(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>UnlockCalls(</match>
+			<replacewith>app.global.UnlockCalls(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>LockCalls(</match>
+			<replacewith>app.global.LockCalls(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>text[0]</match>
+			<replacewith>text.charAt(0)</replacewith>
+			<exceptions>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>SetTimer(</match>
+			<replacewith>_form.SetTimer(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>KillTimer(</match>
+			<replacewith>_form.KillTimer(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>GetReadOnly(</match>
+			<replacewith>_form.GetReadOnly(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>ResetFieldValues(</match>
+			<replacewith>_form.ResetFieldValues(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>SetReadOnly(</match>
+			<replacewith>_form.SetReadOnly(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>ResetModiedFlag(</match>
+			<replacewith>_swdoc.ResetModiedFlag(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>ResolveRecord(</match>
+			<replacewith>_swdoc.ResolveRecord(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>ResetRecord(</match>
+			<replacewith>_swdoc.ResetRecord(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>GetVar(</match>
+			<replacewith>_swdoc.GetVar(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>GetVariable(</match>
+			<replacewith>_swdoc.GetVariable(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>SetVariable(</match>
+			<replacewith>_swdoc.SetVariable(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>RunQuickAction(</match>
+			<replacewith>_swdoc.RunQuickAction(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>UpdateFormFromData(</match>
+			<replacewith>_swdoc.UpdateFormFromData(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>SetTitle(</match>
+			<replacewith>_swdoc.SetTitle(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>document.CloseForm(</match>
+			<replacewith>_swdoc.CloseForm(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>AddFileAttachments(</match>
+			<replacewith>_swdoc.AddFileAttachments(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>IsLoading(</match>
+			<replacewith>_swdoc.IsLoading(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>IsRecordResolved(</match>
+			<replacewith>_swdoc.IsRecordResolved(</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>	
+		<prepare>
+			<match>document</match>
+			<replacewith>_swdoc</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+				<exception type='nextchar'>ctype_alnum</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>global.</match>
+			<replacewith>app.global.</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>itsm.</match>
+			<replacewith>app.itsm.</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>g.</match>
+			<replacewith>app.g.</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>itsmf.</match>
+			<replacewith>app.itsmf.</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>cmdb.</match>
+			<replacewith>app.cmdb.</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>cfg.</match>
+			<replacewith>app.cfg.</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>oKB.</match>
+			<replacewith>app.oKB.</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>kbase.</match>
+			<replacewith>app.kbase.</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>service.</match>
+			<replacewith>app.service.</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>session.</match>
+			<replacewith>app.session.</replacewith>
+			<exceptions>
+				<exception type='prevchar'>.</exception>
+				<exception type='prevchar'>ctype_alnum</exception>
+				<exception type='prevchar'>_</exception>
+			</exceptions>
+		</prepare>
+	</generalReplace>
+
+	<setPropertyReplace>
+		<prepare>
+			<match>.path</match>
+			<wrapper>_flp</wrapper>
+			<exceptions>
+				<exception type='nextchar'>ctype_alnum</exception>
+				<exception type='nextchar'>_</exception>
+			</exceptions>
+		</prepare>
+
+		<prepare>
+			<match>.value</match>
+			<wrapper>_eva</wrapper>
+			<exceptions>
+				<exception type='nextchar'>ctype_alnum</exception>
+				<exception type='nextchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>.text</match>
+			<wrapper>_ete</wrapper>
+			<exceptions>
+				<exception type='nextchar'>ctype_alnum</exception>
+				<exception type='nextchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>.filter</match>
+			<wrapper>_slf</wrapper>
+			<exceptions>
+				<exception type='nextchar'>ctype_alnum</exception>
+				<exception type='nextchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>.rawSql</match>
+			<wrapper>_slraw</wrapper>
+			<exceptions>
+				<exception type='nextchar'>ctype_alnum</exception>
+				<exception type='nextchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>.enable</match>
+			<wrapper>_een</wrapper>
+			<exceptions>
+				<exception type='nextchar'>ctype_alnum</exception>
+				<exception type='nextchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>.readOnly</match>
+			<wrapper>_ero</wrapper>
+			<exceptions>
+				<exception type='nextchar'>ctype_alnum</exception>
+				<exception type='nextchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>.mandatory</match>
+			<wrapper>_ema</wrapper>
+			<exceptions>
+				<exception type='nextchar'>ctype_alnum</exception>
+				<exception type='nextchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>.visible</match>
+			<wrapper>_evi</wrapper>
+			<exceptions>
+				<exception type='nextchar'>ctype_alnum</exception>
+				<exception type='nextchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>.image</match>
+			<wrapper>_eim</wrapper>
+			<exceptions>
+				<exception type='nextchar'>ctype_alnum</exception>
+				<exception type='nextchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>.dataRef</match>
+			<wrapper>_edataref</wrapper>
+			<exceptions>
+				<exception type='nextchar'>ctype_alnum</exception>
+				<exception type='nextchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>.tab</match>
+			<wrapper>_etab</wrapper>
+			<exceptions>
+				<exception type='nextchar'>ctype_alnum</exception>
+				<exception type='nextchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>.color</match>
+			<wrapper>_ecol</wrapper>
+			<exceptions>
+				<exception type='nextchar'>ctype_alnum</exception>
+				<exception type='nextchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>.width</match>
+			<wrapper>_ewi</wrapper>
+			<exceptions>
+				<exception type='nextchar'>ctype_alnum</exception>
+				<exception type='nextchar'>_</exception>
+			</exceptions>
+		</prepare>
+		<prepare>
+			<match>.menuText</match>
+			<wrapper>_emt</wrapper>
+			<exceptions>
+				<exception type='nextchar'>ctype_alnum</exception>
+				<exception type='nextchar'>_</exception>
+			</exceptions>
+		</prepare>
+		
+	</setPropertyReplace>
+
+
+</swcodeReplace>

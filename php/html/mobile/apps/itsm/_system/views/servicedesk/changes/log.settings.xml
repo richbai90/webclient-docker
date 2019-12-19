@@ -1,0 +1,40 @@
+<smartform>
+	<menu>
+		<leftaction>
+			<title>Change Requests</title>
+			<action noparse="1">_process_navigation('[:_swm_app_path]/views/servicedesk/changes/changes.xml')</action>
+		</leftaction>
+		<centeraction>
+			<title>Log Change Request</title>
+		</centeraction>
+		<rightaction>
+			<title></title>
+			<action></action>
+		</rightaction>
+	</menu>
+	<content>
+		<layer type='logcall'>
+			<settings>
+				<entity type='customer' mandatory="0"/>
+				<entity type='sla' mandatory="1"/>
+				<entity type='bpm' mandatory="1" callclass="Change Request"/>
+				<entity type='cmdb' mandatory="0" multi="1">RFC-CAUSE</entity>
+				<entity type='file'>
+					<fileloc>[:_swm_app_path]/generic/logcallinput/input.details.php</fileloc>
+					<filecompleteloc>[:_swm_app_path]/generic/logcallinput/display.details.php</filecompleteloc>
+					<mandatory>
+						<opencall_itsm_title>Summary</opencall_itsm_title>
+						<updatedb_updatetxt>Description</updatedb_updatetxt>
+					</mandatory>
+				</entity>
+				<defaultvalues>
+					<opencall_callclass>Change Request</opencall_callclass>
+					<opencall_suppgroup>[:_swm_gid]</opencall_suppgroup>
+					<opencall_owner>[:_swm_aid]</opencall_owner>
+					<updatedb_udsource>Mobile Portal</updatedb_udsource>
+					<updatedb_udcode>New Change Request Call</updatedb_udcode>
+				</defaultvalues>
+			</settings>
+		</layer>
+	</content>
+</smartform>

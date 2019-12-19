@@ -1,0 +1,12 @@
+<datatable dsn="swdata"  onrowclick="" onrowdblclick="" onmouseover="return false;" onmouseout="return false;">
+<columns>
+	<column id="udid" hidden="1">UDID</column>
+	<column id="updatetimex" conversion="customerdate" nowrap="1">Date / Time</column>
+	<column id="udcode" conversion="">Action type</column>
+	<column id="repid" conversion="">Actioned By</column>
+</columns>
+<preview type="column" colid="updatetxt" visibleon="default" conversion="nl2br"/>
+<from>updatedb</from>
+<where>callref = ![gv('in_calldiary_callref')]! and ![gv('in_calldiary_access')]!</where>
+<orderby>udindex desc</orderby>
+</datatable>

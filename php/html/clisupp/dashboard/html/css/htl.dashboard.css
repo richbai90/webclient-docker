@@ -1,0 +1,258 @@
+html{overflow-y: hidden;}
+
+#chartContextMenu li{ 
+  /* This fixes IE10 issue with bullets showing on context menu */
+  list-style-type: none;
+}
+
+
+body
+{
+	font-family:"Trebuchet MS", "Helvetica", "Arial", "Verdana", "sans-serif";
+	overflow:hidden;
+	padding:0;
+	margin:0;
+}
+
+#dialog-form, #chartContextMenu, #toolbar-control, #collapse, #expand
+{
+	displaY:none;
+}
+
+#toolbar 
+{
+	position:absolute;
+	top:1px;
+	right:36px;
+	font-size:60%;
+	padding:2px 2px 2px 2px;
+
+	display: none;
+	z-index:9;
+}
+
+#toolbar-control
+{
+	position:absolute;
+	top:1px;
+	right:2px;
+	font-size:60%;
+	padding:2px 2px 2px 2px;
+
+	display: block;
+	z-index:9;
+}
+
+
+ support: IE7 
+*+html #toolbar {
+	display: inline-block;
+}
+
+
+.viewmode
+{
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	display:none;
+}
+
+.chartholder
+{
+	display:block;
+	
+	height:100%;
+	border:1px solid #dedede;
+}
+
+.charttitle
+{
+	display:block;
+	border-bottom:1px solid #dedede;
+	background-color:#B2B7C2;
+	color:#ffffff;
+
+	font-family:"Trebuchet MS", "Helvetica", "Arial", "Verdana", "sans-serif";
+	font-size:12px;
+	padding:3px;
+}
+
+table
+{
+	empty-cells:show; 
+	table-layout:fixed;
+}
+
+.w150
+{
+	width:150px;
+}
+
+.w155
+{
+	width:155px;
+}
+
+
+/* CONTEXT MENU AND CHART FORM DESIGNER */
+#chartContextMenu
+{
+	width:120px;
+	font-size:65%;
+	position:absolute;
+	z-index:9999999;
+}
+#tabcontrolDesigner
+{
+	display:block;
+	float:left;
+}
+
+#tabcontrolDesigner .tab-design-content
+{
+	width:600px;
+	height:450px;
+	overflow:auto;
+}
+
+#tabcontrolDesigner .designablechart img
+{
+	width:600px;
+	height:450px;
+}
+
+#tabcontrolDesigner .designablechart .warning
+{
+	text-align:center;
+	color:red;
+}
+
+.chartholder .warning
+{
+	font-size:12px;
+	text-align:center;
+	margin-top:100px;
+	display:none;
+}
+
+
+#propertiesSection
+{
+	display:block;
+	float:right;
+	position:relative;
+	top:25px;
+}
+
+#tabcontrolProperties
+{
+	display:block;
+}
+
+#tabcontrolProperties .tab-design-content
+{
+	width:226px;
+	height:379px;
+	padding:2px 2px 0px 2px;
+	overflow:auto;
+
+}
+
+table.properties
+{
+	background:#CFD3DC;
+}
+
+table.properties td
+{
+	background:#ffffff;
+}
+
+table.properties input, table.properties select
+{
+	border:0px;
+	margin:0px;
+	padding:0px;
+	width:99%;
+}
+table.properties th {text-align: left;}
+
+
+/* override ui styles */
+.ui-dialog{font-size:62.5%;}
+.ui-tabs-nav.ui-widget-header
+{
+	background:none;
+	border-width:0px 0px 1px 0px;
+}
+.ui-tabs-nav.ui-corner-all
+{
+	border-radius: 0px
+}
+
+.ui-tabs.ui-widget-content
+{
+	border:0px solid #aaaaaa;
+}
+.ui-tabs-panel.ui-widget-content
+{
+	border-width:1px;
+	border-top:0px solid #aaaaaa;
+}
+
+.ui-menu a{ white-space:nowrap;}
+li.underline 
+{ 
+  border-bottom-style: dashed; 
+  border-bottom-width:1px; 
+  border-bottom-color:#aaaaaa; 
+  margin-top:2px;
+  margin-bottom:2px;
+} 
+
+div.chartdata table { margin: 1em 0; border-collapse: collapse; width: 100%; }    
+div.chartdata table td, div.chartdata table th { border: 1px solid #eee; padding: .6em 10px; text-align: left;}
+
+
+#colorPickerHolder
+{
+	position:absolute;
+	z-index:100001;
+	background-color:#ffffff;
+}
+#colorPickerHolder table tr td
+{
+	width:25px;
+	height:25px;
+}
+
+#overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    filter:alpha(opacity=15);
+    -moz-opacity:0.15;
+    -khtml-opacity: 0.15;
+    opacity: 0.15;
+    z-index: 10000;
+}
+
+
+#treeTemplates .item
+{
+	white-space:noWrap;
+	cursor:pointer;
+	padding:2px;
+}
+
+#treeTemplates .selected
+{
+	color:#ffffff;
+	background-color:#7FAAFF;
+}

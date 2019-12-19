@@ -1,0 +1,27 @@
+<report title="Services by Category" reportstyle="list" dsn="swdata" uid="" pwd="">
+	<columns>
+		<column dbname="catalog_type" dbtable="config_itemi" level="1">Category</column>
+		<freetext dbname="Count_of_Services" graph='1' level="1" conversion="">count(distinct(config_itemi.ck_config_item))</freetext>
+		<column dbname="ck_config_item" dbtable="config_itemi" conversion="" level="2">Config Item</column>
+		<column dbname="fk_status_level" dbtable="config_itemi" conversion="" level="2">Status</column>
+		<column dbname="description" dbtable="config_itemi" conversion="" level="2">Description</column>
+		<column dbname="status_portfolio" dbtable="config_itemi" conversion="" level="2">Portfolio Status</column>
+		<column dbname="status_lifecycle" dbtable="config_itemi" conversion="" level="2">Lifecycle Status</column>
+	</columns>
+	<tables>
+		<table name="config_itemi" type="master"/>
+		<table name="sc_folio"   type="related" join_type="" join="sc_folio.fk_cmdb_id = config_itemi.pk_auto_id"/>
+	</tables>
+	<criteria>
+		<userinput type="strpicklist" items="2=>External Facing Service|1=>Internal Facing Service|0=>Technical Service" binding="config_itemi.service_type" int="0" op="=">
+			<prompt>Service Type</prompt>
+		</userinput>
+		<userinput type="strpicklist" items="Pipeline=>Pipeline|Catalog=>Catalog|Retired=>Retired" binding="config_itemi.status_portfolio" int="0" op="=">
+			<prompt>Portfolio Status</prompt>
+		</userinput>
+		<userinput type="strpicklist" items="Requirements|Defined|Analysed|Approved|Chartered|Designed|Developed|Built|Tested|Released|Operational|Retired" binding="config_itemi.status_lifecycle" int="0" op="=">
+			<prompt>Lifecycle Status</prompt>
+		</userinput>
+		<static>isactivebaseline='Yes' AND config_itemi.appcode IN (![$GLOBALS['datasetfilterlist']]!) order by 2</static>
+	</criteria>
+</report>

@@ -1,0 +1,11 @@
+<datatable dsn="swdata" keycol="callref" keyvar="in_callref" urlvars="callclass,status" onrowclick="" onrowdblclick="" action="" url="">
+	<columns>
+		<column id="slad_ola" conversion="">OLA ID</column>
+		<column id="fk_suppgroup" conversion="">Support Group</column>
+		<column id="fk_sla" conversion="">Default Priority</column>
+		<column id="fk_aid" conversion="">IT Signatory</column>
+	</columns>
+	<from>itsmsp_slad_ola, config_reli</from>
+	<where>fk_parent_itemtext = ![$GLOBALS['pk_slad_id']]! and fk_parent_type='ME->SLA' and fk_child_type='ME->OLA'  and fk_child_itemtext=pk_ola_id</where>
+	<orderby></orderby>
+</datatable>

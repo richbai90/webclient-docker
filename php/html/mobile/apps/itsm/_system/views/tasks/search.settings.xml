@@ -1,0 +1,111 @@
+<settings>
+	<menu>
+		<leftaction>
+			<title>Tasks</title>
+			<action noparse="1">_process_navigation('[:_swm_app_path]/views/tasks/tasks.xml')</action>
+		</leftaction>
+		<centeraction>
+			<title>Task Search</title>
+		</centeraction>
+		<rightaction>
+			<title></title>
+			<action noparse="1"></action>
+		</rightaction>
+	</menu>
+	<searchvalues>
+		<prob_text type='textbox' title='Description'></prob_text>
+		<status type='status_dropdown' title='Status'>1</status>
+	</searchvalues>
+	<sortvalues>
+		<fixbyx title='Fix Date'></fixbyx>
+		<logdatex title='Log Date'></logdatex>
+	</sortvalues>
+	<content>
+	<layer type='searchpage'>
+		<list>
+			<type>xml</type>
+			<data>
+				<rspointer>rs</rspointer>
+				<db>swdata</db>
+				<formatted>true</formatted><!-- return formatted values as well - have to do 2 sql calls -->
+				<sql>
+					<std>select opencall.h_formattedcallref, opencall.callref, opencall.cust_id, opencall.cust_name,opencall.status, opencall.priority, opencall.logdatex, opencall.fixbyx, opencall.itsm_title,  opencall.h_condition, opencall.escalation, opencall.bpm_status_id, opencall.bpm_task_title,opencall.bpm_workflow_id,opencall.bpm_stage_id,bpm_stage.title from opencall,bpm_stage where bpm_stage.pk_stage_id=opencall.bpm_stage_id and callclass='B.P Task' and owner='[:_swm_sqlprep_aid]'</std>
+					<ora></ora>
+					<ms></ms>
+				</sql>
+				<orderby>callref</orderby>
+				<complexconversions>
+					<!-- pointers to php functions that will return converted values for given column.tagname i.e. condition.color -->
+					<condition>
+						<styling>_get_oc_condition_styling</styling>
+						<level>_get_oc_condition_level</level>
+					</condition>
+					<escalation>
+						<progressbar>_get_oc_escalation_progressbar</progressbar>
+					</escalation>
+				</complexconversions>
+			</data>
+			<!-- html markup to output data - note the embedded data rs.<column>.<columnproperty> -->
+			<outputprocessor>
+				<!-- could show a header -->
+				<nodataoutput><![CDATA[<div class='grptitle'><span class='grptitlecontainer'><span class='grptitle' width='100%'>Incidents</span></span></div><center><div class='datanormal'><br>There are no BP Tasks matching this search</div></center>]]></nodataoutput>
+				<headeroutput><![CDATA[<div class='grptitle'><span class='grptitlecontainer'><span class='grptitle' width='100%'>Search Results</span></span></div>
+				]]></headeroutput>
+				<rowprocessor>
+					<!-- define exclusions by testing data ?? no implemented yet-->
+					<exclusions>
+						<excludeif>rs.itsm_title==''</excludeif>
+					</exclusions>
+
+					<!-- define if we want to get any other record data to be used (i.e. related or extended table info) -->
+					<relateddata>
+						<data>
+						</data>
+					</relateddata>
+
+					<!-- how to echo out the row data -->
+					<rowoutput><![CDATA[
+						<div class='listrow'>
+							<!-- callref + title + mini cols + actions-->
+							<table border='0' width="100%">
+								<tr>
+									<!-- summary -->
+									<td width="75%">
+										<table border='0' width="100%">
+											<tr>
+												<!-- summary -->
+												<td width="75%">
+													<span  class='datanormal'><a href="#" xmlpath="[:_swm_app_path]/views/tasks/call.details.xml" callreffmt="[:rs.h_formattedcallref.formattedvalue]" callref="[:rs.callref.htmlvalue]" onclick="_open_call_details(this);" class="callhyperlink">[:rs.h_formattedcallref.formattedvalue]</a></span>
+													<span class="" style="font-size:16px;">[:rs.itsm_title.htmlvalue]</span>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<span class='datanormal'>
+														[:rs.bpm_workflow_id.htmlvalue] - [:rs.title.value] - [:rs.bpm_task_title.value]
+													</span>
+												</td>
+											</tr>
+										</table>
+									</td>
+									<td width="20%" align="right" class="blackfont">
+											[:rs.status.formattedvalue]
+									</td>
+									<td width="5%" align="right">
+										<img src="client/_system/images/icons/arrow.jpg">
+									</td>
+								</tr>
+							</table>
+						<div class='listrow-splitter'>[:rs.escalation.progressbar]</div>
+						</div>]]>
+					</rowoutput>
+					<rowaction>
+						<target>[:_swm_app_path]/views/servicedesk/call.detail.php</target>
+					</rowaction>
+				</rowprocessor>
+				<footeroutput><![CDATA[]]></footeroutput>
+			</outputprocessor>
+		</list>
+	</layer>
+	</content>
+</settings>

@@ -1,0 +1,106 @@
+<smartform>
+	<menu>
+		<leftaction>
+			<title>[:_callreffmt]</title>
+			<action>_open_call('[:pp__originfilepath]','[:_callref]')</action>
+		</leftaction>
+		<centeraction>
+			<title>Call Diary for [:_callreffmt]</title>
+		</centeraction>
+		<rightaction>
+		</rightaction>
+	</menu>
+	<content>
+	<layer type='datalist'>
+		<includes>
+			<!-- define any files to include i.e is you have bespoke complexconversion functions -->
+			<include>[:_swm_app_path]/_helpers/myphpincludefile.php</include>
+		</includes>
+		<list>
+			<type>xml</type>
+			<data>
+				<rspointer>rs</rspointer>
+				<db>syscache</db>
+				<formatted>true</formatted><!-- return formatted values as well - have to do 2 sql calls -->
+				<sql>
+					<std>select updatedb.updatetime,updatedb.udsource,updatedb.udcode,updatedb.updatetxt,updatedb.groupid,updatedb.aid from updatedb where callref in ([:_callref])</std>
+					<ora></ora>
+					<ms></ms>
+				</sql>
+				<orderby>callref</orderby>
+				<complexconversions>
+					<!-- pointers to php functions that will return converted values for given column.tagname i.e. condition.color -->
+					<condition>
+						<styling>_get_oc_condition_styling</styling>
+						<level>_get_oc_condition_level</level>
+					</condition>
+					<escalation>
+						<progressbar>_get_oc_escalation_progressbar</progressbar>
+					</escalation>
+				</complexconversions>
+			</data>
+			<!-- html markup to output data - note the embedded data rs.<column>.<columnproperty> -->
+			<outputprocessor>
+				<!-- could show a header -->
+				<nodataoutput><![CDATA[<center><div class='datanormal'><br>There are no Diary Entries at this time</div></center>]]></nodataoutput>
+				<headeroutput><![CDATA[]]></headeroutput>
+				<rowprocessor>
+					<!-- define exclusions by testing data ?? no implemented yet-->
+					<exclusions>
+						<excludeif>rs.itsm_title==''</excludeif>
+					</exclusions>
+
+					<!-- define if we want to get any other record data to be used (i.e. related or extended table info) -->
+					<relateddata>
+						<data>
+						</data>
+					</relateddata>
+
+					<!-- how to echo out the row data -->
+					<rowoutput><![CDATA[
+						<div class='listrow'>
+							<!-- callref + title + mini cols + actions-->
+							<table border='0' width="100%">
+								<tr>
+									<td width="50%">
+										<span class="datanormal bluefont">Update Time: </span><span class="datanormal blackfont">[:rs.updatetime.htmlvalue]</span>
+									</td>
+									<td width="50%">
+										<span class="datanormal bluefont">Update Source: </span><span class="datanormal blackfont">[:rs.udsource.htmlvalue]</span>
+									</td>
+								</tr>
+								<tr>
+									<td width="50%">
+										<span class="datanormal bluefont">Update Code: </span><span class="datanormal blackfont">[:rs.udcode.htmlvalue]</span>
+									</td>
+									<td width="50%">
+										<span class="datanormal bluefont">Actioned By: </span><span class="datanormal blackfont">[:rs.aid.htmlvalue] of the [:rs.groupid.htmlvalue] group</span>
+									</td>
+								</tr>
+								<tr>
+									<!-- summary -->
+									<td width="100%" colspan="2">
+										<table border='0' width="100%">
+											<tr>
+												<!-- summary -->
+												<td width="75%">
+													<span  class='datanormal'>[:rs.updatetxt.htmlvalue]</span>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						<div class='listrow-splitter'></div>
+						</div>]]>
+					</rowoutput>
+					<rowaction>
+						<target>[:_swm_app_path]/views/servicedesk/call.detail.php</target>
+					</rowaction>
+				</rowprocessor>
+				<footeroutput><![CDATA[]]></footeroutput>
+			</outputprocessor>
+		</list>
+	</layer>
+	</content>
+</smartform>

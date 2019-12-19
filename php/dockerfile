@@ -1,0 +1,38 @@
+FROM php:5-fpm
+ARG tz="UTC"
+RUN apt-get update && yes | apt-get install ssh
+RUN mkdir -p /var/www/html
+RUN mkdir -p /usr/lib
+COPY ./_phpincludecode /usr/local/lib/php
+COPY ./lib /usr/local/lib/sw
+COPY ./html/ /var/www/html
+# COPY ./swsupport /var/www/html/swsupport
+# install xdebug
+RUN yes | pecl install xdebug-2.5.4 \
+    && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_autostart=on" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_port = 9000" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.idekey = VSCODE" >> /usr/local/etc/php/conf.d/xdebug.ini
+RUN yes | pecl install runkit \
+    && echo "extension=$(find /usr/local/lib/php/extensions/ -name runkit.so)" > /usr/local/etc/php/conf.d/runkit.ini \
+    && echo "runkit.internal_override=1" >> /usr/local/etc/php/conf.d/runkit.ini \
+    && echo "runkit.superglobal=_PREP_FILE_PATH" >> /usr/local/etc/php/conf.d/runkit.ini
+
+# setup the timezone UTC by default
+RUN echo "date.timezone=UTC" > /usr/local/etc/php/conf.d/sw.ini \
+    && echo "session.save_path=/tmp" >> /usr/local/etc/php/conf.d/sw.ini
+# Forward local API traffic
+
+# RUN ssh -L 5005:host.docker.internal:5005 \
+#     -L 5013:host.docker.internal:5013 \
+#     -L 5014:host.docker.internal:5014 \
+#     -L 5015:host.docker.internal:5015 \
+#     -L 5016:host.docker.internal:5016 &
+#RUN iptables -t nat -A OUTPUT -m addrtype --src-type LOCAL --dst-type LOCAL -p tcp --dport 5005 -j DNAT --to-destination host.docker.internal:5005 \
+#    && iptables -t nat -A OUTPUT -m addrtype --src-type LOCAL --dst-type LOCAL -p tcp --dport 5013 -j DNAT --to-destination host.docker.internal:5013 \
+#    && iptables -t nat -A OUTPUT -m addrtype --src-type LOCAL --dst-type LOCAL -p tcp --dport 5014 -j DNAT --to-destination host.docker.internal:5014 \
+#    && iptables -t nat -A OUTPUT -m addrtype --src-type LOCAL --dst-type LOCAL -p tcp --dport 5015 -j DNAT --to-destination host.docker.internal:5015 \
+#    && iptables -t nat -A OUTPUT -m addrtype --src-type LOCAL --dst-type LOCAL -p tcp --dport 5016 -j DNAT --to-destination host.docker.internal:5016 \
+#    && iptables -t nat -A POSTROUTING -m addrtype --src-type LOCAL --dst-type UNICAST -j MASQUERADE \
+#    && sysctl -w net.ipv4.conf.all.route_localnet=1

@@ -1,0 +1,29 @@
+<report title="Portfolio Service by Service Type" reportstyle="list" dsn="swdata" uid="" pwd="">
+	<columns>
+		<column dbname="service_type" dbtable="config_itemi" level="1" conversion="service_type">Service Type</column>
+		<aggregate dbname="pk_auto_id" dbtable="config_itemi" aggregate="1" aggFunction="Count" conversion="" graph="1" level="1">Count Services</aggregate>
+		<column dbname="status_portfolio" dbtable="config_itemi" level="2" >Portfolio Status</column>
+		<column dbname="status_lifecycle" dbtable="config_itemi" level="2" >Lifecycle Status</column>
+		<column dbname="CK_CONFIG_ITEM" dbtable="config_itemi" level="2" >Service ID</column>
+		<column dbname="Description" dbtable="config_itemi" level="2" >Service Name</column>
+		<column dbname="cost_request" dbtable="sc_folio" level="2" >Request Cost</column>
+		<column dbname="cost_subscription" dbtable="sc_folio" level="2" >Subscription Cost</column>
+		<column dbname="cost_maintenance" dbtable="sc_folio" level="2" >Maintenance Cost</column>
+		<column dbname="total_subscription_revenue" dbtable="sc_folio" level="2" >Total Subscription Revenue</column>
+	</columns>
+	<tables>
+	<tables>
+		<table name="sc_folio" type="master"/>
+		<table name="config_itemi" type="related" join_type="left" join="sc_folio.fk_cmdb_id = config_itemi.pk_auto_id"/>
+	</tables>
+	</tables>
+	<criteria>
+		<userinput type="dbpicklist" binding="config_itemi.status_portfolio" dsn="swdata" dbtable="config_itemi" keycol="status_portfolio" txtcol="status_portfolio" filter=" where status_portfolio is not null and status_portfolio!='' and isactivebaseline='Yes' group by status_portfolio" int="0" op="=">
+			<prompt>Portfolio Status</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="config_itemi.status_lifecycle" dsn="swdata" dbtable="config_itemi" keycol="status_lifecycle" txtcol="status_lifecycle" filter=" where status_lifecycle is not null and status_lifecycle!='' and isactivebaseline='Yes' group by status_lifecycle" int="0" op="=">
+			<prompt>Lifecycle Status</prompt>
+		</userinput>
+		<static>config_itemi.isactivebaseline='Yes' and config_itemi.appcode IN (![$GLOBALS['datasetfilterlist']]!)</static>
+	</criteria>
+</report>

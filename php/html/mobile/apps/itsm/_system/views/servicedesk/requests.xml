@@ -1,0 +1,123 @@
+<smartform>
+	<menu>
+		<leftaction>
+			<title>Home</title>
+			<action noparse="1">_process_navigation('[:_swm_app_path]/views/home.xml')</action>
+		</leftaction>
+		<centeraction>
+			<title>Requests</title>
+		</centeraction>
+		<rightaction>
+			<title>Log New</title>
+			<action noparse="1">_process_navigation('[:_swm_app_path]/views/servicedesk/lognew.xml')</action>
+		</rightaction>
+	</menu>
+	<!-- have as many layers as you want - they get processed in order -->
+	<content>
+		<layer type='localrowlist'>
+			<includes>
+				<!-- define any files to include i.e is you have bespoke complexconversion functions -->
+				<include>[:_swm_app_path]/_helpers/myphpincludefile.php</include>
+			</includes>
+			<list>
+				<rows>
+					<row>
+						<title>Incidents</title>
+						<rstext>Active</rstext>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<recordcount>select count(callref) as cnt from opencall where owner='[:_swm_sqlprep_aid]' and status not in (6,8,16,17,18,19) and callclass='Incident'
+						</recordcount>
+						<db>syscache</db>
+						<target>[:_swm_app_path]/views/servicedesk/incidents/incidents.xml</target>
+					</row>
+					<row>
+						<title>Service Requests</title>
+						<rstext>Active</rstext>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<recordcount>select count(callref) as cnt from opencall where owner='[:_swm_sqlprep_aid]' and status not in (6,8,16,17,18,19) and callclass='Service Request'
+						</recordcount>
+						<db>syscache</db>
+						<target>[:_swm_app_path]/views/servicedesk/servicerequests/servicerequests.xml</target>
+					</row>
+					<row>
+						<title>Problems</title>
+						<rstext>Active</rstext>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<recordcount>select count(callref) as cnt from opencall where owner='[:_swm_sqlprep_aid]' and status not in (6,8,16,17,18,19) and callclass='Problem'
+						</recordcount>
+						<db>syscache</db>
+						<target>[:_swm_app_path]/views/servicedesk/problems/problems.xml</target>
+					</row>
+					<row>
+						<title>Changes</title>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<rstext>Active</rstext>
+						<recordcount>select count(callref) as cnt from opencall where owner='[:_swm_sqlprep_aid]' and status not in (6,8,16,17,18,19) and callclass='Change Request'
+						</recordcount>
+						<db>syscache</db>
+						<target>[:_swm_app_path]/views/servicedesk/changes/changes.xml</target>
+					</row>
+					<metaData>
+						<leftimage></leftimage>
+						<title></title>
+						<rstext></rstext>
+						<rscount></rscount>
+						<rightimage></rightimage>
+						<recordcount></recordcount>
+						<target></target>
+						<db/>
+					</metaData>
+					<complexconversions>
+						<!-- pointers to php functions that will return converted values for given column.tagname i.e. condition.color -->
+						<recordcount>
+							<sql>_get_rs_count</sql>
+						</recordcount>
+						<target>
+							<parsed>_swm_parse_string</parsed>
+						</target>
+					</complexconversions>
+				</rows>
+				<headeroutput noparse="1"><![CDATA[<div class="grptitle"><span class="grptitlecontainer"><span class="grptitle">Search</span></span></div>
+						<table class="homepage" width="100%">
+						<tr style="cursor:pointer;" >
+						<td class="limage">
+						</td>
+						<td class="nmlfontsize blackfont" width="50%">Reference
+						</td>
+						<td align="right" class="count"><INPUT type="text" id="callrefsearch" class="call_srch">
+						</td>
+						<td width="3%" align="right"><img onclick="_search_call_details(this);" xmlpath="[:_swm_app_path]/views/servicedesk/search/search.details.xml" callref="" src="client/_system/images/icons/arrow.jpg">
+						</td>
+						</tr>
+						</table>
+						<div class="grptitle"><span class="grptitlecontainer"><span class="grptitle">Types</span></span></div>]]>
+				</headeroutput>
+				<rowprocessor>
+					<rowoutput><![CDATA[
+						<table class="homepage" width="100%">
+						<tr style="cursor:pointer;" xmldefinitionpath="[:rs.target.parsed]" onclick="_process_row_link(this);">
+						<td class="limage">
+						</td>
+						<td class="nmlfontsize blackfont">[:rs.title.value]
+						</td>
+						<td align="right" class="count bluefont">[:rs.recordcount.sql] [:rs.rstext.value]
+						</td>
+						<td width="3%" align="right"><img src="[:rs.rightimage.value]">
+						</td>
+						</tr>
+						<tr>
+						<td colspan="4">
+						<div class="seperator"><div style="display:none;"></div></div>
+						</td>
+						</tr>
+						</table>]]>
+					</rowoutput>
+					<rowaction>
+						<target>[:rs.target.value]</target>
+					</rowaction>
+				</rowprocessor>
+				<footeroutput><![CDATA[]]></footeroutput>
+			</list>
+		</layer>
+	</content>
+</smartform>

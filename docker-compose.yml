@@ -1,0 +1,29 @@
+version: "3.7"
+services:
+  webclient:
+    build: ./webclient
+    ports: 
+      - "80:80"
+    volumes:
+      - "./php/html/:/var/www/html/"
+    networks:
+      default:
+        aliases:
+          - swsupport
+    depends_on: 
+      - php
+  php:
+    environment:
+      XDEBUG_CONFIG: remote_host=host.docker.internal
+    build: ./php
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - "./php/html:/var/www/html/"
+      - "_phpinclude:/usr/local/lib/php"
+volumes:
+  _phpinclude:
+    driver_opts:
+      type: "local"
+      device: "$PWD/php/_phpinclude"
+      o: "bind"

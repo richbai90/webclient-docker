@@ -1,0 +1,48 @@
+<report title="Demand for Optional Components by Service" reportstyle="list" dsn="swdata" uid="" pwd="">
+	<columns>
+		<column dbname="ck_config_item" dbtable="config_itemi" level="1">Service</column>
+		<freetext dbname="Times_Requested" graph='1' level="1" conversion="">count(distinct(request_comp.fk_callref))</freetext>
+		<column dbname="name" dbtable="request_comp" level="2">Component</column>
+		<column dbname="description" dbtable="request_comp" level="2">Component Name</column>
+		<aggregate dbname="fk_comp_id" dbtable="request_comp" aggregate="1" aggFunction="Count" graph="1" level="2">Times Requested</aggregate>
+		<column dbname="callref" dbtable="opencall" conversion="callref" level="3">Call Reference</column>
+		<column dbname="callclass" dbtable="opencall" conversion="callclass" level="3">Type</column>
+		<column dbname="logdatex" dbtable="opencall" conversion="customerdate" level="3">Log Date</column>
+		<column dbname="status" dbtable="opencall" conversion="callstatus" level="3">Status</column>
+		<column dbname="cust_name" dbtable="opencall" conversion="" level="3">Customer</column>
+	</columns>
+	<tables>
+		<table name="opencall" type="master" />
+		<table name="request_comp" type="related" join_type="left" join="request_comp.fk_callref = opencall.callref"/>
+		<table name="config_itemi" type="related" join_type="left" join="config_itemi.pk_auto_id = opencall.itsm_fk_service"/>
+		<table name="sc_rels" type="related" join_type="left" join="opencall.itsm_fk_service = sc_rels.fk_service and sc_rels.fk_key=request_comp.fk_comp_id"/>
+	</tables>
+	<criteria>
+		<order dbname="callref)'" dbtable="'count(opencall" order="desc"></order>
+		<userinput type="daterange" binding="opencall.logdatex" int="1" op="=">
+			<prompt>Requests logged on and between</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.fk_company_id" dsn="swdata" dbtable="opencall" keycol="fk_company_id" txtcol="companyname" filter=" where fk_company_id IS NOT NULL  and fk_company_id &lt;&gt;'' group by opencall.fk_company_id,opencall.companyname" int="0" op="=">
+			<prompt>Organisation</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.site" dsn="swdata" dbtable="site" keycol="site_name" txtcol="site_name" filter="" int="0" op="=">
+			<prompt>Site</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.suppgroup" dsn="swdata" dbtable="opencall" keycol="suppgroup" txtcol="suppgroup" filter=" group by opencall.suppgroup" int="0" op="=">
+			<prompt>Support Group</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.owner" dsn="swdata" dbtable="opencall" keycol="owner" txtcol="owner" filter=" where opencall.owner IS NOT NULL and opencall.owner &lt;&gt;''  group by opencall.owner   " int="0" op="=">
+			<prompt>Analyst</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.probcode" dsn="swdata" dbtable="pcdesc" keycol="code" txtcol="info" filter="" int="0" op="=">
+			<prompt>Profile Name</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="config_itemi.catalog_type" dsn="swdata" dbtable="sc_typei" keycol="pk_config_type" txtcol="type_display" filter=""  int="0" op="=">
+			<prompt>Service Category</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="config_itemi.pk_auto_id" dsn="swdata" dbtable="config_itemi" keycol="pk_auto_id" txtcol="description" filter=" where ck_config_type='ME->SERVICE' and isactivebaseline='Yes'" int="0" op="=">
+			<prompt>Service</prompt>
+		</userinput>
+		<static>opencall.callclass='Service Request' AND opencall.status not in (17) and opencall.appcode IN (![$GLOBALS['datasetfilterlist']]!) AND flg_isoptional=0 order by 2 </static>
+	</criteria>
+</report>

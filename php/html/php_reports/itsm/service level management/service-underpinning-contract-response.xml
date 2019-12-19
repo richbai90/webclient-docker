@@ -1,0 +1,33 @@
+<report title="Service Request Underpinning Contracts Response Performance" reportstyle="list" dsn="swdata" uid="" pwd="">
+	<tables>
+
+		<table name="tpperformance" type="master"/>
+		<table name="opencall"   type="related" join_type="left" join="tpperformance.callref = opencall.callref"/>
+	</tables>
+	<columns>
+		<column dbname="company" dbtable="tpperformance" conversion="" level="1">Company</column>
+		<column dbname="contract" dbtable="tpperformance" conversion="" level="1">Contract</column>
+		<freetext dbname="Met" graph='1' level="1">cast(left(1.0*100*sum(tpperformance.within_resp)/Count(tpperformance.callref), 5) as char(5))</freetext>
+		<freetext dbname="Missed" level="1">cast(left(1.0*100-(100*sum(tpperformance.within_resp)/Count(tpperformance.callref)), 5) as char(5))</freetext>
+		<column dbname="callref" dbtable="tpperformance" conversion="callref" level="2">Call Reference</column>
+		<column dbname="within_resp" dbtable="tpperformance" conversion="1_0_TO_Y_N" level="2">Within Response</column>
+	</columns>
+	<criteria>
+		<userinput type="daterange" binding="opencall.logdatex" int="1" op="=">
+			<prompt>Please Specify a Date Range</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.fk_company_id" dsn="swdata" dbtable="opencall" keycol="fk_company_id" txtcol="companyname" filter=" where fk_company_id IS NOT NULL  and fk_company_id &lt;&gt;'' group by opencall.fk_company_id,opencall.companyname" int="0" op="=">
+			<prompt>Organisation</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.site" dsn="swdata" dbtable="site" keycol="site_name" txtcol="site_name" filter="" int="0" op="=">
+			<prompt>Site</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.probcode" dsn="swdata" dbtable="pcdesc" keycol="code" txtcol="info" filter="" int="0" op="=">
+			<prompt>Problem Profile Code</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.itsm_fk_service" dsn="swdata" dbtable="config_itemi" keycol="pk_auto_id" txtcol="description" filter=" where ck_config_type='ME->SERVICE' and isactivebaseline='Yes'" int="0" op="=">
+			<prompt>Service</prompt>
+		</userinput>
+		<static>opencall.appcode IN (![$GLOBALS['datasetfilterlist']]!) and opencall.callclass='Service Request'</static>
+	</criteria>
+</report>

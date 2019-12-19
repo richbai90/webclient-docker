@@ -1,0 +1,2644 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>B.P Task</name>
+			<title>Task Details For &amp;[opencall.h_formattedcallref]</title>
+			<callClass>B.P Task</callClass>
+			<printTemplates>
+				<printTemplate>&amp;[app.webroot]/clisupp/details/&amp;[app.currentdd]/itsm_swcall.php?callref=&amp;[opencall.callref]</printTemplate>
+			</printTemplates>
+			<options>
+				<showActions>true</showActions>
+				<showExtendedDetails>false</showExtendedDetails>
+				<showTasks>false</showTasks>
+				<showFileAttachments>true</showFileAttachments>
+				<showCustomHtmlTab>false</showCustomHtmlTab>
+				<showMessageBar>false</showMessageBar>
+				<hideToolbar>false</hideToolbar>
+				<hideMenubar>false</hideMenubar>
+				<extendedDetailsTable>
+				</extendedDetailsTable>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>opencall</name>
+				<type>Main Details Table</type>
+				<description>Main Call Details</description>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+			<table>
+				<name>updatedb</name>
+				<type>Diary Updates Table</type>
+				<description>Call Update Diary</description>
+				<mainDetailsColumn>callref</mainDetailsColumn>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+			<table>
+				<name>bpm_stage</name>
+				<type>Related Table</type>
+				<description>BPM Stage Info</description>
+				<mainDetailsColumn>bpm_stage_id</mainDetailsColumn>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+			<table>
+				<name>bpm_workflow</name>
+				<type>Related Table</type>
+				<description>BPM Workflow Info</description>
+				<mainDetailsColumn>bpm_workflow_id</mainDetailsColumn>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeMenuDisplayName>Show Me</showMeMenuDisplayName>
+		<showMeItems>
+		</showMeItems>
+		<formActions>
+		</formActions>
+		<javascript>
+			<methods>
+				<method>
+					<name>OnEnableChangeCallclass</name>
+					<code>
+						<![CDATA[OnEnableChangeCallclass()
+{
+	//-- in app.itsm do not allow them to change the call class
+	return false;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnDataSaved</name>
+					<code>
+						<![CDATA[OnDataSaved()
+{
+	//-- 01.05.2008
+	//-- if parent window is open refresh tasks list
+	if(app.cfg.array_openrfcdocs[opencall.bpm_parentcallref])
+	{
+		if(app.cfg.array_openrfcdocs[opencall.bpm_parentcallref].document.boolRefreshTasks)
+		{
+			app.cfg.array_openrfcdocs[opencall.bpm_parentcallref].mainform.sl_tasks.Refresh();
+		}
+	}
+
+	//-- NWJ - request by pre-sales close form after setting to successfully completed
+	if((opencall.bpm_status_id=="Task Successfully Completed")||(opencall.bpm_status_id=="Skip Task (Not Required)")||(opencall.bpm_status_id=="Failed To Complete Task"))
+	{
+		//app.g.new_dairyevent(opencall.bpm_parentcallref, "The related business process task ("+ opencall.bpm_task_title +") status has been updated to :- " + opencall.bpm_status_id, "Business Process Task", "Status Change");
+		_swdoc.CloseForm();
+	}
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnDataChanged</name>
+					<code>
+						<![CDATA[OnDataChanged()
+{
+	//-- if not resolved or closed then allow them to change status
+	app._een(mainform.lb_status,((opencall.status != 6)&&(opencall.status <16)));
+		
+	//-- F0101293
+	if(app.session.analystId==_swdoc.OC().owner)
+	{
+		if(_swdoc.OC().action_status!="")
+			app._een(_swdoc.MF().btn_actionsts, true);
+	}
+
+
+
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[function OC()
+{
+	return _swdoc.opencall;
+}
+
+function oWF()
+{
+	return _swdoc.bpm_workflow;
+}
+
+function oStage()
+{
+	return _swdoc.bpm_stage;
+}
+
+function MF()
+{
+	return mainform;
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layout>
+		<appearance>
+			<width>519</width>
+			<height>305</height>
+			<backgroundColor>#ffffff</backgroundColor>
+			<fillColour>#ffffff</fillColour>
+			<textColour >#000000</textColour >
+			<font  size="8">Arial</font>
+		</appearance>
+		<controls>
+			<control>
+				<general>
+					<type>Field</type>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>0</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#0000ff</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>76</top>
+						<left>106</left>
+						<right>275</right>
+						<bottom>94</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.status</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Pick List (Numeric Mode)</type>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<listItems>Cancelled^17|Closed^16|Closed(Chg)^18|Pending^1|Unassigned^2|Unaccepted^3|On Hold^4|Off Hold^5|Resolved^6|Defered^7|Incoming^8|Escalated(O)^9|Escalated(G)^10|Escalated(A)^11|Lost Call!!!^15|</listItems>
+						<disabledBackgroundColor>#eaeaea</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>1</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>54</top>
+						<left>106</left>
+						<right>275</right>
+						<bottom>72</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.priority</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Distinct Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>true</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>true</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>true</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+						<pickListOrderDesc>false</pickListOrderDesc>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<defaultValue>[Use Customer SLA]</defaultValue>
+						<distinctTable>priority</distinctTable>
+						<distinctColumn>priority</distinctColumn>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<sqlSource>swdata</sqlSource>
+						<borderColor>#c0c0c0</borderColor>
+						<storedQuery>common.filterByTableValues</storedQuery>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>2</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>54</top>
+						<left>364</left>
+						<right>495</right>
+						<bottom>72</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.suppgroup</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>3</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>76</top>
+						<left>364</left>
+						<right>495</right>
+						<bottom>94</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.owner</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>4</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>153</top>
+						<left>107</left>
+						<right>276</right>
+						<bottom>171</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.respondbyx</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Date/Time Control</type>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<boundDateColumn>respondbyx</boundDateColumn>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<dateFormatMode>0</dateFormatMode>
+						<borderColor>#c0c0c0</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>5</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>175</top>
+						<left>107</left>
+						<right>276</right>
+						<bottom>193</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.fixbyx</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Date/Time Control</type>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<boundDateColumn>fixbyx</boundDateColumn>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<dateFormatMode>0</dateFormatMode>
+						<borderColor>#c0c0c0</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>6</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>153</top>
+						<left>364</left>
+						<right>495</right>
+						<bottom>171</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.resp_time</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Second Time Period</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>true</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>7</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>175</top>
+						<left>364</left>
+						<right>495</right>
+						<bottom>193</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.fix_time</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Second Time Period</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>true</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>tb_probprofile</name>
+					<type>Field</type>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>8</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>98</top>
+						<left>106</left>
+						<right>495</right>
+						<bottom>116</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.probcode</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<hintText>Click here to select a category for this task</hintText>
+						<activeTextColor>#eeeeee</activeTextColor>
+						<disabledBackgroundColor>#dddddd</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>9</index>
+					<caption>Status</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>76</top>
+						<left>13</left>
+						<right>102</right>
+						<bottom>94</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.status</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<listItems>Cancelled^17|Closed^16|Closed(Chg)^18|Pending^1|Unassigned^2|Unaccepted^3|On Hold^4|Off Hold^5|Resolved^6|Defered^7|Incoming^8|Escalated(O)^9|Escalated(G)^10|Escalated(A)^11|Lost Call!!!^15|</listItems>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>10</index>
+					<caption>Priority</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>54</top>
+						<left>13</left>
+						<right>102</right>
+						<bottom>72</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.priority</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+						<defaultValue>[Use Customer SLA]</defaultValue>
+						<distinctTable>priority</distinctTable>
+						<distinctColumn>priority</distinctColumn>
+						<sqlSource>swdata</sqlSource>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>11</index>
+					<caption>Support Group</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>54</top>
+						<left>280</left>
+						<right>360</right>
+						<bottom>72</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.suppgroup</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>12</index>
+					<caption>Owner</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>76</top>
+						<left>290</left>
+						<right>360</right>
+						<bottom>94</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.owner</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>13</index>
+					<caption>Respond By</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8" bold="1">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>153</top>
+						<left>14</left>
+						<right>103</right>
+						<bottom>171</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.respondby</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<boundDateColumn>respondbyx</boundDateColumn>
+						<dateFormatMode>0</dateFormatMode>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>14</index>
+					<caption>Fix By</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8" bold="1">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>175</top>
+						<left>14</left>
+						<right>103</right>
+						<bottom>193</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.fixby</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<boundDateColumn>fixbyx</boundDateColumn>
+						<dateFormatMode>0</dateFormatMode>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>15</index>
+					<caption>Response Time</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8" bold="1">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>153</top>
+						<left>276</left>
+						<right>360</right>
+						<bottom>171</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.resp_time</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>16</index>
+					<caption>Fix Time</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8" bold="1">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>175</top>
+						<left>278</left>
+						<right>360</right>
+						<bottom>193</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.fix_time</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Text1</name>
+					<type>Text</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>17</index>
+					<caption>Task Category</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>98</top>
+						<left>13</left>
+						<right>102</right>
+						<bottom>116</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>TabDet</name>
+					<type>TabControl</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>18</index>
+					<caption>Tab1</caption>
+					<backgroundColor>#ded7ce</backgroundColor>
+					<foregroundColor>#f2eedd</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>None</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>7</top>
+						<left>7</left>
+						<right>514</right>
+						<bottom>296</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>100</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<tabStyle>Top</tabStyle>
+				<tabSize>19</tabSize>
+				<items>
+					<item>
+						<name>Task Details</name>
+						<properties>56=#eaeaea|59=#4d4d4d|58=#000000|_flags=0</properties>
+						<textBorder>None</textBorder>
+						<textBackgroundColor>#ffffff</textBackgroundColor>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<properties>
+								<tabColor>#eaeaea</tabColor>
+								<inactiveTextColor>#4d4d4d</inactiveTextColor>
+								<activeTextColor>#000000</activeTextColor>
+							</properties>
+						</controlInfo>
+					</item>
+					<item>
+						<name>Other Details</name>
+						<properties>56=#eaeaea|59=#4d4d4d|58=#000000|_flags=0</properties>
+						<textBorder>None</textBorder>
+						<textBackgroundColor>#ffffff</textBackgroundColor>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<properties>
+								<tabColor>#eaeaea</tabColor>
+								<inactiveTextColor>#4d4d4d</inactiveTextColor>
+								<activeTextColor>#000000</activeTextColor>
+							</properties>
+						</controlInfo>
+					</item>
+				</items>
+				<selectedTextFont  size="8">Arial</selectedTextFont>
+				<selectedTextColor>#000000</selectedTextColor>
+				<deselectedTextColor>#000000</deselectedTextColor>
+				<tabSlopeLeft>2</tabSlopeLeft>
+				<tabSlopeRight>2</tabSlopeRight>
+				<deselectedTabHeightOffset>1</deselectedTabHeightOffset>
+				<tabSpacing>0</tabSpacing>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<tabStyle>0</tabStyle>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Rect1</name>
+					<type>Rectange</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>19</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#c0c0c0</foregroundColor>
+					<font  size="0"/>
+					<borderStyle>Rectangle</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>42</top>
+						<left>16</left>
+						<right>504</right>
+						<bottom>128</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Text1</name>
+					<type>Text</type>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>20</index>
+					<caption>Other Information</caption>
+					<backgroundColor>#f2eedd</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Left</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>33</top>
+						<left>23</left>
+						<right>113</right>
+						<bottom>52</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Rect1</name>
+					<type>Rectange</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>21</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#c0c0c0</foregroundColor>
+					<font  size="0"/>
+					<borderStyle>Rectangle</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>146</top>
+						<left>16</left>
+						<right>504</right>
+						<bottom>202</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Text1</name>
+					<type>Text</type>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>22</index>
+					<caption>SLA Target</caption>
+					<backgroundColor>#f2eedd</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Left</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>137</top>
+						<left>23</left>
+						<right>86</right>
+						<bottom>156</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Label1</name>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>23</index>
+					<caption>Task</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>88</top>
+						<left>-15</left>
+						<right>74</right>
+						<bottom>106</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.bpm_task_title</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Field1</name>
+					<type>Field</type>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>24</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>88</top>
+						<left>78</left>
+						<right>494</right>
+						<bottom>106</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.bpm_task_title</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>true</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<autoCompleteField>false</autoCompleteField>
+						<editUnlimitedText>false</editUnlimitedText>
+						<url>false</url>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<content>#eeeeee</content>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>tb_updatetxt</name>
+					<type>Field</type>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>25</index>
+					<backgroundColor>#eeeeee</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>110</top>
+						<left>78</left>
+						<right>494</right>
+						<bottom>258</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>100</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>true</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<autoCompleteField>false</autoCompleteField>
+						<editUnlimitedText>true</editUnlimitedText>
+						<url>false</url>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<content>#eeeeee</content>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Label1</name>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>26</index>
+					<caption>Stage</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>66</top>
+						<left>-15</left>
+						<right>74</right>
+						<bottom>84</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.bpm_stage_title</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Field1</name>
+					<type>Field</type>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>27</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>66</top>
+						<left>78</left>
+						<right>278</right>
+						<bottom>84</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.bpm_stage_id</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Distinct Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>true</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>true</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+						<pickListOrderDesc>false</pickListOrderDesc>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<content>#eeeeee</content>
+						<sqlSource>swdata</sqlSource>
+						<distinctTable>bpm_stage</distinctTable>
+						<distinctColumn>pk_stage_id</distinctColumn>
+						<displayColumn>title</displayColumn>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+						<storedQuery>common.filterByTableValues</storedQuery>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Label1</name>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>28</index>
+					<caption>Process</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>44</top>
+						<left>-18</left>
+						<right>75</right>
+						<bottom>62</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.bpm_workflow_id</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Field1</name>
+					<type>Field</type>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>29</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>44</top>
+						<left>78</left>
+						<right>278</right>
+						<bottom>62</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.bpm_workflow_id</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>true</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<autoCompleteField>false</autoCompleteField>
+						<editUnlimitedText>false</editUnlimitedText>
+						<url>false</url>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<content>#eeeeee</content>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>tb_parentref</name>
+					<type>Field</type>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>30</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>44</top>
+						<left>420</left>
+						<right>495</right>
+						<bottom>62</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>100</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>true</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<autoCompleteField>false</autoCompleteField>
+						<editUnlimitedText>false</editUnlimitedText>
+						<url>false</url>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<content>#eeeeee</content>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+						<sqlSource>swdata</sqlSource>
+						<distinctTable>opencall</distinctTable>
+						<distinctColumn>callref</distinctColumn>
+						<dropdownButtonType>1</dropdownButtonType>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Label1</name>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>31</index>
+					<caption>Parent Reference</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>44</top>
+						<left>327</left>
+						<right>416</right>
+						<bottom>62</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>100</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.bpm_parentcallref</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>lb_status</name>
+					<type>Field</type>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>32</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>262</top>
+						<left>78</left>
+						<right>291</right>
+						<bottom>280</bottom>
+					</position>
+					<scaling>
+						<top>100</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>100</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.bpm_status_id</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>true</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>true</comboNewValues>
+						<useDDPickList>false</useDDPickList>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<content>#eeeeee</content>
+						<listItems>Task Not Started|25% Complete|50% Complete|75% Complete|Task Successfully Completed|Failed To Complete Task|</listItems>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Text2</name>
+					<type>Text</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>33</index>
+					<caption>Task Status</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>262</top>
+						<left>-15</left>
+						<right>74</right>
+						<bottom>280</bottom>
+					</position>
+					<scaling>
+						<top>100</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>100</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Text3</name>
+					<type>Text</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>34</index>
+					<caption>Description</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>110</top>
+						<left>-15</left>
+						<right>74</right>
+						<bottom>128</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>popup_call</name>
+					<type>Image</type>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>35</index>
+					<caption>&amp;[app.webroot]/clisupp/formimages/itsm/form.gif</caption>
+					<backgroundColor>#e7e4dc</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="0"/>
+					<alignment>ExactSize</alignment>
+					<borderStyle>None</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>44</top>
+						<left>496</left>
+						<right>512</right>
+						<bottom>62</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>100</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<backMode>1</backMode>
+						<imageHAlign>1</imageHAlign>
+						<imageVAlign>1</imageVAlign>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>popup_dataform</name>
+					<type>Image</type>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>36</index>
+					<caption>&amp;[app.webroot]/clisupp/formimages/itsm/form.gif</caption>
+					<backgroundColor>#e7e4dc</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="0"/>
+					<alignment>ExactSize</alignment>
+					<borderStyle>None</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>66</top>
+						<left>279</left>
+						<right>295</right>
+						<bottom>84</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>100</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<backMode>1</backMode>
+						<imageHAlign>1</imageHAlign>
+						<imageVAlign>1</imageVAlign>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>btn_actionsts</name>
+					<type>EventButton</type>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>37</index>
+					<caption>Clear Action Status</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>210</top>
+						<left>16</left>
+						<right>127</right>
+						<bottom>236</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>true</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+						<backgroundColor>#ff9900</backgroundColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Text4</name>
+					<type>Text</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:1</group>
+				</general>
+				<appearance>
+					<index>38</index>
+					<caption>The owner of this request can use this button to clear the Action Status field to acknowledge the update(s)</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Left</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>210</top>
+						<left>134</left>
+						<right>493</right>
+						<bottom>249</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>true</multiLine>
+					</flags>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Label2</name>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>39</index>
+					<caption>3rd Party Ref</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>67</top>
+						<left>302</left>
+						<right>416</right>
+						<bottom>83</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>100</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.third_party_reference</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Field2</name>
+					<type>Field</type>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>40</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>66</top>
+						<left>420</left>
+						<right>495</right>
+						<bottom>84</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>100</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.third_party_reference</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<image>#eeeeee</image>
+						<borderColor>#c0c0c0</borderColor>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>btn_copy</name>
+					<type>EventButton</type>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>41</index>
+					<caption>Create Copy</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>262</top>
+						<left>420</left>
+						<right>495</right>
+						<bottom>280</bottom>
+					</position>
+					<scaling>
+						<top>100</top>
+						<left>100</left>
+						<right>100</right>
+						<bottom>100</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<backgroundColor>#ff9900</backgroundColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>fld_taskscheduled</name>
+					<type>Field</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+					<group>TabDet:0</group>
+				</general>
+				<appearance>
+					<index>42</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>None</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>263</top>
+						<left>300</left>
+						<right>401</right>
+						<bottom>279</bottom>
+					</position>
+					<scaling>
+						<top>100</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>100</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.custom_i4</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Form Flags</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>true</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<imageHSpace>#eeeeee</imageHSpace>
+						<flagItems>Task Scheduled^1|</flagItems>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+					</properties>
+				</controlInfo>
+			</control>
+		</controls>
+		<formActions>
+		</formActions>
+		<javascript>
+			<methods>
+				<method>
+					<name>OnFormLoaded</name>
+					<code>
+						<![CDATA[OnFormLoaded()
+{
+	//-- pad out callref
+	app._ete(tb_parentref,app.g.pad_callref(opencall.bpm_parentcallref));
+		
+	//-- enable status change only if not completed
+	app._een(lb_status,((opencall.status != 6)&&(opencall.status <16)));
+		
+	//-- load description
+	var boolCache = (_swdoc.OC().status<15);
+	app.g.get_call_first_updatetxt(_swdoc.OC().callref, boolCache, _swdoc.MF().tb_updatetxt);
+
+	boolSetStatus = app.session.HaveAppRight(app.PG_BPM, app.BPM_SETSTATUS, app.session.dataDictionary);
+	if(!boolSetStatus)
+	{
+		app._een(lb_status,false);
+	}
+	
+	//-- NWJ - rel2.1 Part of CR14 - Allow user to skip a task
+	if(app.session.HaveAppRight(app.PG_BPM, app.BPM_SKIPTASK))
+	{
+		var strItems = lb_status.pickList;
+		strItems += "Skip Task (Not Required)";
+		lb_status.pickList = strItems;
+	}
+	//-- F0101293
+	if(app.session.analystId==_swdoc.OC().owner)
+	{
+		if(_swdoc.OC().action_status!="")
+			app._een(_swdoc.MF().btn_actionsts, true);
+	}
+		
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>lb_status_OnValueChanged</name>
+					<code>
+						<![CDATA[lb_status_OnValueChanged(strValue)
+{
+	//--
+	if((strValue.indexOf("Success")!=-1)||(strValue.indexOf("Skip Task")!=-1))
+	{
+		//-- mark as completed - needed for vpme script
+		opencall.bpm_waitingtasks = "0";
+	}
+	else
+	{
+		//-- mark as uncompleted
+		opencall.bpm_waitingtasks = "1";
+	}
+	
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>popup_call_OnLeftClick</name>
+					<code>
+						<![CDATA[popup_call_OnLeftClick()
+{
+	//-- popup a form 
+	if (opencall.bpm_parentcallref!="") app.global.OpenCallDetailsView(opencall.bpm_parentcallref);
+
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>popup_dataform_OnLeftClick</name>
+					<code>
+						<![CDATA[popup_dataform_OnLeftClick()
+{
+	//-- open stage or workflow  data form
+	
+	//-- get the data table
+	var strUseTable  = _swdoc.oWF().ext_db_table
+	
+	
+	//-- first make sure there there is a callref rel in this table if not make one
+	if(strUseTable=="")
+	{
+		MessageBox("The data table for the data form has not been linked to the current workflow. It may not operate correctly");
+	}
+	else
+	{
+		//-- if we do not have a matching key create a record
+		var strPriKeyCol = dd.tables[strUseTable].PrimaryKey;
+		if(strPriKeyCol!="")
+		{
+			//-- does record already exist ??
+			var strParams = "tbl="+app.pfu(strUseTable)+"&cr="+_swdoc.OC().callref;
+			app.g.submitsqs("call/common/check_bpm_dataform",strParams,false);
+		}
+		else
+		{
+			MessageBox("The data table for the data form does not have a primary key field. It may not operate correctly");
+		}
+		
+	}
+	
+	//-- now open the form (use stage form if there is one otherwise use the workflow form).
+	var strArgs="";	
+	var strForm = _swdoc.oStage().swdataform;
+	if(strForm=="")strForm = _swdoc.oWF().ext_sw_form;
+	//###20120618 - prevent popup form if not given.
+	if (""!=strForm) app.OpenFormForEdit(strForm, opencall.bpm_parentcallref, strArgs, true);
+	
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>btn_actionsts_OnPressed</name>
+					<code>
+						<![CDATA[btn_actionsts_OnPressed()
+{
+	// TODO: Add your event handler code here
+	var xmlmc = new XmlMethodCall;
+
+	// Set values for the Input parameters - Parameter values must be set in the same order they are expected by the method.
+	xmlmc.SetParam("callref", _swdoc.OC().callref); 				
+	
+	// Invoke the VPME method LogCall.
+	if(xmlmc.Invoke("VPME", "clearActionStatus"))
+	{
+    	// Success, lets access output parameters
+    	app._een(_swdoc.MF().btn_actionsts, false);
+	}
+	else
+	{
+    	// Error
+    	MessageBox(xmlmc.GetLastError());
+	}
+
+
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>btn_copy_OnPressed</name>
+					<code>
+						<![CDATA[btn_copy_OnPressed()
+{
+	// TODO: Add your event handler code here
+
+		var strURL = "task=" + app.pfu(_swdoc.OC().bpm_task_title) + "&desc=" + app.pfu(_swdoc.OC().prob_text) + "&supgroup=" + app.pfu(_swdoc.OC().suppgroup)
+          + "&analyst=" + app.pfu(_swdoc.OC().owner) + "&priority=" + app.pfu(_swdoc.OC().priority) + "&copy=true"
+		  + "&flg_seq=0&fk_callref=" + app.pfu(_swdoc.OC().bpm_parentcallref) + "&fk_stage_id=" + app.pfu(_swdoc.OC().bpm_stage_id)
+		  + "&fk_workflow_id=" + app.pfu(_swdoc.OC().bpm_workflow_id) + "&stage_title=" + app.pfu(_swdoc.OC().bpm_stage_title)
+		  + "&thirdpartyref="+app.pfu(_swdoc.OC().third_party_reference)+ "&thirdpartycontract="+app.pfu(_swdoc.OC().tpcontract);
+		app.g.popup("bpm_add_octask",strURL);
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</layout>
+	<extendedLayout>
+		<appearance>
+			<width>645</width>
+			<height>366</height>
+			<backgroundColor>#d6d3ce</backgroundColor>
+			<fillColour>#ffffff</fillColour>
+			<textColour >#000000</textColour >
+			<font  size="8">Arial</font>
+		</appearance>
+		<controls>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>0</index>
+					<caption>&lt;&lt;invalid name ref&gt;&gt;</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Left</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>20</top>
+						<left>40</left>
+						<right>118</right>
+						<bottom>36</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>scatt.test1</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>1</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>3-D Sunken</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>20</top>
+						<left>120</left>
+						<right>402</right>
+						<bottom>36</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>scatt.test1</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>2</index>
+					<caption>&lt;&lt;invalid name ref&gt;&gt;</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Left</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>44</top>
+						<left>7</left>
+						<right>119</right>
+						<bottom>60</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>scatt.test2</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>3</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>3-D Sunken</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>44</top>
+						<left>119</left>
+						<right>403</right>
+						<bottom>60</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>scatt.test2</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+					</properties>
+				</controlInfo>
+			</control>
+		</controls>
+		<formActions>
+		</formActions>
+		<javascript>
+			<methods>
+			</methods>
+		</javascript>
+	</extendedLayout>
+</espForm>

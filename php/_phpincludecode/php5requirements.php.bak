@@ -1,0 +1,24 @@
+<?php
+require_once 'itsm_default/xmlmc/installpath.php';
+require_once 'class_redefine_for_docker.php';
+
+function _PREP_FILE_PATH($path)
+{
+    $path = strtolower(str_replace('\\', '/', $path));
+    if (defined('_SWFS_HTML_PATH')) {
+        if (strpos($path, "Supportworks Server/html/") !== false) {
+            $path = _SWFS_HTML_PATH . substr($path, strpos($path, 'html/') + strlen('html/'), strlen($path) - 1);
+        } else if (strPos($path, "Supportworks Server/") !== false) {
+            $path = _SWFS_INSTALL_PATH . substr($path, strpos($path, 'Supportworks Server/') + strlen('supportworks server/'), strlen($path) - 1);
+        }
+    }
+    return $path;
+}
+
+// redefine all the functions that access the file path
+RedefineForDocker::init();
+
+if (version_compare(PHP_VERSION, '5', '>=')) {
+    require_once 'domxml-php4-to-php5.php'; //Load the PHP5 converter
+    require_once 'swphpdll.php'; //load the php5 converter
+}

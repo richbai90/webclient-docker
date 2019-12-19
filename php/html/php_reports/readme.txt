@@ -1,0 +1,1 @@
+This folder is used for static PHP reports (those that are not based on PHP templates)

@@ -1,0 +1,28 @@
+<report title="Third Party Contract Expiry Dates" reportstyle="list" dsn="swdata" uid="" pwd="">
+	<tables>
+		<table name="tpperformance"   type="master"/>
+		<table name="contract"   type="related" join_type="" join="tpperformance.contract = contract.pk_contract_id"/>
+	</tables>
+	<columns>
+		<column dbname="company" dbtable="tpperformance" conversion="" level="1">Company</column>
+		<column dbname="contract" dbtable="tpperformance" conversion="" level="1">Contract</column>
+		<column dbname="start_datex" dbtable="contract" conversion="analystdate" level="1">Valid From</column>
+		<column dbname="end_datex" dbtable="contract" conversion="analystdate" level="1">Expires On</column>
+		
+		
+	</columns>
+	<criteria>
+		<userinput type="daterange" binding="contract.end_datex" int="1" op="=">
+			<prompt>Please Specify a Date Range</prompt>
+		</userinput>
+
+		<userinput type="dbpicklist" binding="tpperformance.company" dsn="swdata" dbtable="tpperformance" keycol="company" txtcol="company" filter=" where company IS NOT NULL group by tpperformance.company, tpperformance.contract" int="0" op="=">
+			<prompt>Supplier</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="tpperformance.contract" dsn="swdata" dbtable="tpperformance" keycol="contract" txtcol="contract" filter=" where contract IS NOT NULL" int="0" op="=">
+			<prompt>Contract</prompt>
+		</userinput>
+		<static> 1=1 group by tpperformance.company, tpperformance.contract, contract.start_datex, contract.end_datex</static>
+		<order dbname="end_datex" dbtable="contract" order="desc"></order>
+	</criteria>
+</report>

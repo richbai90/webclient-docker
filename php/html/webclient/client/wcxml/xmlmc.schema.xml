@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<XmlmcSchema>
+	<calendar>
+		<getAppointment>
+			<input>
+				<calendarId  required='1' type='int'/>
+				<appointmentId  required='1' type='int'/>
+			</input>
+			<output>
+				<appointment type='complex' complextype='appointment'>
+					<appointmentId  type='int'/>
+					<type  type='str' default='appointment'/>
+					<startTime  type='dateTime' conversion="replace:Z:"/>
+					<endTime  type='dateTime' conversion="replace:Z:"/>
+					<subject  type='str'/>
+					<description  type='str'/>
+					<showTimeAs  type='str' conversion="replace:_: "/>
+					<mainRecordId type='int'/>
+					<primaryCalendar type='int'/>
+					<primaryAppointment type='int'/>
+					<xmlDetails type='str'/>
+				</appointment>
+			</output>
+		</getAppointment>
+		<createAppointment includedatatags="1">
+			<input>
+				<calendarId  required='1' type='int'/>
+				<appointmentData  required='1' type='complex' complextype='appointmentData'>
+					<type  type='str' default='appointment'/>
+					<startTime  type='dateTime'/>
+					<endTime  type='dateTime'/>
+					<subject  type='str'/>
+					<description  type='str'/>
+					<showTimeAs  type='str' conversion="replace: :_"/>
+					<mainRecordId type='int'/>
+				</appointmentData>
+			</input>
+			<output>
+				<calendarId type='int'/>
+				<appointmentId type='int'/>
+			</output>
+		</createAppointment>
+		<updateAppointment>
+			<input>
+				<calendarId  required='1' type='int'/>
+				<appointmentId  required='1' type='int'/>
+				<type  type='str' default='appointment'/>
+				<startTime  type='dateTime'/>
+				<endTime  type='dateTime'/>
+				<subject  type='str'/>
+				<description  type='str'/>
+				<showTimeAs  type='str' conversion="replace: :_"/>
+			</input>
+			<output>
+				<calendarId type='int'/>
+				<appointmentId type='int'/>
+			</output>
+		</updateAppointment>
+	</calendar>
+	<knowledgebase>
+		<articleAdd>
+			<input>
+				<docRef type='str'/>
+				<title  required='1' type='str'/>
+				<docVisibleToCustomers  required='1' type='bool'/>
+				<docStatus  required='1' type='int'/>
+				<catalogId  required='1' type='int'/>
+				<problem  type='str'/>
+				<solution  type='str'/>
+				<author  type='str'/>
+				<callref  type='str'/>
+				<callProbCode  type='str'/>
+				<docDate  type='dateTime'/>
+				<keywords  type='str'/>
+				<template  type='str'/>
+				<ownerAnalystID  type='str'/>
+				<ownerGroupID  type='str'/>
+				<expiryDate  type='dateTime'/>
+				<isRetired  type='bool'/>
+			</input>
+			<output>
+				<docRef type='str'/>
+			</output>
+		</articleAdd>
+		<articleUpdate>
+			<input>
+				<docRef required='1' type='str'/>
+				<title  required='1' type='str'/>
+				<docVisibleToCustomers  required='1' type='bool'/>
+				<docStatus  required='1' type='int'/>
+				<catalogId  required='1' type='int'/>
+				<problem  type='str'/>
+				<solution  type='str'/>
+				<author  type='str'/>
+				<callref  type='str'/>
+				<callProbCode  type='str'/>
+				<docDate  type='dateTime'/>
+				<keywords  type='str'/>
+				<template  type='str'/>
+				<ownerAnalystID  type='str'/>
+				<ownerGroupID  type='str'/>
+				<expiryDate  type='dateTime'/>
+				<isRetired  type='bool'/>
+			</input>
+			<output/>
+		</articleUpdate>
+		<documentGetInfo>
+			<input>
+				<docRef required='1' type='str'/>
+			</input>
+			<output>
+				<docRef required='1' type='str'/>
+				<title  required='1' type='str'/>
+				<docVisibleToCustomers  required='1' type='bool'/>
+				<docStatus  required='1' type='int'/>
+				<catalogId  required='1' type='int'/>
+				<problem  type='str'/>
+				<solution  type='str'/>
+				<author  type='str'/>
+				<callref  type='str'/>
+				<callProbCode  type='str'/>
+				<docDate  type='dateTime'/>
+				<keywords  type='str'/>
+				<template  type='str'/>
+				<docPath  type='str'/>
+				<ownerAnalystID  type='str'/>
+				<ownerGroupID  type='str'/>
+				<expiryDate  type='dateTime'/>
+				<isRetired  type='bool'/>
+				<timesAccessed  type='int'/>
+				<flaggedForModification  type='bool'/>
+			</output>
+		</documentGetInfo>
+		<documentAdd>
+			<input>
+				<docRef type='str'/>
+				<title  required='1' type='str'/>
+				<docVisibleToCustomers  required='1' type='bool'/>
+				<docStatus  required='1' type='int'/>
+				<catalogId  required='1' type='int'/>
+				<author  type='str'/>
+				<callref  type='str'/>
+				<callProbCode  type='str'/>
+				<docDate  type='dateTime'/>
+				<keywords  type='str'/>
+				<template  type='str'/>
+				<forceOverwrite  type='bool'/>
+				<document type='complex' complextype='embeddedFileAttachment'/>
+				<ownerAnalystID  type='str'/>
+				<ownerGroupID  type='str'/>
+				<expiryDate  type='dateTime'/>
+				<isRetired  type='bool'/>
+			</input>
+			<output>
+				<docRef type='str'/>
+			</output>
+		</documentAdd>
+	</knowledgebase>
+</XmlmcSchema>

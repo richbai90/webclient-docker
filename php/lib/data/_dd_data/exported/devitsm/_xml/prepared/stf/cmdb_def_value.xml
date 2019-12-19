@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>cmdb_def_value</name>
+			<title>CI Default Value</title>
+			<description>Form used to managed a planned activity</description>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>true</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>config_type_def</name>
+				<type>Main Details Table</type>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[function oAtt()
+{
+	return _swdoc.config_type_def;
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>430</width>
+				<height>84</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>Field1</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>0</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>36</top>
+							<left>84</left>
+							<right>417</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_type_def.targetbinding</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_def_value</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>1</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>58</top>
+							<left>84</left>
+							<right>417</right>
+							<bottom>76</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_type_def.defaultvalue</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label1</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>2</index>
+						<caption>Target Binding</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>36</top>
+							<left>8</left>
+							<right>82</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_type_def.targetbinding</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_labels</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>3</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>14</top>
+							<left>84</left>
+							<right>417</right>
+							<bottom>32</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<hintText>Select data binding by column label</hintText>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<listItems>Flg Availmntr (config_itemi.flg_availmntr)^1|Flg Canbundle (config_itemi.flg_canbundle)^2|Flg Bundle (config_itemi.flg_bundle)^3|Service Category (config_itemi.catalog_type)^4|Business Owner (config_itemi.owner_business)^5|IT Owner (config_itemi.owner_it)^6|Lifecycle Status (config_itemi.status_lifecycle)^7|Portfolio Status (config_itemi.status_portfolio)^8|Service Type (config_itemi.service_type)^9|Monitor Group (config_itemi.monitorgroup)^10|Location (config_itemi.location)^11|Shown In CMDB Monitor List (config_itemi.flg_showinmonitorlist)^12|SW Today Message (config_itemi.swtoday_message)^13|Self Service Message (config_itemi.selfserv_message)^14|Description (config_itemi.selfserv_descimpact)^15|Description (config_itemi.swtoday_descimpact)^16|Resolved On (config_itemi.resolvedonx)^17|Resolve By (config_itemi.expectresolvebyx)^18|Started On (config_itemi.startedonx)^19|Flg Showonswtodayimpact (config_itemi.flg_showonswtodayimpact)^20|Flg Showonswtodayfail (config_itemi.flg_showonswtodayfail)^21|Flg Showonselfservimpact (config_itemi.flg_showonselfservimpact)^22|Flg Showonselfservfail (config_itemi.flg_showonselfservfail)^23|Flg Showonselfserv (config_itemi.flg_showonselfserv)^24|Flg Showonswtoday (config_itemi.flg_showonswtoday)^25|Impact Title (config_itemi.swtoday_titleimpact)^26|Failed Title (config_itemi.swtoday_titlefail)^27|Title (config_itemi.swtoday_title)^28|Description (config_itemi.swtoday_descfail)^29|Fail Title (config_itemi.selfserv_titlefail)^30|Impact Title (config_itemi.selfserv_titleimpact)^31|Title (config_itemi.selfserv_title)^32|Description (config_itemi.selfserv_descfail)^33|Mon S (config_itemi.mon_s)^34|Mon E (config_itemi.mon_e)^35|Tue S (config_itemi.tue_s)^36|Tue E (config_itemi.tue_e)^37|Wed S (config_itemi.wed_s)^38|Wed E (config_itemi.wed_e)^39|Thu S (config_itemi.thu_s)^40|Thu E (config_itemi.thu_e)^41|Fri S (config_itemi.fri_s)^42|Fri E (config_itemi.fri_e)^43|Sat S (config_itemi.sat_s)^44|Sat E (config_itemi.sat_e)^45|Description (config_itemi.selfserv_desc)^46|Sun E (config_itemi.sun_e)^47|Sun S (config_itemi.sun_s)^48|Description (config_itemi.swtoday_desc)^49|Supportexpdatex (config_itemi.supportexpdatex)^50|Installdatex (config_itemi.installdatex)^51|Is impacted ? (config_itemi.isimpacted)^52|Is de-activated? (config_itemi.isdeactivated)^53|Is faulty? (config_itemi.isfaulty)^54|BLN Index (config_itemi.ck_baselineindex)^55|Urgency (config_itemi.fk_urgency_level)^56|Is active baseline? (config_itemi.isactivebaseline)^57|Inherits Type Service Requests (config_itemi.flg_inherit_reqtypes)^58|Impact (config_itemi.fk_impact_level)^59|SLA (config_itemi.fk_sla)^60|Manufacturer (config_itemi.fk_manufacturer)^61|Profile (config_itemi.fk_profilecode)^62|Type (config_itemi.ck_config_type)^63|Configuration ID (config_itemi.ck_config_item)^64|Charge Centre (config_itemi.fk_cost_center)^65|Priority (config_itemi.fk_priority_level)^66|Contact (config_itemi.fk_userdb)^67|Status (config_itemi.fk_status_level)^68|Supplier (config_itemi.fk_supplier)^69|CMDB ID (config_itemi.pk_auto_id)^70|Owner Name (config_itemi.owner_name)^71|Baseline ID (config_itemi.baselineid)^72|Is active? (config_itemi.isactive)^73|Order Number (config_itemi.purchase_order_number)^74|Description (config_itemi.description)^75|Notes (config_itemi.notes)^76|Expenditure (config_itemi.capital_expenditure)^77|Purchase Date (config_itemi.purchase_datex)^78|Inventory ID (config_itemi.inventory_tool_id)^79|Warranty Expires (config_itemi.warranty_expiresx)^80|Telephone (config_itemi.owner_telephone)^81|Support Group (config_itemi.ci_support_group)^82|Service Level Ref. (config_itemi.sla_ref)^83|Version (config_itemi.bespoke_version)^84|Site (config_itemi.fk_site)^85|Support Analyst (config_itemi.ci_support_analyst)^86|Is authorised? (config_itemi.isauthorised)^87|CMDB Status (config_itemi.cmdb_status)^88|Is unavailable? (config_itemi.isunavailable)^89|Me Table (config_itemi.me_table)^90|Org. ID (config_itemi.fk_company_id)^91|Organisation (config_itemi.companyname)^92|Flg Validsupport (config_itemi.flg_validsupport)^93|Flg Mocs (config_itemi.flg_mocs)^94|MAC Address (citype_genhdw.mac_address)^1|IP Address (citype_genhdw.ip_address)^2|Model (citype_genhdw.model)^3|Last Login Date (citype_genhdw.last_logindate)^4|Last Login User (citype_genhdw.last_loginuser)^5|Invoice No. (citype_genhdw.invoice_num)^6|HDD Size (citype_genhdw.hdd_size)^7|CPU Name (citype_genhdw.cpu_name)^8|CI Name (citype_genhdw.ci_name)^9|CMDB ID (citype_genhdw.pk_ci_id)^10|Load Date (citype_genhdw.loandatex)^11|Operating System (citype_genhdw.op_system)^12|OS Version (citype_genhdw.os_version)^13|RAM (citype_genhdw.ram)^14|Serial No. (citype_genhdw.serial_no)^15|Warranty Status (citype_genhdw.warranty_status)^16|Warranty Type (citype_genhdw.warranty_type)^17|Rack No. (citype_genhdw.rack_no)^18|U Range (citype_genhdw.u_range)^19|Connectivity (citype_genhdw.connectivity)^20|Device Telephone No. (citype_genhdw.device_telnum)^21|IMEI Number (citype_genhdw.imei_number)^22</listItems>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text2</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>4</index>
+						<caption>Table Column</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>14</top>
+							<left>14</left>
+							<right>82</right>
+							<bottom>32</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label2</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>5</index>
+						<caption>Default Value</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>59</top>
+							<left>9</left>
+							<right>82</right>
+							<bottom>75</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>config_type_def.defaultvalue</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded(bDataReloaded)
+{
+	//txt_ex.text = '.at matches any three-character string ending with "at", including "hat", "cat", and "bat".\n'
+	//txt_ex.text +='[hc]at matches "hat" and "cat".\n'
+	//txt_ex.text +='[^b]at matches all strings matched by .at except "bat".\n'
+	//txt_ex.text +='^[hc]at matches "hat" and "cat", but only at the beginning of the string or line.\n'
+	//txt_ex.text +='[hc]at$ matches "hat" and "cat", but only at the end of the string or line.\n'
+	//txt_ex.text +='[hc]+at matches "hat", "cat", "hhat", "chat", "hcat", "ccchat", and so on, but not "at".\n';
+	//txt_ex.text +='[hc]?at matches "hat", "cat", and "at".\n';
+	//txt_ex.text +='cat|dog matches "cat" or "dog".\n';
+
+	
+	//-- load lables listbox for config_itemi and the extended table for this ci type if it has one.
+	//-- we can then use the label listbox to select a field and then auto set the databinding.
+	var strLbData = app.g.dd_getcolumnlist("config_itemi", true,undefined,undefined,true);
+	var strExtTable = _swdoc.GetArg("extended_table");
+	if(strExtTable!="")
+	{
+		 strLbData += "|" + app.g.dd_getcolumnlist(strExtTable, true, undefined,undefined,true);
+	}
+	lb_labels.pickList = strLbData;
+		
+	if(_swdoc.oAtt().fk_config_type=="")
+	{
+		
+		_swdoc.oAtt().fk_config_type = _swdoc.GetArg("fk_config_type");	
+	}
+	
+	if(_swdoc.oAtt().targetbinding!="")
+	{
+		var arrBindingInfo = _swdoc.oAtt().targetbinding.split(".");
+		var strCol = dd.tables[LC(arrBindingInfo[0])].columns[arrBindingInfo[1]].DisplayName		
+		_eva(lb_labels, strCol+" ("+_swdoc.oAtt().targetbinding+")");
+	}
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_labels_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_labels_OnValueChanged(strValue)
+{
+	//-- get value - which is number.
+	//-- we can then make array of table bindings and match up
+	var arrBindingInfo = strValue.split(" (");
+	var arrBindingInfo = arrBindingInfo[1].split(")");
+	if(app.cmdb.default_value_exists(arrBindingInfo[0],config_type_def.fk_config_type))
+	{
+		MessageBox("There is already a default value record setup for "+arrBindingInfo[0]);
+		config_type_def.targetbinding = "";
+		_eva(lb_labels,"");
+	}else
+	{
+		config_type_def.targetbinding = arrBindingInfo[0];
+	}
+	
+	_swdoc.UpdateFormFromData(); 
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>Field1_OnValueChanged</name>
+						<code>
+							<![CDATA[Field1_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	if(app.cmdb.default_value_exists(strValue,config_type_def.fk_config_type))
+	{
+		MessageBox("There is already a default value record setup for "+strValue);
+		config_type_def.targetbinding = "";
+		_eva(lb_labels,"");
+	}else
+	{
+		config_type_def.targetbinding = strValue;
+	}
+	
+	_swdoc.UpdateFormFromData();
+
+
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

@@ -1,0 +1,4 @@
+FROM nginx:latest
+COPY ./webclient.conf /etc/nginx/nginx.conf
+RUN mkdir -p /var/www/html
+

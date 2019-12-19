@@ -1,0 +1,66 @@
+<espoutlook>
+	<esptree>
+		<onloadjsfunction>app.servicedesk_tree_loaded</onloadjsfunction>
+		<rootnodes>
+			<rootnode type="db" db="syscache">
+				<id>swhd</id>
+				<displaytext>Supportworks Helpdesk</displaytext>
+				<defaultimage>treeimages/helpdesk/servicedesk.png</defaultimage>
+				<openimage>treeimages/helpdesk/servicedesk.png</openimage>
+				<onselectjs>app._servicedesk_tree_selection</onselectjs>
+				<!-- how to draw root node tree -->
+				<branch>
+					<onselectjs>app._servicedesk_tree_selection</onselectjs>
+					<swsql>select id, name, parent_id from swgroups where id not in('_SYSTEM') order by name, parent_id asc</swsql>
+					<key>id</key>
+					<displaytext>name</displaytext>
+					<parentbranchkey>parent_id</parentbranchkey>
+					<defaultimage>treeimages/helpdesk/suppgroup.png</defaultimage>
+					<openimage>treeimages/helpdesk/suppgroup.png</openimage>
+				</branch>
+				<node>
+					<onselectjs>app._servicedesk_tree_selection</onselectjs>
+					<swsql>select analystid, name from swanalysts where supportgroup not in (&apos;_THIRDPARTY&apos;,&apos;_SYSTEM&apos;)</swsql>
+					<key>analystid</key>
+					<displaytext>name</displaytext>
+					<defaultimage>treeimages/helpdesk/swanalyst.png</defaultimage>
+				</node>
+				<nodebranch>
+					<swsql>select analystid, groupid from swanalysts_groups</swsql>
+					<nodekey>analystid</nodekey>
+					<branchkey>groupid</branchkey>
+				</nodebranch>
+			</rootnode>
+			<rootnode type="db" db="syscache">
+				<id>_THIRDPARTY</id>
+				<displaytext>3rd Party Suppliers</displaytext>
+				<defaultimage>treeimages/helpdesk/servicedesk.png</defaultimage>
+				<openimage>treeimages/helpdesk/servicedesk.png</openimage>
+				<onselectjs>app._servicedesk_tree_selection</onselectjs>
+				<!-- how to draw root node tree -->
+				<branch>
+					<onselectjs>app._servicedesk_tree_selection</onselectjs>
+					<swsql>select analystid, name from swanalysts where supportgroup in (&apos;_THIRDPARTY&apos;) order by name</swsql>
+					<key>analystid</key>
+					<displaytext>name</displaytext>
+					<parentbranchkey></parentbranchkey>
+					<defaultimage>treeimages/helpdesk/suppgroup.png</defaultimage>
+					<openimage>treeimages/helpdesk/suppgroup.png</openimage>
+				</branch>
+				<node>
+					<onselectjs>app._servicedesk_tree_selection</onselectjs>
+					<swsql>select slaid, name from system_sla</swsql>
+					<key>slaid</key>
+					<displaytext>name</displaytext>
+					<defaultimage>treeimages/helpdesk/swanalyst.png</defaultimage>
+				</node>
+				<nodebranch>
+					<swsql>select slaid, analystid from swanalysts , system_sla where analystid = tpcompany</swsql>
+					<nodekey>slaid</nodekey>
+					<branchkey>analystid</branchkey>
+				</nodebranch>
+	
+			</rootnode>
+		</rootnodes>
+	</esptree>
+</espoutlook>

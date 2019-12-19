@@ -1,0 +1,32 @@
+<report title="Change CI Trending" reportstyle="trend" dsn="swdata" uid="" pwd=""  singlelevel="0">
+	<columns>
+		<column dbname="ck_config_type" dbtable="config_itemi" level="1">Configuration Type</column>
+		<aggregate dbname="callref" dbtable="opencall" aggregate="1" aggFunction="Count" graph="1" level="1">Total Changes</aggregate>
+		<column dbname="pk_auto_id" dbtable="config_itemi" conversion="" level="2">Configuration Item ID</column>
+		<column dbname="description" dbtable="config_itemi" conversion="" level="2">Description</column>
+		<column dbname="fk_status_level" dbtable="config_itemi" conversion="" level="2">Status</column>
+		<column dbname="callref" dbtable="opencall" conversion="callref" level="2">RFC Reference</column>
+		<column dbname="itsm_title" dbtable="opencall" conversion="" level="2">RFC Description</column>
+		<column dbname="probcode" dbtable="opencall" conversion="" level="2">RFC Profile</column>
+		<column dbname="bpm_workflow_id" dbtable="opencall" conversion="" level="2">Business Process</column>
+	</columns>
+	<tables>
+		<table name="cmn_rel_opencall_ci" type="master"/>
+		<table name="config_itemi" type="related" join_type="left" join="config_itemi.pk_auto_id = cmn_rel_opencall_ci.fk_ci_auto_id"/>
+		<table name="opencall" type="related" join_type="left" join="cmn_rel_opencall_ci.fk_callref = opencall.callref"/>
+	</tables>
+	<criteria>
+		<userinput type="daterange" binding="opencall.logdatex" int="1" op="=">
+			<prompt>Requests logged on and between</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="config_itemi.ck_config_type" dsn="swdata" dbtable="config_itemi" keycol="ck_config_type" txtcol="ck_config_type" filter=" where ck_config_type is not null and ck_config_type not like 'ME%' group by ck_config_type" int="0" op="=">
+			<prompt>CI Type</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="config_itemi.fk_status_level" dsn="swdata" dbtable="config_itemi" keycol="fk_status_level" txtcol="fk_status_level" filter=" where fk_status_level is not null group by fk_status_level" int="0" op="=">
+			<prompt>CI Status</prompt>
+		</userinput>
+		<static>cmn_rel_opencall_ci.relcode = 'RFC-CAUSE' and opencall.callclass = 'Change Request' and opencall.callref = cmn_rel_opencall_ci.fk_callref  and opencall.appcode IN (![$GLOBALS['datasetfilterlist']]!)</static>
+	</criteria>
+	<trend dbname="logdatex" dbtable="opencall"/>
+</report>
+

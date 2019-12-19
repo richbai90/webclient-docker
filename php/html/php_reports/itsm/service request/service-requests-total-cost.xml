@@ -1,0 +1,55 @@
+<report title="Total Cost by Service" reportstyle="list" dsn="swdata" uid="" pwd="">
+	<columns>
+		<column dbname="description" dbtable="config_itemi" level="1" >Service Name</column>
+		<aggregate dbname="callref" dbtable="opencall" aggregate="1" aggFunction="Count" conversion="" graph="1" level="1">Total Calls</aggregate>
+		<aggregate dbname="request_cost" dbtable="opencall" aggregate="1" aggFunction="Sum" conversion="money" level="1" casttype="float" precision="2">Total Costs</aggregate>
+		<column dbname="owner" dbtable="opencall" level="2" >Request Owner</column>
+		<aggregate dbname="callref" dbtable="opencall" aggregate="1" aggFunction="Count" conversion="" graph="1" level="2">Total Calls</aggregate>
+		<aggregate dbname="request_cost" dbtable="opencall" aggregate="1" aggFunction="Sum" conversion="money" graph="1" level="2" casttype="float" precision="2">Total Costs</aggregate>
+		<column dbname="callref" dbtable="opencall" conversion="callref" level="3">Call Reference</column>
+		<column dbname="logdatex" dbtable="opencall" conversion="customerdate" level="3">Log Date</column>
+		<column dbname="status" dbtable="opencall" conversion="callstatus" level="3">Status</column>
+		<column dbname="cust_name" dbtable="opencall" conversion="" level="3">Customer</column>
+		<column dbname="request_cost" dbtable="opencall" casttype="float" precision="2" conversion="money" level="3">Cost</column>
+	</columns>
+	<tables>
+	<tables>
+		<table name="opencall" type="master"/>
+		<table name="sc_folio" type="related" join_type="left" join="sc_folio.fk_cmdb_id = opencall.itsm_fk_service"/>
+		<table name="config_itemi" type="related" join_type="left" join="sc_folio.fk_cmdb_id = config_itemi.pk_auto_id"/>
+	</tables>
+	</tables>
+	<criteria>
+		<userinput type="daterange" binding="opencall.logdatex" int="1" op="=">
+			<prompt>Requests logged on and between</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="config_itemi.pk_auto_id" dsn="swdata" dbtable="config_itemi" keycol="pk_auto_id" txtcol="description" filter=" where ck_config_type='ME->SERVICE' and isactivebaseline='Yes'" int="0" op="=">
+			<prompt>Service</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.fk_company_id" dsn="swdata" dbtable="opencall" keycol="fk_company_id" txtcol="companyname" filter=" where fk_company_id IS NOT NULL  and fk_company_id &lt;&gt;'' group by opencall.fk_company_id,opencall.companyname" int="0" op="=">
+			<prompt>Organisation</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.site" dsn="swdata" dbtable="site" keycol="site_name" txtcol="site_name" filter="" int="0" op="=">
+			<prompt>Site</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.fk_dept_code" dsn="swdata" dbtable="department" keycol="pk_dept_code" txtcol="dept_name" filter="" int="0" op="=">
+			<prompt>Department</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.costcenter" dsn="swdata" dbtable="costcent" keycol="costcenter" txtcol="costcenter" filter="" int="0" op="=">
+			<prompt>Charge Centre</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.suppgroup" dsn="swdata" dbtable="opencall" keycol="suppgroup" txtcol="suppgroup" filter=" group by opencall.suppgroup"  int="0" op="=">
+			<prompt>Support Group</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.owner" dsn="swdata" dbtable="opencall" keycol="owner" txtcol="owner" filter=" where opencall.owner IS NOT NULL and opencall.owner &lt;&gt;''  group by opencall.owner   " int="0" op="=">
+			<prompt>Analyst</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.probcode"  dsn="swdata" dbtable="pcdesc" keycol="code" txtcol="info" filter="" int="0" op="=">
+			<prompt>Profile Name</prompt>
+		</userinput>
+		<userinput type="strpicklist" items="1=>Pending|2=>Unassigned|3=>Unaccepted|4=>On Hold|5=>Off Hold|6=>Resolved|7=>Deferred|8=>Incoming|9=>Escalated Owner|10=>Escalated Group|11=>Escalated All|16=>Closed|18=>Closed Chargable" binding="opencall.status" int="0" op="=">
+			<prompt>Call Status</prompt>
+		</userinput>
+		<static>opencall.callclass='Service Request' and opencall.appcode IN (![$GLOBALS['datasetfilterlist']]!)</static>
+	</criteria>
+</report>

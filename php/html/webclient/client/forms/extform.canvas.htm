@@ -1,0 +1,257 @@
+<html>
+<head>	
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="form.canvas.css" type="text/css" />
+<style>
+</style>
+
+<script src='../js/jquery-1.11.1.min.js'></script>
+<script>
+
+	var jqDoc = null;
+	var jqTopDoc = null;
+	if(top.info!=undefined)
+	{
+		var _swdoc = top._swdoc;
+		
+		//-- pointers to app items
+		var app = top.info.__app;
+		var dd = app.dd;
+		var _form = null;
+		var infobar = top.infobar;
+		
+		if(top.strExtFormJavascript!=undefined)
+		{
+			//-- load xml js
+			//try
+			//{
+				eval(top.strExtFormJavascript);				
+			//}
+			//catch (e)
+			//{
+
+			//	var txt="There was an error evaluating the mainform js code for this form. Please contact your Adminitrator.\n\n";
+			///	    txt+="Error description: " + e.description + "\n\n";
+				//    txt+="Click OK to continue.\n\n";
+				//	alert(txt);
+				//	top.window.close();
+			//}
+		}
+		else
+		{
+			alert("Client Error : The mainform javascript is undefined. Please contact your Administrator");
+		}
+	}
+
+	function _hide_popup_items(oEv)
+	{
+		try
+		{
+			_form._close_open_menubuttons();		
+			_form._close_open_lists();
+			_hide_date_popup(oEv);			
+		}
+		catch (e)
+		{
+		}
+	}
+
+	function _hide_date_popup(oEv)
+	{
+		if(document['_datecontrol_clicked']==undefined)document['_datecontrol_clicked']=false;
+
+		if(document['_datecontrol_clicked'])
+		{
+			document['_datecontrol_clicked']=false;
+			return false;
+		}
+
+		var formDP = document.getElementById("__sw_element_date_picker");
+		if(oEv==undefined)
+		{
+			if(formDP!=null)
+			{
+				formDP.style.display="none";
+				formDP.targetelement.setAttribute("hidden","true");
+			}
+		}
+		else
+		{
+
+			//-- check if we have date picker already
+			var srcEle = app.ev_source(oEv);
+			if(formDP!=null)
+			{
+				if(formDP.targetelement == srcEle) 
+				{
+					if(app.clicked_datebox_trigger(srcEle,oEv))return true;
+				}
+				else
+				{
+					//-- check if clicked on calendar
+					var pNode = srcEle.parentNode;
+					while(pNode!=null) 
+					{
+						if(formDP == pNode) 
+						{
+							//-- clicked inside date dropdown
+							return true;
+						}
+						pNode = pNode.parentNode;
+					}
+				}
+				
+				formDP.style.display="none";
+				formDP.targetelement.setAttribute("hidden","true");
+			}
+		}
+	}	
+
+	var extform;
+	var mainform;
+	var _top = this;
+	function _init_top_var_pointers()
+	{	
+		mainform = top.mainform;
+		extform = top.extform;
+		//--associate extform functions to extform object
+		for(strID in top._arr_extform_js_names)
+		{
+			extform[strID] = _top[strID];
+		}
+		for(strID in extform._controlgroups)
+		{
+			_top[strID] = extform._controlgroups[strID];
+		}
+
+	}
+
+	function _onhide()
+	{
+		//document.body.style.display="none";
+	}
+
+	function _onshow()
+	{
+		document.body.style.display="";
+	}
+
+
+	var _initsize = false;
+	var jqBody;
+	function _resize_form(frameWidth,frameHeight)
+	{
+		if(jqBody==undefined)jqBody = $(document.body);
+		if(extform!=undefined && extform._bDrawn)
+		{
+			try
+			{
+				//extform._width = (!app.isIE)?document.body.clientWidth:document.body.offsetWidth;
+				//extform._height = (!app.isIE)?document.body.clientHeight-2:document.body.offsetHeight;		
+				
+				extform._width = frameWidth - 3; //top.GetWinWidth()-4;
+				extform._height = frameHeight - 6; //top.GetWinHeight()-5;		
+				
+				
+				extform.width = extform._width;
+				extform.height = extform._height;
+			}
+			catch (e)
+			{
+			}
+
+			extform._resize_controls();
+
+			//-- if we need overflow then enable it
+			document.body.style.overflow = "hidden";
+			var wDiff = mainform._width - $(document.body).width();
+			var hDiff = mainform._height - $(document.body).height();
+			if( wDiff>14 || hDiff>14)
+			{
+			
+				var i = app.getOverflowWH(document.body);
+				if(i.height < -16)
+				{
+					document.body.style.overflow = "auto"
+				}
+				else if(i.width < -16)
+				{
+					document.body.style.overflow = "auto";
+				}
+			}		
+			
+		}
+	}
+
+	//-- sw form timer
+	var _arrtimers = new Array();
+	function _SetTimer(nTimerID, nMilliseconds)
+	{
+		app._CURRENT_JS_WINDOW = top.window;
+		if(_top['OnTimer']!=undefined)
+		{
+			//-- in sw we tend to use timers as forms are in a ready state - in webclient this isnt needed - so if less than 1000 then likely they are waiting for refesh - so in webclient jsut set to 0
+						if(nMilliseconds<1000)nMilliseconds=0;
+
+			_arrtimers[nTimerID] = setInterval("OnTimer("+nTimerID+")",nMilliseconds);
+		}
+	}
+
+	function _KillTimer(nTimerID)
+	{
+		clearInterval(_arrtimers[nTimerID])
+	}
+
+	function _unload_form()
+	{
+		window.onerror=function()
+		{
+			return true;
+		}
+
+		return true;
+	}
+
+	function _handle_drag_drop(ev)
+	{
+		app.stopEvent(ev);
+		return false;
+	}
+
+	//-- 88751 - issue with safari running on windows - keydown must return false on modal forms (https://discussions.apple.com/thread/3336946?start=0&tstart=0)
+	if(top.__bFormIsModal && app.isSafari && app.isWindows)
+	{
+		document.onkeydown=function(e)
+		{
+			var iKeyCode = app.getKeyCode(e);
+			if(iKeyCode>47)return false; //-- only ret false for alpha numeric chars
+		}
+	}
+
+	function onloadEvents()
+	{
+	
+		jqDoc = $(document); //-- so can use jquery		
+		jqTopDoc = top.jqDoc;
+		
+		//-- add browser class to body
+		if(top.app.browserClassName!="")
+		{
+			jqDoc.find("body").addClass(top.app.browserClassName);
+		}
+
+		top._extform_ready=true;
+	}
+
+</script>
+
+<!-- main js -->
+<script src='js/min/swjs.classes.js'></script>
+<!-- load thi slast as it referes to app.-->
+<script src='../js/system/swc.constants.js'></script>
+
+
+</head>
+<body style='display:none;' onload='onloadEvents()' onunload="_unload_form();" onmousedown='_hide_popup_items(event);' ondrop="return _handle_drag_drop(event);" ondragover="return _handle_drag_drop(event);" ondragenter="return _handle_drag_drop(event);">
+</body>
+</html>

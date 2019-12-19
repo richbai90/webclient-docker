@@ -1,0 +1,32 @@
+<report title="Third Party Contracts Response Performance" reportstyle="list" dsn="swdata" uid="" pwd="">
+	<tables>
+		<table name="tpperformance"   type="master"/>
+		<table name="opencall"   type="related" join_type="" join="tpperformance.callref = opencall.callref"/>
+		<!--<table name="sw_systemdb.system_sla" type="related" join_type="" join="tpperformance.contract = system_sla.name"/>-->
+	</tables>
+	<columns>
+		<column dbname="company" dbtable="tpperformance" conversion="" level="1">Company</column>
+		<column dbname="contract" dbtable="tpperformance" conversion="" level="1">Contract</column>
+		<freetext dbname="Percent_Met" graph='1' level="1">cast(left(1.0*100*sum(tpperformance.within_resp)/Count(tpperformance.callref), 5) as char(5))</freetext>
+		<freetext dbname="Percent_Missed" level="1">cast(left(1.0*100-(100*sum(tpperformance.within_resp)/Count(tpperformance.callref)), 5) as char(5))</freetext>
+		<column dbname="callref" dbtable="tpperformance" conversion="callref" level="2">Call Reference</column>
+		<column dbname="within_resp" dbtable="tpperformance" conversion="1_0_TO_Y_N" level="2">Within Response</column>
+		<column dbname="createdatex" dbtable="tpperformance" conversion="analystdate" level="2">Start Date</column>
+		<column dbname="respdatex" dbtable="tpperformance" conversion="analystdate" level="2">Response Date</column>
+		<!--<column dbname="resptime" dbtable="system_sla" conversion="hhmmss" level="2">Target Response Time</column>-->
+		<column dbname="resp_time" dbtable="tpperformance" conversion="hhmmss" level="2">Actual Response Time</column>
+		
+	</columns>
+	<criteria>
+		<userinput type="daterange" binding="tpperformance.createdatex" int="1" op="=">
+			<prompt>Please Specify a Date Range</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="tpperformance.company" dsn="swdata" dbtable="tpperformance" keycol="company" txtcol="company" filter=" where company IS NOT NULL group by tpperformance.company, tpperformance.within_resp" int="0" op="=">
+			<prompt>Supplier</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="tpperformance.contract" dsn="swdata" dbtable="tpperformance" keycol="contract" txtcol="contract" filter=" where contract IS NOT NULL" int="0" op="=">
+			<prompt>Contract</prompt>
+		</userinput>
+		<static> tpperformance.resp_time > 0 and opencall.appcode IN (![$GLOBALS['datasetfilterlist']]!)</static>
+	</criteria>
+</report>

@@ -1,0 +1,76 @@
+<smartform>
+	<menu>
+		<leftaction>
+			<title>Requests</title>
+			<action noparse="1">_process_navigation('[:_swm_app_path]/views/servicedesk/requests.xml')</action>
+		</leftaction>
+		<centeraction>
+			<title>Log Request</title>
+		</centeraction>
+		<rightaction>
+		</rightaction>
+	</menu>
+	<!-- have as many layers as you want - they get processed in order -->
+	<content>
+		<layer type='localrowlist'>
+			<includes>
+				<!-- define any files to include i.e is you have bespoke complexconversion functions -->
+				<include>[:_swm_app_path]/_helpers/myphpincludefile.php</include>
+			</includes>
+			<list>
+				<rows>
+					<row>
+						<title>Incident</title>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<navigate>[:_swm_app_path]/views/servicedesk/incidents/log.settings.xml</navigate>
+					</row>
+					<row>
+						<title>Service Request</title>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<navigate>[:_swm_app_path]/views/servicedesk/servicerequests/log.settings.xml</navigate>
+					</row>
+					<row>
+						<title>Problem</title>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<navigate>[:_swm_app_path]/views/servicedesk/problems/log.settings.xml</navigate>
+					</row>
+					<row>
+						<title>Change Request</title>
+						<rightimage>client/_system/images/icons/arrow.jpg</rightimage>
+						<navigate>[:_swm_app_path]/views/servicedesk/changes/log.settings.xml</navigate>
+					</row>
+					<metaData>
+						<title></title>
+						<rightimage></rightimage>
+						<navigate></navigate>
+					</metaData>
+					<complexconversions>
+					</complexconversions>
+				</rows>
+				<headeroutput noparse="1">
+				</headeroutput>
+				<rowprocessor>
+					<rowoutput><![CDATA[
+						<table class="homepage" width="100%">
+						<tr xmldefinitionpath="[:rs.target.parsed]" onclick="_process_navigation('[:rs.navigate.value]');">
+						<td class="nmlfontsize blackfont">[:rs.title.value]
+						</td>
+						<td width="3%" align="right"><img src="[:rs.rightimage.value]">
+						</td>
+						</tr>
+						<tr>
+						<td colspan="4">
+						<div class="seperator"><div style="display:none;"></div></div>
+						</td>
+						</tr>
+						</table>]]>
+					</rowoutput>
+					<rowaction>
+						<target>[:rs.target.value]</target>
+					</rowaction>
+				</rowprocessor>
+				<footeroutput><![CDATA[]]></footeroutput>
+			</list>
+		</layer>
+	</content>
+</smartform>

@@ -1,0 +1,43 @@
+<report title="Resolved / Closed Incidents by Status" reportstyle="list" dsn="swdata" uid="" pwd="">
+	<columns>
+		<column dbname="status" dbtable="opencall" conversion="callstatus" level="1">Status</column>
+		<aggregate dbname="callref" dbtable="opencall" aggregate="1" aggFunction="Count" graph="1" level="1">Number Of Calls</aggregate>
+		<column dbname="probcode" dbtable="opencall" conversion="probcode" level="2">Problem Code</column>
+		<aggregate dbname="callref" dbtable="opencall" aggregate="1" aggFunction="Count" graph="1" level="2">Number Of Calls</aggregate>
+		<column dbname="callref" dbtable="opencall" conversion="callref" level="3">Call Reference</column>
+		<column dbname="logdatex" dbtable="opencall" conversion="customerdate" level="3">Log Date</column>
+		<column dbname="resolve_datex" dbtable="opencall" conversion="customerdate" level="3">Resolve Date</column>
+		<column dbname="closedatex" dbtable="opencall" conversion="customerdate" level="3">Close Date</column>
+		<column dbname="cust_name" dbtable="opencall" conversion="" level="3">Customer</column>
+	</columns>
+	<tables>
+		<table name="opencall" type="master"/>
+	</tables>
+	<criteria>
+		<userinput type="daterange" binding="opencall.closedatex" int="1" op="=">
+			<prompt>Requests closed on and between</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.fk_company_id" dsn="swdata" dbtable="opencall" keycol="fk_company_id" txtcol="companyname" filter=" where fk_company_id IS NOT NULL  and fk_company_id &lt;&gt;'' group by opencall.fk_company_id,opencall.companyname" int="0" op="=">
+			<prompt>Organisation</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.site" dsn="swdata" dbtable="opencall" keycol="site" txtcol="site" filter=" where site IS NOT NULL  group by opencall.site" int="0" op="=">
+			<prompt>Site</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.suppgroup" dsn="swdata" dbtable="opencall" keycol="suppgroup" txtcol="suppgroup" filter=" group by opencall.suppgroup" int="0" op="=">
+			<prompt>Support Group</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.owner" dsn="swdata" dbtable="opencall" keycol="owner" txtcol="owner" filter=" where opencall.owner IS NOT NULL and opencall.owner &lt;&gt;''  group by opencall.owner   " int="0" op="=">
+			<prompt>Analyst</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.probcode" dsn="swdata" dbtable="pcdesc" keycol="code" txtcol="info" filter="" int="0" op="=">
+			<prompt>Problem Profile Code</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.fixcode" dsn="swdata" dbtable="rcdesc" keycol="code" txtcol="info" filter="" int="0" op="like">
+			<prompt>Resolution Profile Name</prompt>
+		</userinput>
+		<userinput type="strpicklist" binding="opencall.status" items="6=>Resolved|16=>Closed|18=>Closed Chargable"  int="0" op="=">
+			<prompt>Call Status</prompt>
+		</userinput>
+		<static>opencall.callclass='incident' AND opencall.status in (6,16,18) and opencall.appcode='ITSMF'</static>
+	</criteria>
+</report>

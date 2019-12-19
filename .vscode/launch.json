@@ -1,0 +1,38 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+    
+
+        {
+            "type": "chrome",
+            "request": "attach",
+            "name": "Attach to Chrome",
+            "port": 9222,
+            "pathMapping": {
+                "http://localhost/client/loadcorejsfiles.php?t=2017_11_14_2_0_4_QA_1" : "${workspaceRoot}/webclient_code/client/core_2017_11_14_2_0_4_QA_1.js"
+            },
+            "disableNetworkCache": true
+        },
+        {
+            "name": "Listen for XDebug",
+            "type": "php",
+            "request": "launch",
+            "port": 9000,
+            "pathMappings": {
+                "/usr/local/lib/php": "${workspaceRoot}/php/_phpinclude",
+                "/var/www/html/": "${workspaceRoot}/html"
+              }
+        },
+        {
+            "name": "Launch currently open script",
+            "type": "php",
+            "request": "launch",
+            "program": "${file}",
+            "cwd": "${fileDirname}",
+            "port": 9000
+        }
+    ]
+}

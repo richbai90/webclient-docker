@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolbar id='app-mainbar' handler="app.application_toolbar_action">
+	<item iid="main"  disabled="0" type='menu'  img="hsl-logo.png" button="1" toolbartext="0" mnuhandler="app.application_toolbar_action" >
+		<label>Log requests and manage data</label>
+
+		<mitem iid="log--new"   type='menu' mnuhandler="sys.mnu_run_action" itemloader="_get_lcf_menu_items" disabled="0">
+			<label>Log New</label>
+		</mitem>
+		<mitem iid="log--quick"   type='menu' mnuhandler="sys.mnu_run_action" jsitemloader="_apptoolbar__get_quicklog_list" disabled="0">
+			<label>Quick Log</label>
+		</mitem>
+		<mitem iid="newissue" img="issue-create.png"  hidden="1" disabled="0">
+			<label>New Issue</label>
+		</mitem>
+	
+		<mitem iid="split"  disabled="0"></mitem>
+		<mitem iid="mefile" img=""  disabled="0" type='menu' mnuhandler="sys.mnu_run_action" itemloader="_get_managed_entities" >
+			<label>Manage Data</label>
+		</mitem>
+
+		<mitem iid="split" disabled="0"/>
+		<mitem iid="new_email"  img="email-new.gif" disimg="email-new-d.gif" disabled="0">
+			<label>Compose E-Mail</label>
+		</mitem>
+		<mitem iid="kbase"  img="kbase.png"  disabled="0" type='menu' mnuhandler="sys.mnu_run_action">
+			<label>KnowledgeBase</label>
+			<mitem iid="kbase--search"  disabled="0">Search The KnowledgeBase</mitem>
+			<mitem iid="split"  disabled="0"></mitem>
+			<mitem iid="kbase--compose"  disabled="0">Compose FAQ Document</mitem>
+			<mitem iid="kbase--submit"  disabled="0">Submit External Document </mitem>
+		</mitem>
+
+		<mitem iid="split" disabled="0"/>
+		<mitem iid="tools"  img="settings.png"  disabled="0" type='menu' mnuhandler="sys.mnu_run_action">
+			<label>Tools</label>
+			<mitem iid="tools--multiclip"  disabled="0">Manage MultiClips</mitem>
+			<mitem iid="tools--qlc"  disabled="0">Manage Quick-Log Templates</mitem>
+			<mitem iid="tools--lockcalls"  disabled="0">Manage My Locked Requests</mitem>
+			<mitem iid="tools--changepassword"  disabled="0">Change My Password</mitem>
+			<mitem iid="split"  disabled="0"></mitem>
+			<mitem iid="tools--sessions"  disabled="0">Manage Web Sessions</mitem>
+			<mitem iid="split"  disabled="0"></mitem>
+			<mitem iid="tools--switch"  disabled="0">Switch Application</mitem>
+		</mitem>
+	</item>
+
+	<item iid="logo"  img="companynameonly.png"  disabled="1" toolbartext="0">
+		<label></label>
+	</item>
+
+</toolbar>

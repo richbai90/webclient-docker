@@ -1,0 +1,3690 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>Problem</name>
+			<title>Log New Problem</title>
+			<callClass>Problem</callClass>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<showExtendedDetails>false</showExtendedDetails>
+				<showWorkflow>true</showWorkflow>
+				<showFileAttachments>true</showFileAttachments>
+				<showAffectedCustomers>false</showAffectedCustomers>
+				<showAffectedContacts>true</showAffectedContacts>
+				<showCustomHtmlTab>false</showCustomHtmlTab>
+				<showPartsUsedTab>false</showPartsUsedTab>
+				<allowLog>true</allowLog>
+				<allowLogAssign>true</allowLogAssign>
+				<allowLogAccept>true</allowLogAccept>
+				<allowLogClose>true</allowLogClose>
+				<allowLogAcceptTake>true</allowLogAcceptTake>
+				<showMassageBar>true</showMassageBar>
+				<showCloseDetails>true</showCloseDetails>
+				<useEmailDateToLogCall>false</useEmailDateToLogCall>
+				<hideToolbar>false</hideToolbar>
+				<hideMenubar>false</hideMenubar>
+				<hideFromMenu>false</hideFromMenu>
+				<affectedContactsTab>
+				</affectedContactsTab>
+				<extendedDetailsTable>
+				</extendedDetailsTable>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>opencall</name>
+				<type>Main Details Table</type>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+			<table>
+				<name>updatedb</name>
+				<type>Diary Updates Table</type>
+				<mainDetailsColumn>equipment</mainDetailsColumn>
+				<recordPicklist>Asset</recordPicklist>
+				<addRecordForm>Form.TfAsset</addRecordForm>
+				<editRecordForm>Form.TfAsset</editRecordForm>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+			<table>
+				<name>userdb</name>
+				<type>Related Table</type>
+				<description>Customer Details</description>
+				<mainDetailsColumn>cust_id</mainDetailsColumn>
+				<recordPicklist>Customer</recordPicklist>
+				<addRecordForm>Form.tfCustomer</addRecordForm>
+				<editRecordForm>Form.tfCustomer</editRecordForm>
+				<flags>0</flags>
+				<assignments>
+					<assignment>
+						<expression>keysearch</expression>
+						<masterRecordColumn>opencall.cust_id</masterRecordColumn>
+					</assignment>
+					<assignment>
+						<expression>firstname + &quot; &quot; + surname</expression>
+						<masterRecordColumn>opencall.cust_name</masterRecordColumn>
+					</assignment>
+					<assignment>
+						<expression>postcode</expression>
+						<masterRecordColumn>opencall.postcode</masterRecordColumn>
+					</assignment>
+					<assignment>
+						<expression>fk_company_id</expression>
+						<masterRecordColumn>opencall.fk_company_id</masterRecordColumn>
+					</assignment>
+					<assignment>
+						<expression>companyname</expression>
+						<masterRecordColumn>opencall.companyname</masterRecordColumn>
+					</assignment>
+				</assignments>
+			</table>
+			<table>
+				<name>equipmnt</name>
+				<type>Related Table</type>
+				<description>Asset Details</description>
+				<mainDetailsColumn>equipment</mainDetailsColumn>
+				<recordPicklist>Asset</recordPicklist>
+				<addRecordForm>Form.TfAsset</addRecordForm>
+				<editRecordForm>Form.TfAsset</editRecordForm>
+				<flags>0</flags>
+				<assignments>
+					<assignment>
+						<expression>equipid</expression>
+						<masterRecordColumn>opencall.equipment</masterRecordColumn>
+					</assignment>
+					<assignment>
+						<expression>fk_contract_id</expression>
+						<masterRecordColumn>opencall.fk_contract_id</masterRecordColumn>
+					</assignment>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+			<action>
+				<name>Customer Search</name>
+				<id>9</id>
+				<attrib1>Customer</attrib1>
+				<displayName>Customer Search</displayName>
+			</action>
+			<action>
+				<name>Customer Properties</name>
+				<id>2</id>
+				<attrib1>Form.TfCustomer</attrib1>
+				<attrib2>&amp;[userdb.keysearch]</attrib2>
+				<displayName>Customer Properties</displayName>
+			</action>
+			<action>
+				<name>Manager Properties</name>
+				<id>2</id>
+				<attrib1>Form.TfCustomer</attrib1>
+				<attrib2>&amp;[userdb.fk_manager]</attrib2>
+				<displayName>Manager Properties</displayName>
+			</action>
+			<action>
+				<name>Organisation Properties</name>
+				<id>2</id>
+				<attrib1>Form.TfCompany</attrib1>
+				<attrib2>&amp;[userdb.fk_company_id]</attrib2>
+				<displayName>Organisation Properties</displayName>
+			</action>
+			<action>
+				<name>sep1</name>
+				<id>0</id>
+				<displayName>sep1</displayName>
+			</action>
+			<action>
+				<name>Asset Search</name>
+				<id>9</id>
+				<attrib1>Asset</attrib1>
+				<displayName>Asset Search</displayName>
+			</action>
+			<action>
+				<name>Customer&apos;s Assets</name>
+				<id>4</id>
+				<attrib1>showme_assets</attrib1>
+				<attrib2>owner &lt;&gt; &apos;&apos; AND owner = &apos;&amp;[userdb.keysearch]&apos;</attrib2>
+				<displayName>Customer&apos;s Assets</displayName>
+			</action>
+			<action>
+				<name>Organisation&apos;s Assets</name>
+				<id>4</id>
+				<attrib1>showme_assets</attrib1>
+				<attrib2>fk_company_id = &apos;&amp;[userdb.fk_company_id]&apos; and (owner = &apos;&apos; or owner is null)</attrib2>
+				<displayName>Organisation&apos;s Assets</displayName>
+			</action>
+			<action>
+				<name>Asset Properties</name>
+				<id>2</id>
+				<attrib1>Form.TfAsset</attrib1>
+				<attrib2>&amp;[equipmnt.equipid]</attrib2>
+				<displayName>Asset Properties</displayName>
+			</action>
+			<action>
+				<name>Inventory Details for this Asset</name>
+				<id>12</id>
+				<attrib1>http://&amp;[app.server]:&amp;[app.httpport]/aw/html/viewer4</attrib1>
+				<attrib2>-var compname=&amp;[equipmnt.equipid]</attrib2>
+				<displayName>Inventory Details for this Asset</displayName>
+			</action>
+		</showMeItems>
+		<formActions>
+		</formActions>
+		<javascript>
+			<methods>
+				<method>
+					<name>OnRecordResolved</name>
+					<code>
+						<![CDATA[OnRecordResolved(strTable)
+{
+    if (strTable == "userdb")
+    {
+		//-- if the user is attached to an organisation, check organisation has a resolve message
+		if(userdb.fk_company_id!="")
+		{
+			var comp = app.g.get_record("company",userdb.fk_company_id);
+			if(comp.recordresolvedmsg!="")
+				MessageBox(comp.recordresolvedmsg);
+		}
+	}
+	
+	//-- 2.0.0 - contract check - but only if we are supporting orgs
+	if(strTable=="equipmnt")
+	{
+		//-- if asset does not belong to customers org then raise warning
+		if(userdb.fk_company_id!="")
+		{
+			if (userdb.fk_company_id!=equipmnt.fk_company_id)
+			{
+				if(!confirm("The asset selected is not associated to the same organisation as the current customer. Do you want to proceed?"))
+				{
+					_swdoc.ResetRecord("equipmnt");
+				}	
+			}
+		}
+	
+		app.cfg.process_call_contract_check(equipmnt.equipid, true,_swdoc);
+	}
+	
+    //-- When auto resolved user then we will need to refresh some of the sqllists as they dont do so
+    //-- automatically
+    if (IsObjectDefined("mainform") && strTable == "userdb")
+    {
+       	//-- set opencall fk_dept_code
+		_swdoc.OC().fk_dept_code = userdb.fk_dept_code;
+    
+		//-- if customer does not belong to asset org then raise warning
+		if(equipmnt.fk_company_id!="")
+		{
+			if (userdb.fk_company_id!=equipmnt.fk_company_id)
+			{
+				if(!confirm("The customer selected is not associated to the same organisation as the current asset. Do you want to proceed?"))
+				{
+					_swdoc.ResolveRecord("userdb", "keysearch", _swdoc.currentCustID);
+					return;
+				}	
+			}
+		}
+    
+ 	   	_swdoc.currentCustID = userdb.keysearch;
+    	//--_swdoc.setup_customer_details()
+
+		//-- check if customer is in active    	
+    	var strCustStatusMsgValue = dd.GetGlobalParamAsString("Application Settings/CustomerStatusMessages/" + _swdoc.oCust().status);
+		if(strCustStatusMsgValue!="")
+		{
+			MessageBox(strCustStatusMsgValue);
+		}
+		
+		_swdoc.UpdateFormFromData();
+    }    
+
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnRecordValueChanged</name>
+					<code>
+						<![CDATA[OnRecordValueChanged(strTable, strColumn, strValue, strOldValue)
+{
+	var strBinding = strTable + "." + strColumn;
+	switch(strBinding)
+	{
+		case "opencall.prb_state":
+			_swdoc.OC().flg_ke = (strValue.indexOf("(")!=-1)?"1":"0";
+			//-- allow user to alter flag when they set it to identified
+			//-- so it can be an identified problem or known error
+			
+			//-- this type of code is now invalid
+			app._een(_swdoc.MF().flg_ke , (strValue.indexOf("Ident")==0)?true:false);						
+			
+			//var varSetValue = (strValue.indexOf("Ident")==0)?true:false;
+			//MF().flg_ke.enable = varSetValue;
+
+			
+			_swdoc.UpdateFormFromData();
+			break;
+		case "opencall.itsm_impact_level":
+		case "opencall.itsm_urgency_level":		
+			var strSLA = app.itsm.get_sla_frommatrix(_swdoc.OC().itsm_impact_level, _swdoc.OC().itsm_urgency_level);
+			if(strSLA!="")
+			{
+				_swdoc.OC().priority = strSLA;
+				_swdoc.UpdateFormFromData();
+			}
+			break;
+	}
+
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var intRaisedFromInc = 0;
+var currentCustID = "";
+
+//-- pointers
+function MF()
+{
+	return mainform;
+}
+
+function OC()
+{
+	return _swdoc.opencall;
+}
+
+function oCust()
+{
+	return _swdoc.userdb;
+}
+
+function oAsset()
+{
+	return _swdoc.equipmnt;
+}
+
+//-- reset values after company id change
+function reset_listbox_values()
+{
+	_swdoc.OC().fk_dept_code="";
+	app._ete(_swdoc.MF().lb_oc_dept,""); // -- core product workaround - should reset when value is set to ""	
+	_swdoc.OC().site="[Use Customer Site]";
+	_swdoc.OC().costcenter="[Use Customer Charge Centre]";	
+	_swdoc.UpdateFormFromData();
+}
+
+function ValidateForm()
+{
+	//-- check required fields
+	if (!_swdoc.check_mandatory_fields("updatedb",mainform))return false;		
+	if (!_swdoc.check_mandatory_fields("opencall",mainform))return false;
+	
+	return TRUE;
+}
+				
+function check_mandatory_fields(strTable,oForm)
+{
+    for (var x = 0; x<oForm.elements.length;x++)
+    {
+        var element = oForm.elements[x];
+        
+        if ((element.mandatory) && (element.text ==""))
+        {
+            var colName = "";
+            var fieldName = "(not specified)";
+            if(element.dataRef!="")
+            {
+            	var arrInfo = element.dataRef.split(".");
+            	var strTable = arrInfo[0];
+            	var colName = arrInfo[1];
+            	var fieldName = dd.tables[strTable].columns[colName.toLowerCase()].DisplayName;
+            }
+        	MessageBox("The field '" + fieldName + "' is a mandatory field and must be completed.");
+            return false;
+        }
+    }
+    return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnCallLoggedOK</name>
+					<code>
+						<![CDATA[OnCallLoggedOK(nCallRef, dateRespondBy, dateFixBy, strCustName, strSla)
+{
+
+	if(_swdoc.intRaisedFromInc>0)
+	{
+			//-- check if inc form is open - if so access it and set value and save
+		var incDoc = app.g.get_me_document("opencall",_swdoc.intRaisedFromInc);
+		if(incDoc!=false)
+		{
+			incDoc.OC().prb_callref = app.g.callref_unpad(nCallRef);
+			incDoc.format_linked_call_fields();
+			incDoc.Save();
+		}
+		else
+		{
+			//-- if not open update iincident using hdcon
+		}
+	}
+
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnFormLoading</name>
+					<code>
+						<![CDATA[OnFormLoading(strFormName, strCallclass)
+{
+	return app.itsm.can_create(strCallclass,true);
+
+
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnResolveRecord</name>
+					<code>
+						<![CDATA[OnResolveRecord(strTable, strColumn, strValue)
+{
+	if((strTable=="userdb")||(strTable=="equipmnt"))
+	{
+		//-- store company id so can use in create cust or asset code
+		app.global.logcall_addnew_orgid = _swdoc.oCust().fk_company_id;
+		app.global.logcall_addnew_orgname = userdb.companyname;
+
+	}
+	if((strTable=="userdb"))
+	{
+		_swdoc.OC().fk_dept_code = "";
+		if(IsObjectDefined("mainform"))
+			app._ete(_swdoc.MF().lb_oc_dept,"");
+		_swdoc.UpdateFormFromData();
+	}
+
+	return strValue;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnFormClosing</name>
+					<code>
+						<![CDATA[OnFormClosing()
+{
+	app.global.logcall_addnew_orgid =null;
+
+
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnValidate</name>
+					<code>
+						<![CDATA[OnValidate()
+{
+	//-- validate the form
+	if(!_swdoc.ValidateForm())return VALIDATE_FAIL;
+		
+	return VALIDATE_DEFAULT;
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layout>
+		<appearance>
+			<width>605</width>
+			<height>522</height>
+			<backgroundColor>#ffffff</backgroundColor>
+			<fillColour>#ffffff</fillColour>
+			<textColour >#000000</textColour >
+			<font  size="8">Arial</font>
+		</appearance>
+		<controls>
+			<control>
+				<general>
+					<name>lb_company</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>0</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>34</top>
+						<left>94</left>
+						<right>283</right>
+						<bottom>52</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>userdb.companyname</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>true</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<autoCompleteField>false</autoCompleteField>
+						<editUnlimitedText>false</editUnlimitedText>
+						<url>false</url>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>1</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>54</top>
+						<left>94</left>
+						<right>283</right>
+						<bottom>72</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>userdb.keysearch</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>SearchField1</name>
+					<type>DualSearchField</type>
+				</general>
+				<appearance>
+					<index>2</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>74</top>
+						<left>94</left>
+						<right>283</right>
+						<bottom>92</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>userdb.firstname!surname</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>3</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>94</top>
+						<left>94</left>
+						<right>283</right>
+						<bottom>112</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>userdb.site</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Distinct Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>true</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+						<pickListOrderDesc>false</pickListOrderDesc>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<distinctTable>site</distinctTable>
+						<distinctColumn>site_name</distinctColumn>
+						<newRecordForm>Form.EfSite</newRecordForm>
+						<editRecordForm>Form.EfSite</editRecordForm>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<sqlSource>swdata</sqlSource>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>4</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>114</top>
+						<left>94</left>
+						<right>283</right>
+						<bottom>132</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>userdb.costcenter</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Distinct Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>true</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+						<pickListOrderDesc>false</pickListOrderDesc>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<distinctTable>costcent</distinctTable>
+						<distinctColumn>costcenter</distinctColumn>
+						<newRecordForm>Form.EfCharge Centre</newRecordForm>
+						<editRecordForm>Form.EfCharge Centre</editRecordForm>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<sqlSource>swdata</sqlSource>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>5</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>134</top>
+						<left>94</left>
+						<right>283</right>
+						<bottom>152</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>userdb.telext</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>6</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>154</top>
+						<left>94</left>
+						<right>283</right>
+						<bottom>172</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>userdb.email</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>E-mail Address</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#d3c9b6</borderColor>
+						<imageList>Helpdesk Icons</imageList>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>7</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>34</top>
+						<left>403</left>
+						<right>597</right>
+						<bottom>52</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>equipmnt.EQUIPID</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>8</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>54</top>
+						<left>403</left>
+						<right>597</right>
+						<bottom>72</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>equipmnt.MANUFACTUR</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Distinct Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+						<pickListOrderDesc>false</pickListOrderDesc>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<distinctTable>manufact</distinctTable>
+						<distinctColumn>comp_name</distinctColumn>
+						<newRecordForm>Form.EfManufacturer</newRecordForm>
+						<editRecordForm>Form.EfManufacturer</editRecordForm>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<sqlSource>swdata</sqlSource>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>9</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>74</top>
+						<left>403</left>
+						<right>597</right>
+						<bottom>92</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>equipmnt.MODEL</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Distinct Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+						<pickListOrderDesc>false</pickListOrderDesc>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<distinctTable>equipmnt</distinctTable>
+						<distinctColumn>model</distinctColumn>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<sqlSource>swdata</sqlSource>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>10</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>94</top>
+						<left>403</left>
+						<right>597</right>
+						<bottom>112</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>equipmnt.SERIALNO</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>11</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>114</top>
+						<left>403</left>
+						<right>597</right>
+						<bottom>132</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>equipmnt.GENERIC</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Distinct Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+						<pickListOrderDesc>false</pickListOrderDesc>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<distinctTable>generic</distinctTable>
+						<distinctColumn>code</distinctColumn>
+						<newRecordForm>Form.EfGeneric</newRecordForm>
+						<editRecordForm>Form.EfGeneric</editRecordForm>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<sqlSource>swdata</sqlSource>
+						<borderColor>#d3c9b6</borderColor>
+						<displayColumn>descriptn</displayColumn>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>12</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>134</top>
+						<left>403</left>
+						<right>597</right>
+						<bottom>152</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>equipmnt.wrnty_datex</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Date/Time Control</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<colorDateIndicator>true</colorDateIndicator>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<dateFormatMode>0</dateFormatMode>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>13</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>154</top>
+						<left>403</left>
+						<right>597</right>
+						<bottom>172</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>equipmnt.fk_contract_id</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Distinct Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>true</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>true</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+						<pickListOrderDesc>false</pickListOrderDesc>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<distinctTable>contract</distinctTable>
+						<distinctColumn>pk_contract_id</distinctColumn>
+						<newRecordForm>Form.TfContract</newRecordForm>
+						<editRecordForm>Form.EfGeneric</editRecordForm>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<sqlSource>swdata</sqlSource>
+						<borderColor>#d3c9b6</borderColor>
+						<displayColumn>title</displayColumn>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>14</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>216</top>
+						<left>94</left>
+						<right>283</right>
+						<bottom>234</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.costcenter</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Distinct Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>true</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>true</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+						<pickListOrderDesc>false</pickListOrderDesc>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<defaultValue>[Use Customer Charge Centre]</defaultValue>
+						<hintText>The charge center for this call</hintText>
+						<distinctTable>costcent</distinctTable>
+						<distinctColumn>costcenter</distinctColumn>
+						<newRecordForm>Form.EfCharge Centre</newRecordForm>
+						<editRecordForm>Form.EfCharge Centre</editRecordForm>
+						<listFilter>fk_company_id = &apos;&amp;[userdb.fk_company_id]&apos; OR fk_company_id = &apos;&amp;[equipmnt.fk_company_id]&apos;</listFilter>
+						<extraOptions>[Use Customer Charge Centre]=&amp;[userdb.costcenter]^[Use Asset Charge Centre]=&amp;[equipmnt.costcenter]</extraOptions>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<sqlSource>swdata</sqlSource>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>15</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>239</top>
+						<left>94</left>
+						<right>283</right>
+						<bottom>257</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.site</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Distinct Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>true</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>true</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+						<pickListOrderDesc>false</pickListOrderDesc>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<defaultValue>[Use Customer Site]</defaultValue>
+						<hintText>The site for this call</hintText>
+						<distinctTable>site</distinctTable>
+						<distinctColumn>site_name</distinctColumn>
+						<newRecordForm>Form.EfCharge Centre</newRecordForm>
+						<editRecordForm>Form.EfCharge Centre</editRecordForm>
+						<listFilter>fk_company_id = &apos;&amp;[userdb.fk_company_id]&apos; OR fk_company_id = &apos;&amp;[equipmnt.fk_company_id]&apos;</listFilter>
+						<extraOptions>[Use Customer Site]=&amp;[userdb.site]^^[Use Asset Site]=&amp;[equipmnt.site]</extraOptions>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<sqlSource>swdata</sqlSource>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>lb_oc_dept</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>16</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>261</top>
+						<left>94</left>
+						<right>283</right>
+						<bottom>279</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.fk_dept_code</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Distinct Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>true</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>true</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>true</comboAutoUpdate>
+						<comboNewValues>true</comboNewValues>
+						<pickListOrderDesc>false</pickListOrderDesc>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<distinctTable>department</distinctTable>
+						<distinctColumn>pk_dept_code</distinctColumn>
+						<newRecordForm>Form.TfDepartment</newRecordForm>
+						<editRecordForm>Form.EfCharge Centre</editRecordForm>
+						<listFilter>fk_company_id = &apos;&amp;[userdb.fk_company_id]&apos; OR fk_company_id = &apos;&amp;[equipmnt.fk_company_id]&apos;</listFilter>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<sqlSource>swdata</sqlSource>
+						<borderColor>#c0c0c0</borderColor>
+						<displayColumn>dept_name</displayColumn>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>lb_impact1</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>17</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>283</top>
+						<left>94</left>
+						<right>283</right>
+						<bottom>301</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.itsm_impact_level</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>true</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>true</comboNewValues>
+						<useDDPickList>true</useDDPickList>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<defaultValue>Low</defaultValue>
+						<activeTextColor>#eeeeee</activeTextColor>
+						<listItems>None|Low|Medium|High|Critical|</listItems>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#d3c9b6</borderColor>
+						<sqlSource>swdata</sqlSource>
+						<distinctTable>itsm_impact_lvl</distinctTable>
+						<distinctColumn>pk_impact</distinctColumn>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>lb_urgency1</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>18</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>306</top>
+						<left>94</left>
+						<right>283</right>
+						<bottom>324</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.itsm_urgency_level</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>true</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>true</comboNewValues>
+						<useDDPickList>true</useDDPickList>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<defaultValue>Low</defaultValue>
+						<activeTextColor>#eeeeee</activeTextColor>
+						<listItems>None|Low|Medium|High|Extreme|</listItems>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#d3c9b6</borderColor>
+						<sqlSource>swdata</sqlSource>
+						<distinctTable>itsm_urgency_lvl</distinctTable>
+						<distinctColumn>pk_urgency</distinctColumn>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>fd_priority</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>19</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>328</top>
+						<left>94</left>
+						<right>283</right>
+						<bottom>346</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.priority</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Distinct Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>true</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>true</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>true</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+						<pickListOrderDesc>false</pickListOrderDesc>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<defaultValue>[Use Customer SLA]</defaultValue>
+						<distinctTable>priority</distinctTable>
+						<distinctColumn>priority</distinctColumn>
+						<newRecordForm>SystemForms.SLA</newRecordForm>
+						<extraOptions>[Use Customer SLA]=&amp;[userdb.priority]^[Use Asset SLA]=&amp;[equipmnt.priority]^[Use Charge Centre SLA]=&amp;[costcent.priority]^[Use Profile SLA]=&amp;[_form.probcodesla]</extraOptions>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<sqlSource>swdata</sqlSource>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>flg_display</name>
+					<type>Field</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>20</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>None</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>216</top>
+						<left>400</left>
+						<right>589</right>
+						<bottom>234</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.itsm_swtoday_on</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Form Flags</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>true</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<borderColor>#d3c9b6</borderColor>
+						<image>#eeeeee</image>
+						<flagItems>Display on Supportworks Today^1|</flagItems>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>flg_display1</name>
+					<type>Field</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>21</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>None</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>239</top>
+						<left>400</left>
+						<right>611</right>
+						<bottom>257</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.itsm_wssm_on</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Form Flags</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>true</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<borderColor>#d3c9b6</borderColor>
+						<image>#eeeeee</image>
+						<flagItems>Display in SelfService notifications^1|</flagItems>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>lb_prbstage</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>22</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>262</top>
+						<left>403</left>
+						<right>597</right>
+						<bottom>280</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.prb_state</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>true</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+						<useDDPickList>true</useDDPickList>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<content>#eeeeee</content>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>fld_condition</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>23</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>306</top>
+						<left>403</left>
+						<right>597</right>
+						<bottom>324</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.h_condition</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Pick List (Numeric Mode)</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>true</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>true</comboNewValues>
+						<useDDPickList>true</useDDPickList>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<defaultValue>1</defaultValue>
+						<listItems>None^1|Green^2|Amber^3|Blue^4|Magenta^5|Red^6|</listItems>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>tb_title1</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>24</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>384</top>
+						<left>8</left>
+						<right>597</right>
+						<bottom>402</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.itsm_title</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>true</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<autoCompleteField>false</autoCompleteField>
+						<editUnlimitedText>false</editUnlimitedText>
+						<url>false</url>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<hintText>&lt;please enter a summary of the problem&gt;</hintText>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>tb1</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>25</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="10">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>408</top>
+						<left>8</left>
+						<right>597</right>
+						<bottom>507</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>100</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>updatedb.updatetxt</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>true</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<autoCompleteField>false</autoCompleteField>
+						<editUnlimitedText>true</editUnlimitedText>
+						<url>false</url>
+					</flags>
+					<textLineCount>4</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>mb_cust1</name>
+					<type>MenuButton</type>
+					<flags>
+						<transparent>false</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>true</toolbarButtonStyle>
+						<cache>true</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>26</index>
+					<caption>Actions</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>5</top>
+						<left>218</left>
+						<right>283</right>
+						<bottom>28</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<backgroundColor>#ff9900</backgroundColor>
+						<commands>Customer Search^1|Customer Properties^2|Manager Properties^4|Organisation Properties^3|</commands>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>cp_rfc</name>
+					<type>CaptionBar</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>true</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>27</index>
+					<caption>Summary / Description</caption>
+					<backgroundColor>#f1f1f1</backgroundColor>
+					<foregroundColor>#003366</foregroundColor>
+					<font  size="10" bold="1">Trebuchet (MS)</font>
+					<alignment>Left</alignment>
+					<fillStyle>Vertical Gradient</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>355</top>
+						<left>3</left>
+						<right>601</right>
+						<bottom>512</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>100</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<backgroundColor2>#d8d8d8</backgroundColor2>
+						<imageHSpace>10</imageHSpace>
+						<slope>12</slope>
+						<borderColor>#d3c9b6</borderColor>
+						<headerHeight>23</headerHeight>
+						<hasBorder>1</hasBorder>
+						<panelBorderColor>#d3c9b6</panelBorderColor>
+						<fillStyle>0</fillStyle>
+						<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+						<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						<image>&amp;[app.webroot]/clisupp/formimages/itsm/document.png</image>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>CaptionPanel2</name>
+					<type>CaptionBar</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>true</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>28</index>
+					<caption>Raised By Customer</caption>
+					<backgroundColor>#f1f1f1</backgroundColor>
+					<foregroundColor>#003366</foregroundColor>
+					<font  size="10" bold="1">Trebuchet (MS)</font>
+					<alignment>Left</alignment>
+					<fillStyle>Vertical Gradient</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>5</top>
+						<left>3</left>
+						<right>291</right>
+						<bottom>180</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<backgroundColor2>#d8d8d8</backgroundColor2>
+						<imageHSpace>10</imageHSpace>
+						<slope>12</slope>
+						<borderColor>#d3c9b6</borderColor>
+						<headerHeight>23</headerHeight>
+						<hasBorder>1</hasBorder>
+						<panelBorderColor>#d3c9b6</panelBorderColor>
+						<fillStyle>0</fillStyle>
+						<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+						<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						<image>&amp;[app.webroot]/clisupp/formimages/itsm/contact.png</image>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>CaptionPanel3</name>
+					<type>CaptionBar</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>true</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>29</index>
+					<caption>Problem Asset</caption>
+					<backgroundColor>#f1f1f1</backgroundColor>
+					<foregroundColor>#003366</foregroundColor>
+					<font  size="10" bold="1">Trebuchet (MS)</font>
+					<alignment>Left</alignment>
+					<fillStyle>Vertical Gradient</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>5</top>
+						<left>298</left>
+						<right>600</right>
+						<bottom>180</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<backgroundColor2>#d8d8d8</backgroundColor2>
+						<imageHSpace>10</imageHSpace>
+						<slope>12</slope>
+						<borderColor>#d3c9b6</borderColor>
+						<headerHeight>23</headerHeight>
+						<hasBorder>1</hasBorder>
+						<panelBorderColor>#d3c9b6</panelBorderColor>
+						<fillStyle>0</fillStyle>
+						<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+						<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						<image>&amp;[app.webroot]/clisupp/formimages/itsm/assets.png</image>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>30</index>
+					<caption>Customer ID</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>54</top>
+						<left>5</left>
+						<right>90</right>
+						<bottom>72</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>userdb.keysearch</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>31</index>
+					<caption>Main Site</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>94</top>
+						<left>5</left>
+						<right>90</right>
+						<bottom>112</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>userdb.site</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+						<distinctTable>site</distinctTable>
+						<distinctColumn>site_name</distinctColumn>
+						<newRecordForm>Form.EfSite</newRecordForm>
+						<editRecordForm>Form.EfSite</editRecordForm>
+						<sqlSource>swdata</sqlSource>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Text</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>32</index>
+					<caption>Name</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>74</top>
+						<left>5</left>
+						<right>90</right>
+						<bottom>92</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>33</index>
+					<caption>Charge Centre</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>114</top>
+						<left>5</left>
+						<right>90</right>
+						<bottom>132</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>userdb.costcenter</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+						<distinctTable>costcent</distinctTable>
+						<distinctColumn>costcenter</distinctColumn>
+						<newRecordForm>Form.EfCharge Centre</newRecordForm>
+						<editRecordForm>Form.EfCharge Centre</editRecordForm>
+						<sqlSource>swdata</sqlSource>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>34</index>
+					<caption>Tel. No.</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>134</top>
+						<left>5</left>
+						<right>90</right>
+						<bottom>152</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>userdb.telext</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>35</index>
+					<caption>E-Mail</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>154</top>
+						<left>5</left>
+						<right>90</right>
+						<bottom>172</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>userdb.email</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>CaptionPanel1</name>
+					<type>CaptionBar</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>true</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>36</index>
+					<caption>Problem Settings / Options</caption>
+					<backgroundColor>#f1f1f1</backgroundColor>
+					<foregroundColor>#003366</foregroundColor>
+					<font  size="10" bold="1">Trebuchet (MS)</font>
+					<alignment>Left</alignment>
+					<fillStyle>Vertical Gradient</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>185</top>
+						<left>3</left>
+						<right>601</right>
+						<bottom>351</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<backgroundColor2>#d8d8d8</backgroundColor2>
+						<imageHSpace>10</imageHSpace>
+						<slope>12</slope>
+						<borderColor>#d3c9b6</borderColor>
+						<headerHeight>23</headerHeight>
+						<hasBorder>1</hasBorder>
+						<panelBorderColor>#d3c9b6</panelBorderColor>
+						<fillStyle>0</fillStyle>
+						<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+						<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						<image>&amp;[app.webroot]/clisupp/formimages/itsm/alarm.png</image>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>37</index>
+					<caption>SLA</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>328</top>
+						<left>10</left>
+						<right>90</right>
+						<bottom>346</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.priority</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+						<defaultValue>[Use Customer SLA]</defaultValue>
+						<distinctTable>priority</distinctTable>
+						<distinctColumn>priority</distinctColumn>
+						<extraOptions>[Use Customer SLA]=&amp;[userdb.priority]^[Use Asset SLA]=&amp;[equipmnt.priority]^[Use Charge Centre SLA]=&amp;[costcent.priority]^[Use Profile SLA]=&amp;[_form.probcodesla]</extraOptions>
+						<sqlSource>swdata</sqlSource>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>38</index>
+					<caption>Charge Centre</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>216</top>
+						<left>5</left>
+						<right>90</right>
+						<bottom>234</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.costcenter</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+						<defaultValue>[Use Customer Charge Centre]</defaultValue>
+						<hintText>The charge center for this call</hintText>
+						<distinctTable>costcent</distinctTable>
+						<distinctColumn>costcenter</distinctColumn>
+						<newRecordForm>Form.EfCharge Centre</newRecordForm>
+						<editRecordForm>Form.EfCharge Centre</editRecordForm>
+						<extraOptions>[Use Customer Charge Centre]=&amp;[userdb.costcenter]^[Use Asset Charge Centre]=&amp;[equipmnt.costcenter]</extraOptions>
+						<sqlSource>swdata</sqlSource>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>39</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>358</top>
+						<left>258</left>
+						<right>597</right>
+						<bottom>376</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.probcode</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<hintText>Click on this field to browse for and select a profile for this change</hintText>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#d3c9b6</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>lbl_condition</name>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>40</index>
+					<caption>Condition</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>306</top>
+						<left>307</left>
+						<right>399</right>
+						<bottom>324</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.h_condition</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+						<defaultValue>1</defaultValue>
+						<listItems>None^1|Green^2|Amber^3|Blue^4|Magenta^5|Red^6|</listItems>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>lbl_company</name>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>41</index>
+					<caption>Organisation</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>34</top>
+						<left>5</left>
+						<right>90</right>
+						<bottom>52</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>userdb.companyname</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>42</index>
+					<caption>Site Name</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>239</top>
+						<left>5</left>
+						<right>90</right>
+						<bottom>257</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.site</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+						<defaultValue>[Use Customer Charge Centre]</defaultValue>
+						<hintText>The charge center for this call</hintText>
+						<distinctTable>costcent</distinctTable>
+						<distinctColumn>costcenter</distinctColumn>
+						<newRecordForm>Form.EfCharge Centre</newRecordForm>
+						<editRecordForm>Form.EfCharge Centre</editRecordForm>
+						<extraOptions>[Use Customer Charge Centre]=&amp;[userdb.costcenter]^[Use Asset Charge Centre]=&amp;[equipmnt.costcenter]</extraOptions>
+						<sqlSource>swdata</sqlSource>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Text1</name>
+					<type>Text</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>43</index>
+					<caption>Profile :</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>358</top>
+						<left>167</left>
+						<right>254</right>
+						<bottom>376</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Text3</name>
+					<type>Text</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>44</index>
+					<caption>Impact</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>283</top>
+						<left>10</left>
+						<right>90</right>
+						<bottom>301</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Text4</name>
+					<type>Text</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>45</index>
+					<caption>Urgency</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>306</top>
+						<left>10</left>
+						<right>90</right>
+						<bottom>324</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>mb_asset</name>
+					<type>MenuButton</type>
+					<flags>
+						<transparent>false</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>true</toolbarButtonStyle>
+						<cache>true</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>46</index>
+					<caption>Actions</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>5</top>
+						<left>530</left>
+						<right>595</right>
+						<bottom>28</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>100</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<backgroundColor>#ff9900</backgroundColor>
+						<commands>Asset Search^1|Customer&apos;s Assets^3|Organisation&apos;s Assets^5|Asset Properties^2|Inventory Details for this Asset^4|</commands>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>47</index>
+					<caption>Asset ID</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>34</top>
+						<left>314</left>
+						<right>399</right>
+						<bottom>52</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>equipmnt.EQUIPID</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>48</index>
+					<caption>Make</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>54</top>
+						<left>314</left>
+						<right>399</right>
+						<bottom>72</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>equipmnt.MANUFACTUR</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+						<distinctTable>manufact</distinctTable>
+						<distinctColumn>comp_name</distinctColumn>
+						<newRecordForm>Form.EfManufacturer</newRecordForm>
+						<editRecordForm>Form.EfManufacturer</editRecordForm>
+						<sqlSource>swdata</sqlSource>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>49</index>
+					<caption>Model</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>74</top>
+						<left>314</left>
+						<right>399</right>
+						<bottom>92</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>equipmnt.MODEL</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+						<distinctTable>equipmnt</distinctTable>
+						<distinctColumn>model</distinctColumn>
+						<sqlSource>swdata</sqlSource>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>50</index>
+					<caption>Serial Number</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>94</top>
+						<left>314</left>
+						<right>399</right>
+						<bottom>112</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>equipmnt.SERIALNO</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>51</index>
+					<caption>Asset Type</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>114</top>
+						<left>314</left>
+						<right>399</right>
+						<bottom>132</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>equipmnt.GENERIC</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+						<distinctTable>generic</distinctTable>
+						<distinctColumn>code</distinctColumn>
+						<newRecordForm>Form.EfGeneric</newRecordForm>
+						<editRecordForm>Form.EfGeneric</editRecordForm>
+						<listFilter>PICTURE</listFilter>
+						<sqlSource>swdata</sqlSource>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>52</index>
+					<caption>Warranty Expires</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>134</top>
+						<left>308</left>
+						<right>400</right>
+						<bottom>152</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>equipmnt.WRNTY_EXPR</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+						<dateFormatMode>0</dateFormatMode>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>53</index>
+					<caption>Contract</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>154</top>
+						<left>314</left>
+						<right>399</right>
+						<bottom>172</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>equipmnt.fk_contract_id</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+						<distinctTable>generic</distinctTable>
+						<distinctColumn>code</distinctColumn>
+						<newRecordForm>Form.EfGeneric</newRecordForm>
+						<editRecordForm>Form.EfGeneric</editRecordForm>
+						<listFilter>PICTURE</listFilter>
+						<sqlSource>swdata</sqlSource>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>54</index>
+					<caption>Problem Stage</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>262</top>
+						<left>310</left>
+						<right>399</right>
+						<bottom>280</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.prb_state</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>55</index>
+					<caption>Department</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>261</top>
+						<left>-2</left>
+						<right>90</right>
+						<bottom>279</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.fk_dept_code</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+						<defaultValue>[Use Customer Charge Centre]</defaultValue>
+						<hintText>The charge center for this call</hintText>
+						<distinctTable>costcent</distinctTable>
+						<distinctColumn>costcenter</distinctColumn>
+						<newRecordForm>Form.EfCharge Centre</newRecordForm>
+						<editRecordForm>Form.EfCharge Centre</editRecordForm>
+						<extraOptions>[Use Customer Charge Centre]=&amp;[userdb.costcenter]^[Use Asset Charge Centre]=&amp;[equipmnt.costcenter]</extraOptions>
+						<sqlSource>swdata</sqlSource>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>flg_ke</name>
+					<type>Field</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>56</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>None</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>283</top>
+						<left>400</left>
+						<right>611</right>
+						<bottom>301</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.flg_ke</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Form Flags</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>true</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<borderColor>#d3c9b6</borderColor>
+						<image>#eeeeee</image>
+						<flagItems>Is a known error^1|</flagItems>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Field1</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>57</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>3-D Sunken</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>559</top>
+						<left>483</left>
+						<right>589</right>
+						<bottom>575</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.appcode</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<flags>
+						<invisible>true</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<autoCompleteField>false</autoCompleteField>
+						<editUnlimitedText>false</editUnlimitedText>
+						<url>false</url>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<defaultValue>ITSMF</defaultValue>
+						<image>#eeeeee</image>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+					</properties>
+				</controlInfo>
+			</control>
+		</controls>
+		<formActions>
+		</formActions>
+		<javascript>
+			<methods>
+				<method>
+					<name>OnFormLoaded</name>
+					<code>
+						<![CDATA[OnFormLoaded(bDataReloaded)
+{
+	
+	//-- NWJ - 17.09.2007 - log call for user if being passed in (logging from customer form)
+	if(app.global.LOG_CALL_FOR_USER!=null)
+	{
+		_swdoc.ResolveRecord("userdb", "keysearch", app.global.LOG_CALL_FOR_USER);
+	}
+	app.global.LOG_CALL_FOR_USER=null;	
+	
+	//-- raised from incident
+	if(app.global.RAISE_PRB_FROM_INCIDENT!=null)
+	{
+		_swdoc.intRaisedFromInc = app.global.RAISE_PRB_FROM_INCIDENT;
+		var incDoc = app.g.get_me_document("opencall",_swdoc.intRaisedFromInc);
+		if(incDoc!=false)
+		{
+			//-- get values to copy across - summary, description etc
+			_swdoc.OC().itsm_title = incDoc.OC().itsm_title;
+			_swdoc.OC().itsm_impact_level = incDoc.OC().itsm_impact_level;
+			_swdoc.OC().itsm_urgency_level = incDoc.OC().itsm_urgency_level;
+			_swdoc.OC().priority = incDoc.OC().priority;
+			_swdoc.OC().probcode = incDoc.OC().probcode;
+			_swdoc.OC().costcenter = incDoc.OC().costcenter;
+			_swdoc.OC().site = incDoc.OC().site;
+			_swdoc.updatedb.updatetxt = incDoc.MF().tb_origtext.text;
+			_swdoc.UpdateFormFromData();
+			
+			//-- resolve same related records
+			_swdoc.ResolveRecord("userdb", "keysearch", incDoc.OC().cust_id);
+			_swdoc.ResolveRecord("equipmnt", "equipid", incDoc.OC().equipment);
+		}
+	}
+	app.global.RAISE_PRB_FROM_INCIDENT=null;	
+	
+	//-- 12.07.2008 
+	//-- disable or hide company field if internal support only
+	app._een(_swdoc.MF().lb_company , ((dd.GetGlobalParamAsString("Application Settings/SupportExternalCompanies")==1)));
+	if(!_swdoc.MF().lb_company.enable)
+	{
+		//-- check if we should hide
+		app._evi(_swdoc.MF().lb_company ,(dd.GetGlobalParamAsString("Application Settings/HideCompanyField")!=1));		
+	}
+	app._evi(_swdoc.MF().lbl_company , _swdoc.MF().lb_company.visible);	
+	//-- eof hide / enable	    	
+	if(_swdoc.oCust().keysearch !="")
+	{
+		_swdoc.OC().fk_dept_code = userdb.fk_dept_code;
+	}
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</layout>
+	<extendedLayout>
+		<appearance>
+			<width>600</width>
+			<height>366</height>
+			<backgroundColor>#d6d3ce</backgroundColor>
+			<fillColour>#ffffff</fillColour>
+			<textColour >#000000</textColour >
+			<font  size="8">Arial</font>
+		</appearance>
+		<controls>
+		</controls>
+		<formActions>
+		</formActions>
+		<javascript>
+			<methods>
+			</methods>
+		</javascript>
+	</extendedLayout>
+</espForm>

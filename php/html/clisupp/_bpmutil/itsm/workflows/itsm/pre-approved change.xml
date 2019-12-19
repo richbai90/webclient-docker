@@ -1,0 +1,462 @@
+<?xml version="1.0"?>
+<workflow>
+  <Recordset table="bpm_workflow">
+    <Record>
+      <ext_db_table></ext_db_table>
+      <ext_sw_form></ext_sw_form>
+      <fk_default_sla>P3 - 8 Hour Response</fk_default_sla>
+      <title></title>
+      <fk_firststage_id>55</fk_firststage_id>
+      <flg_active>0</flg_active>
+      <description>This process is used for pre-approved changes, such as applying patches to PCs.
+
+There are 2 stages 
+
+1. To carry out the work - There are two standard tasks.
+    a. Prepare all CIs for change
+    b. Apply the changes
+   (tasks can also be added on the fly)
+
+2. Completion of the Change request.
+
+Note: there is no authorisation required for this process.</description>
+      <pk_workflow_id>Pre-approved Change</pk_workflow_id>
+      <callclass>Change Request</callclass>
+      <fk_default_sla_name></fk_default_sla_name>
+      <fk_default_sla_new></fk_default_sla_new>
+      <flg_sla_apply></flg_sla_apply>
+      <flg_sla_enforce></flg_sla_enforce>
+      <flg_requireci></flg_requireci>
+      <appcode>itsm</appcode>
+      <graphxml>&lt;mxGraphModel grid="1" guides="0" tooltips="0" connect="0" fold="0" page="0" pageScale="1" pageWidth="826" pageHeight="1169"&gt;&lt;root&gt;&lt;mxCell id="0"/&gt;&lt;mxCell id="1" parent="0"/&gt;&lt;mxCell id="2" value="Pre-approved&amp;#xa;Change" style="shape=mxgraph.flowchart.terminator;fillColor=#FFF2CC;strokeColor=#000000;strokeWidth=2;shadow=1;gradientColor=#FFFFCC" parent="1" vertex="1"&gt;&lt;mxGeometry x="310" width="110" height="80" as="geometry"/&gt;&lt;Object type="start" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_2_stage_55" value="" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="2" target="stage_55" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="365" y="92"/&gt;&lt;mxPoint x="365" y="128"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="stage_55" value="Implement&amp;#xa;pre-approved&amp;#xa;work" style="shape=mxgraph.flowchart.predefined_process;fillColor=#B5739D;strokeColor=#000000;strokeWidth=2;shadow=1;whiteSpace:wrap;gradientColor=#E6D0DE" parent="1" vertex="1"&gt;&lt;mxGeometry x="310" y="140" width="110" height="80" as="geometry"/&gt;&lt;Object type="stage" stagekey="55" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_stage_55_cond_start_55" value="" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="stage_55" target="cond_start_55" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="340" y="232"/&gt;&lt;mxPoint x="210" y="268"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="cond_start_55" value="On&amp;#xa;Stage&amp;#xa;Start" style="shape=mxgraph.flowchart.decision;strokeColor=#000000;strokeWidth=2;shadow=1;fillColor=#FFFFFF;gradientColor=#73AD64;" parent="1" vertex="1"&gt;&lt;mxGeometry x="155" y="280" width="110" height="80" as="geometry"/&gt;&lt;Object type="startcond" stagekey="55" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_cond_55_stage_56" value="Tasks Completed" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="cond_55" target="stage_56" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="495" y="372"/&gt;&lt;mxPoint x="210" y="408"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="66" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="stage_56" value="Change&amp;#xa;Completed&amp;#xa;OK" style="shape=mxgraph.flowchart.predefined_process;fillColor=#B5739D;strokeColor=#000000;strokeWidth=2;shadow=1;whiteSpace:wrap;gradientColor=#E6D0DE" parent="1" vertex="1"&gt;&lt;mxGeometry x="155" y="420" width="110" height="80" as="geometry"/&gt;&lt;Object type="stage" stagekey="56" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_stage_56_cond_start_56" value="" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="stage_56" target="cond_start_56" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="185" y="512"/&gt;&lt;mxPoint x="55" y="548"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="cond_start_56" value="On&amp;#xa;Stage&amp;#xa;Start" style="shape=mxgraph.flowchart.decision;strokeColor=#000000;strokeWidth=2;shadow=1;fillColor=#FFFFFF;gradientColor=#73AD64;" parent="1" vertex="1"&gt;&lt;mxGeometry y="560" width="110" height="80" as="geometry"/&gt;&lt;Object type="startcond" stagekey="56" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_stage_56_cond_56" value="" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="stage_56" target="cond_56" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="235" y="512"/&gt;&lt;mxPoint x="365" y="548"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="cond_56" value="Completed" style="shape=mxgraph.flowchart.decision;strokeColor=#000000;strokeWidth=2;shadow=1;fillColor=#FF3333;gradientColor=#FFCCCC;" parent="1" vertex="1"&gt;&lt;mxGeometry x="310" y="560" width="110" height="80" as="geometry"/&gt;&lt;Object type="endnode" stagekey="56" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_cond_55_stage_57" value="Tasks NOT completed" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="cond_55" target="stage_57" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="545" y="372"/&gt;&lt;mxPoint x="597.5" y="408"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="67" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="stage_57" value="Change&amp;#xa;failed&amp;#xa;or&amp;#xa;backed&amp;#xa;out" style="shape=mxgraph.flowchart.predefined_process;fillColor=#B5739D;strokeColor=#000000;strokeWidth=2;shadow=1;whiteSpace:wrap;gradientColor=#E6D0DE" parent="1" vertex="1"&gt;&lt;mxGeometry x="542.5" y="420" width="110" height="80" as="geometry"/&gt;&lt;Object type="stage" stagekey="57" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_stage_57_cond_57" value="" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="stage_57" target="cond_57" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="597.5" y="512"/&gt;&lt;mxPoint x="675" y="548"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="cond_57" value="Completed" style="shape=mxgraph.flowchart.decision;strokeColor=#000000;strokeWidth=2;shadow=1;fillColor=#FF3333;gradientColor=#FFCCCC;" parent="1" vertex="1"&gt;&lt;mxGeometry x="620" y="560" width="110" height="80" as="geometry"/&gt;&lt;Object type="endnode" stagekey="57" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="link_stage_55_cond_55" value="" style="endArrow=block;edgeStyle=elbowEdgeStyle;strokeWidth=2;strokeColor=#000000" parent="1" source="stage_55" target="cond_55" edge="1"&gt;&lt;mxGeometry x="50" y="50" width="110" height="80" as="geometry"&gt;&lt;Array as="points"&gt;&lt;mxPoint x="390" y="232"/&gt;&lt;mxPoint x="520" y="268"/&gt;&lt;/Array&gt;&lt;/mxGeometry&gt;&lt;Object type="link" condid="" as="htl"/&gt;&lt;/mxCell&gt;&lt;mxCell id="cond_55" value="On&amp;#xa;Status&amp;#xa;Change" style="shape=mxgraph.flowchart.decision;strokeColor=#000000;strokeWidth=2;shadow=1;fillColor=#A9C4EB;gradientColor=#D4E1F5;" parent="1" vertex="1"&gt;&lt;mxGeometry x="465" y="280" width="110" height="80" as="geometry"/&gt;&lt;Object type="statuscond" stagekey="55" as="htl"/&gt;&lt;/mxCell&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;</graphxml>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_progress">
+    <Record>
+      <message_failure>Failed</message_failure>
+      <message_working>Ongoing</message_working>
+      <message_complete>Completed</message_complete>
+      <pindex>1</pindex>
+      <description>The change is ongoing</description>
+      <pk_progid>35</pk_progid>
+      <fk_workflow_id>Pre-approved Change</fk_workflow_id>
+      <title>Ongoing</title>
+      <percentage>50</percentage>
+    </Record>
+    <Record>
+      <message_failure>Failed</message_failure>
+      <message_working>Ongoing</message_working>
+      <message_complete>Completed OK</message_complete>
+      <pindex>2</pindex>
+      <description>Completed OK</description>
+      <pk_progid>36</pk_progid>
+      <fk_workflow_id>Pre-approved Change</fk_workflow_id>
+      <title>Completed</title>
+      <percentage>100</percentage>
+    </Record>
+    <Record>
+      <message_failure>Failed</message_failure>
+      <message_working>Ongoing</message_working>
+      <message_complete>Complete</message_complete>
+      <pindex>3</pindex>
+      <description>Failed to complete change</description>
+      <pk_progid>37</pk_progid>
+      <fk_workflow_id>Pre-approved Change</fk_workflow_id>
+      <title>Failed</title>
+      <percentage>100</percentage>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_stage">
+    <Record>
+      <rej_weighting>100</rej_weighting>
+      <auth_weighting>100</auth_weighting>
+      <flg_addcalltasks>1</flg_addcalltasks>
+      <flg_addcallauths>0</flg_addcallauths>
+      <swauthreq_email></swauthreq_email>
+      <authreq_mbox></authreq_mbox>
+      <custauthreq_email></custauthreq_email>
+      <set_tasksok_status>TASKSOK</set_tasksok_status>
+      <set_tasksfail_status>TASKSFAIL</set_tasksfail_status>
+      <set_taskfail_status></set_taskfail_status>
+      <fk_workflow_id>Pre-approved Change</fk_workflow_id>
+      <swdataform></swdataform>
+      <swwordtemplate></swwordtemplate>
+      <flg_seqtasks>1</flg_seqtasks>
+      <flg_hastasks>1</flg_hastasks>
+      <flg_authorisation>0</flg_authorisation>
+      <pk_stage_id>55</pk_stage_id>
+      <title>Implement pre-approved work</title>
+      <description>Please see the tasks created to carry out the work.</description>
+      <flg_update_access>0</flg_update_access>
+      <flg_visible_access>0</flg_visible_access>
+      <set_allauth_status></set_allauth_status>
+      <set_allmixed_status></set_allmixed_status>
+      <set_allrej_status></set_allrej_status>
+      <flg_custmanagerauth>0</flg_custmanagerauth>
+      <set_onrej_status></set_onrej_status>
+      <swdataform_table></swdataform_table>
+      <set_onauth_status></set_onauth_status>
+      <seq>1</seq>
+      <flg_unanimous_auth></flg_unanimous_auth>
+      <flg_disable_manual></flg_disable_manual>
+      <flg_auth_via_email></flg_auth_via_email>
+      <flg_requireci></flg_requireci>
+      <aba_authreq_email></aba_authreq_email>
+      <notif_template></notif_template>
+      <notif_mailbox></notif_mailbox>
+      <notif_email></notif_email>
+      <notif_days></notif_days>
+      <edit_level_reqd></edit_level_reqd>
+      <flg_releaseready></flg_releaseready>
+      <servownauthreq_email></servownauthreq_email>
+      <techownauthreq_email></techownauthreq_email>
+      <ciownauthreq_email></ciownauthreq_email>
+      <flg_enable_change_control></flg_enable_change_control>
+    </Record>
+    <Record>
+      <rej_weighting>100</rej_weighting>
+      <auth_weighting>100</auth_weighting>
+      <flg_addcalltasks>0</flg_addcalltasks>
+      <flg_addcallauths>0</flg_addcallauths>
+      <swauthreq_email></swauthreq_email>
+      <authreq_mbox></authreq_mbox>
+      <custauthreq_email></custauthreq_email>
+      <set_tasksok_status>TASKSOK</set_tasksok_status>
+      <set_tasksfail_status>TASKSFAIL</set_tasksfail_status>
+      <set_taskfail_status></set_taskfail_status>
+      <fk_workflow_id>Pre-approved Change</fk_workflow_id>
+      <swdataform></swdataform>
+      <swwordtemplate></swwordtemplate>
+      <flg_seqtasks>0</flg_seqtasks>
+      <flg_hastasks>0</flg_hastasks>
+      <flg_authorisation>0</flg_authorisation>
+      <pk_stage_id>56</pk_stage_id>
+      <title>Change Completed OK</title>
+      <description>This Change has been completed
+
+All pre-approved work has been carried out.</description>
+      <flg_update_access>0</flg_update_access>
+      <flg_visible_access>0</flg_visible_access>
+      <set_allauth_status></set_allauth_status>
+      <set_allmixed_status></set_allmixed_status>
+      <set_allrej_status></set_allrej_status>
+      <flg_custmanagerauth>0</flg_custmanagerauth>
+      <set_onrej_status></set_onrej_status>
+      <swdataform_table></swdataform_table>
+      <set_onauth_status></set_onauth_status>
+      <seq>2</seq>
+      <flg_unanimous_auth></flg_unanimous_auth>
+      <flg_disable_manual></flg_disable_manual>
+      <flg_auth_via_email></flg_auth_via_email>
+      <flg_requireci></flg_requireci>
+      <aba_authreq_email></aba_authreq_email>
+      <notif_template></notif_template>
+      <notif_mailbox></notif_mailbox>
+      <notif_email></notif_email>
+      <notif_days></notif_days>
+      <edit_level_reqd></edit_level_reqd>
+      <flg_releaseready></flg_releaseready>
+      <servownauthreq_email></servownauthreq_email>
+      <techownauthreq_email></techownauthreq_email>
+      <ciownauthreq_email></ciownauthreq_email>
+      <flg_enable_change_control></flg_enable_change_control>
+    </Record>
+    <Record>
+      <rej_weighting>100</rej_weighting>
+      <auth_weighting>100</auth_weighting>
+      <flg_addcalltasks>0</flg_addcalltasks>
+      <flg_addcallauths>0</flg_addcallauths>
+      <swauthreq_email></swauthreq_email>
+      <authreq_mbox></authreq_mbox>
+      <custauthreq_email></custauthreq_email>
+      <set_tasksok_status>TASKSOK</set_tasksok_status>
+      <set_tasksfail_status>TASKSFAIL</set_tasksfail_status>
+      <set_taskfail_status></set_taskfail_status>
+      <fk_workflow_id>Pre-approved Change</fk_workflow_id>
+      <swdataform></swdataform>
+      <swwordtemplate></swwordtemplate>
+      <flg_seqtasks>0</flg_seqtasks>
+      <flg_hastasks>0</flg_hastasks>
+      <flg_authorisation>0</flg_authorisation>
+      <pk_stage_id>57</pk_stage_id>
+      <title>Change failed or backed out</title>
+      <description>The Change was not completed successfully.</description>
+      <flg_update_access>0</flg_update_access>
+      <flg_visible_access>0</flg_visible_access>
+      <set_allauth_status></set_allauth_status>
+      <set_allmixed_status></set_allmixed_status>
+      <set_allrej_status></set_allrej_status>
+      <flg_custmanagerauth>0</flg_custmanagerauth>
+      <set_onrej_status></set_onrej_status>
+      <swdataform_table></swdataform_table>
+      <set_onauth_status></set_onauth_status>
+      <seq>3</seq>
+      <flg_unanimous_auth></flg_unanimous_auth>
+      <flg_disable_manual></flg_disable_manual>
+      <flg_auth_via_email></flg_auth_via_email>
+      <flg_requireci></flg_requireci>
+      <aba_authreq_email></aba_authreq_email>
+      <notif_template></notif_template>
+      <notif_mailbox></notif_mailbox>
+      <notif_email></notif_email>
+      <notif_days></notif_days>
+      <edit_level_reqd></edit_level_reqd>
+      <flg_releaseready></flg_releaseready>
+      <servownauthreq_email></servownauthreq_email>
+      <techownauthreq_email></techownauthreq_email>
+      <ciownauthreq_email></ciownauthreq_email>
+      <flg_enable_change_control></flg_enable_change_control>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_ctrl_fields"/>
+  <Recordset table="bpm_audit_fields"/>
+  <Recordset table="bpm_stage_auth"/>
+  <Recordset table="bpm_stage_task">
+    <Record>
+      <fk_stage_id>55</fk_stage_id>
+      <fk_workflow_id>Pre-approved Change</fk_workflow_id>
+      <fk_analyst></fk_analyst>
+      <fk_suppgroup>1STLINE</fk_suppgroup>
+      <sla>P2 - 4 Hour Response</sla>
+      <description>Please prepare all CIs in advance of applying the changes</description>
+      <title>Prepare all CIs for Change</title>
+      <pk_auto_id>21</pk_auto_id>
+      <seq>1</seq>
+      <predecessor></predecessor>
+      <predecessor_name></predecessor_name>
+      <h_condition></h_condition>
+      <flg_skip_calc></flg_skip_calc>
+      <budgeted_time></budgeted_time>
+      <probcode></probcode>
+      <flg_enable_change_control></flg_enable_change_control>
+      <schedule_task></schedule_task>
+    </Record>
+    <Record>
+      <fk_stage_id>55</fk_stage_id>
+      <fk_workflow_id>Pre-approved Change</fk_workflow_id>
+      <fk_analyst></fk_analyst>
+      <fk_suppgroup>CHANGE</fk_suppgroup>
+      <sla>P2 - 4 Hour Response</sla>
+      <description>Apply the changes as described in Parent Change request</description>
+      <title>Apply Changes</title>
+      <pk_auto_id>22</pk_auto_id>
+      <seq>2</seq>
+      <predecessor></predecessor>
+      <predecessor_name></predecessor_name>
+      <h_condition></h_condition>
+      <flg_skip_calc></flg_skip_calc>
+      <budgeted_time></budgeted_time>
+      <probcode></probcode>
+      <flg_enable_change_control></flg_enable_change_control>
+      <schedule_task></schedule_task>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_stage_sts"/>
+  <Recordset table="bpm_cond">
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition> '&amp;[new_opencall.bpm_status_id]'='TASKSOK'</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>56</set_stage>
+      <set_workflow>Pre-approved Change</set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>6</set_call_status>
+      <set_status>TASKSOK</set_status>
+      <fk_stage_id>55</fk_stage_id>
+      <fk_workflow_id>Pre-approved Change</fk_workflow_id>
+      <pk_condition_id>66</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>0</flg_runatstart>
+      <title>Tasks Completed</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt>All tasks completed OK</updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Tasks Completed</updatecode>
+      <flg_diaryupdate>1</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>1</updatepublic>
+      <set_progress>0</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new></set_call_sla_new>
+      <flg_remwatch></flg_remwatch>
+      <flg_addwatch></flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile></set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched></flg_copysched>
+      <flg_releaseready></flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition> '&amp;[new_opencall.bpm_status_id]'='TASKSFAIL'</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>57</set_stage>
+      <set_workflow>Pre-approved Change</set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status>TASKSFAIL</set_status>
+      <fk_stage_id>55</fk_stage_id>
+      <fk_workflow_id>Pre-approved Change</fk_workflow_id>
+      <pk_condition_id>67</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>0</flg_runatstart>
+      <title>Tasks NOT completed</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt></updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>0</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>0</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new></set_call_sla_new>
+      <flg_remwatch></flg_remwatch>
+      <flg_addwatch></flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile></set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched></flg_copysched>
+      <flg_releaseready></flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition>1=1</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>0</set_stage>
+      <set_workflow></set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status></set_status>
+      <fk_stage_id>55</fk_stage_id>
+      <fk_workflow_id>Pre-approved Change</fk_workflow_id>
+      <pk_condition_id>68</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>1</flg_runatstart>
+      <title>Start</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt></updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>0</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>35</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new></set_call_sla_new>
+      <flg_remwatch></flg_remwatch>
+      <flg_addwatch></flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile></set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched></flg_copysched>
+      <flg_releaseready></flg_releaseready>
+    </Record>
+    <Record>
+      <run_vpme></run_vpme>
+      <flg_contvpmeonfail>0</flg_contvpmeonfail>
+      <test_condition>1=1</test_condition>
+      <email_others></email_others>
+      <email_analysts></email_analysts>
+      <email_owner>0</email_owner>
+      <email_callcust>0</email_callcust>
+      <email_owners_group>0</email_owners_group>
+      <email_customers></email_customers>
+      <email_template></email_template>
+      <assignto_analyst></assignto_analyst>
+      <assignto_group></assignto_group>
+      <set_call_condition>0</set_call_condition>
+      <set_stage>0</set_stage>
+      <set_workflow></set_workflow>
+      <set_call_sla></set_call_sla>
+      <set_timer>0</set_timer>
+      <remove_timer>0</remove_timer>
+      <fk_timer_id>0</fk_timer_id>
+      <set_call_status>0</set_call_status>
+      <set_status></set_status>
+      <fk_stage_id>56</fk_stage_id>
+      <fk_workflow_id>Pre-approved Change</fk_workflow_id>
+      <pk_condition_id>69</pk_condition_id>
+      <flg_resolvelinkedcalls>0</flg_resolvelinkedcalls>
+      <flg_runatstart>1</flg_runatstart>
+      <title>Start stage</title>
+      <onhold_duration>450</onhold_duration>
+      <email_mailbox></email_mailbox>
+      <onhold_durationhrs>7</onhold_durationhrs>
+      <onhold_durationmins>30</onhold_durationmins>
+      <updatetxt></updatetxt>
+      <updatesource>Business Process Manager</updatesource>
+      <updatecode>Stage Actions</updatecode>
+      <flg_diaryupdate>0</flg_diaryupdate>
+      <email_custmanager>0</email_custmanager>
+      <updatepublic>0</updatepublic>
+      <set_progress>36</set_progress>
+      <set_progress_fail>0</set_progress_fail>
+      <set_call_sla_new></set_call_sla_new>
+      <flg_remwatch></flg_remwatch>
+      <flg_addwatch></flg_addwatch>
+      <remwatchlist></remwatchlist>
+      <addwatchlist></addwatchlist>
+      <set_profile></set_profile>
+      <set_profile_value></set_profile_value>
+      <set_res_profile_value></set_res_profile_value>
+      <flg_copysched></flg_copysched>
+      <flg_releaseready></flg_releaseready>
+    </Record>
+  </Recordset>
+  <Recordset table="bpm_cond_vpme"/>
+</workflow>

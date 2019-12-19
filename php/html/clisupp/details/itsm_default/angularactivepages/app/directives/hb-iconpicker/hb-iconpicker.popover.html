@@ -1,0 +1,21 @@
+<div class="hb-iconpicker hb-iconpicker-exclude" ng-style="{'min-width': vm.holderWidth,'max-width': vm.holderWidth}">
+    <uib-pager
+        ng-if="vm.totalPages > 1"
+        total-items="vm.totalItems"
+        items-per-page="vm.itemsPerPage"
+        ng-model="vm.currentPageNumber"
+        previous-text="{{vm.prevPageString}}"
+        next-text="{{vm.nextPageString}}"
+        template-url="app/directives/hb-iconpicker/hb-iconpicker.pager.html?rel=477">
+    </uib-pager>
+    <input hb-focus-me="true" type="text" ng-model="vm.filter" ng-change="vm.filterIcons()" placeholder="{{vm.filterString}}" class="form-control hb-iconpicker-exclude">
+    <div ng-repeat="icon in vm.filteredIcons | limitTo:vm.itemsPerPage:(vm.currentPageNumber-1)*vm.itemsPerPage" class="icon-container hb-iconpicker-exclude" ng-class="{active: ngModel == icon.prefix+icon.icon}">
+        <a ng-click="vm.setIcon(icon.prefix+icon.icon)"><i class="fa {{icon.prefix}}{{icon.icon}} hb-iconpicker-exclude"></i></a>
+    </div>
+    <p ng-if="vm.filteredIcons.length === 0" class="marg-t-10 text-center text-strong">
+        <hb-translate key="user.iconPicker.noIcons" default="No Icons Found"></hb-translate>
+    </p>
+    <div class="text-center hb-iconpicker-exclude">
+        {{vm.pageString}} {{vm.currentPageNumber}}/{{vm.totalPages}}
+    </div>
+</div>

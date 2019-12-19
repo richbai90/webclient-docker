@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espSqlTreeBrowsers>
+	<sqlTreeBrowser>
+		<name>Customers</name>
+		<table>userdb</table>
+		<imageList>Helpdesk Icons</imageList>
+		<rootGroupItems>
+			<rootGroupItem>
+				<name>Entire Customer Database</name>
+				<table>userdb</table>
+				<columns>surname, firstname, keysearch</columns>
+				<imageList>Helpdesk Icons</imageList>
+				<image>2</image>
+			</rootGroupItem>
+			<rootGroupItem>
+				<name>Customers by Organisation site</name>
+				<table>userdb</table>
+				<columns>companyname, site, surname, firstname, keysearch</columns>
+				<imageList>Helpdesk Icons</imageList>
+				<image>12</image>
+			</rootGroupItem>
+			<rootGroupItem>
+				<name>Customers by Organisation charge centre</name>
+				<table>userdb</table>
+				<columns>companyname, costcenter, surname, keysearch</columns>
+				<imageList>Helpdesk Icons</imageList>
+				<image>65</image>
+			</rootGroupItem>
+		</rootGroupItems>
+	</sqlTreeBrowser>
+	<sqlTreeBrowser>
+		<name>Assets</name>
+		<table>equipmnt</table>
+		<imageList>Generic Types</imageList>
+		<rootGroupItems>
+			<rootGroupItem>
+				<name>Entire Asset Database</name>
+				<table>equipmnt</table>
+				<columns>generic, manufactur, model, equipid</columns>
+				<imageList>Generic Types</imageList>
+				<image>12</image>
+			</rootGroupItem>
+			<rootGroupItem>
+				<name>Assets by Organisation site</name>
+				<table>equipmnt</table>
+				<columns>companyname, site, generic, manufactur, model, equipid</columns>
+				<imageList>Generic Types</imageList>
+				<image>1</image>
+			</rootGroupItem>
+		</rootGroupItems>
+	</sqlTreeBrowser>
+	<sqlTreeBrowser>
+		<name>Organisations</name>
+		<table>company</table>
+		<imageList>Helpdesk Icons</imageList>
+		<rootGroupItems>
+			<rootGroupItem>
+				<name>Entire Organisation Database</name>
+				<table>company</table>
+				<columns>companyname, pk_company_id</columns>
+				<imageList>Helpdesk Icons</imageList>
+				<image>12</image>
+			</rootGroupItem>
+			<rootGroupItem>
+				<name>Organisations by country</name>
+				<table>company</table>
+				<columns>country, county, companyname, pk_company_id</columns>
+				<imageList>Helpdesk Icons</imageList>
+				<image>15</image>
+			</rootGroupItem>
+			<rootGroupItem>
+				<name>Organisations by sector</name>
+				<table>company</table>
+				<columns>fk_company_type, companyname, pk_company_id</columns>
+				<imageList>Helpdesk Icons</imageList>
+				<image>5</image>
+			</rootGroupItem>
+		</rootGroupItems>
+	</sqlTreeBrowser>
+</espSqlTreeBrowsers>

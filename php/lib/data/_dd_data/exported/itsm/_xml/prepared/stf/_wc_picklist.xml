@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>_wc_picklist</name>
+			<title>Choose</title>
+			<description>webclient picklist form for lcf</description>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>false</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var _selected_picklistkey = "";]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>555</width>
+				<height>231</height>
+				<backgroundColor>#d4d0c8</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>sl_picklist</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>false</verticalGridLines>
+							<horizontalGridLines>false</horizontalGridLines>
+							<autoLoad>false</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+					</general>
+					<appearance>
+						<index>0</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>3-D Sunken</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>9</top>
+							<left>6</left>
+							<right>478</right>
+							<bottom>224</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>18</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#cae1ee</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<highlightStyle>0</highlightStyle>
+							<borderColor>#d3c9b6</borderColor>
+							<sqlSource>swdata</sqlSource>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_prop</name>
+						<type>EventButton</type>
+					</general>
+					<appearance>
+						<index>1</index>
+						<caption>Properties</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>9</top>
+							<left>488</left>
+							<right>549</right>
+							<bottom>36</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_new</name>
+						<type>EventButton</type>
+					</general>
+					<appearance>
+						<index>2</index>
+						<caption>New</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>488</left>
+							<right>549</right>
+							<bottom>67</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>true</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_select</name>
+						<type>EventButton</type>
+					</general>
+					<appearance>
+						<index>3</index>
+						<caption>Select</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>164</top>
+							<left>488</left>
+							<right>549</right>
+							<bottom>191</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_cancel</name>
+						<type>EventButton</type>
+					</general>
+					<appearance>
+						<index>4</index>
+						<caption>Cancel</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>196</top>
+							<left>488</left>
+							<right>549</right>
+							<bottom>223</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded(bDataReloaded)
+{
+	if(IsObjectDefined("app._xmlPickLists")==false)return;
+
+	//-- get picklist details from xml
+	if(app._xmlPickLists==null)
+	{
+		MessageBox("The picklist definition ("+ top._primary_key +") does not exist. Please contact your Administrator");
+		_swdoc.CloseForm();
+		return;
+	}
+
+	var xmlPL = null;
+	var arrPickLists = app._xmlPickLists.getElementsByTagName('pickListForm');
+	for(var x=0;x < arrPickLists.length;x++)
+	{
+		var strName = app.xmlNodeTextByTag(arrPickLists[x],"name");
+		if(strName==top._primary_key)
+		{
+			xmlPL = arrPickLists[x];
+			break;
+		}
+	}
+
+	//-- set sqllist (sl_picklist)
+	if(xmlPL!=null)
+	{
+		//-- 
+		_swdoc.SetTitle(app.xmlNodeTextByTag(xmlPL,"title"));
+
+		//-- set sqltable properties
+		sl_picklist.table = app.xmlNodeTextByTag(xmlPL,"table");
+		sl_picklist.editRecordForm = app.xmlNodeTextByTag(xmlPL,"propertiesForm");
+		sl_picklist.addRecordForm = app.xmlNodeTextByTag(xmlPL,"newRecordForm");	
+		
+		//-- get columns and draw out
+		var strColumnXML = "";
+		var arrColumns = app.xmlNodeTextByTag(xmlPL,"visibleColumns").split(",");
+		sl_picklist._create_bespoke_xmlcols(arrColumns);		
+
+
+		//-- set filter	
+		var strFilter = _swdoc.GetArg('_filter');
+		if(strFilter==undefined || strFilter=="")
+		{
+			var strFilterCol = _swdoc.GetArg('_resolvecolumn');
+			var strFilterValue = _swdoc.GetArg('_resolvevalue');
+			if(app.dd.tables[sl_picklist.table].columns[strFilterCol].IsNumeric())
+			{
+				if(isNaN(strFilterValue))
+				{
+					MessageBox('The column you are resolving agaisnt is numeric. Please enter a numeric value');
+					_swdoc.CloseForm();
+					return;
+				}
+				
+				sl_picklist._filter(strFilterCol + '=' + strFilterValue);
+			}
+			else
+			{
+				sl_picklist._filter(strFilterCol + " like '%" + app.pfs(strFilterValue) + "%'");
+			}
+		}
+		else
+		{
+			sl_picklist._filter(strFilter);
+		}
+	}
+
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_select_OnPressed</name>
+						<code>
+							<![CDATA[btn_select_OnPressed()
+{
+    var sCol = dd.tables[sl_picklist.table].PrimaryKey;
+	var keyValue = sl_picklist.GetItemTextRaw(sl_picklist.curSel, sCol)
+	
+	if(keyValue!="")
+	{
+		_swdoc._selected_picklistkey = keyValue;
+		_swdoc.CloseForm();
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_prop_OnPressed</name>
+						<code>
+							<![CDATA[btn_prop_OnPressed()
+{
+	sl_picklist.EditRecord(sl_picklist.curSel);
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_cancel_OnPressed</name>
+						<code>
+							<![CDATA[btn_cancel_OnPressed()
+{
+	_swdoc._selected_picklistkey = "";
+	_swdoc.CloseForm()
+	
+
+
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

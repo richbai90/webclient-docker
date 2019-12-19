@@ -1,0 +1,132 @@
+<html>
+<title>Webclient Debugger</title>
+<style>
+	body
+	{
+		background-color:#B1D3FF;
+	}
+	table
+	{
+		background-color:#ffffff;
+	}
+	td
+	{
+		font-size:12px;
+		font-family:arial;
+	}
+</style>
+<script>
+	function get_debug()
+	{
+		var indentCount=0;
+		var arrStarted = new Array();
+		var arrLog = new Array();
+		arrLog.push("<table border=1 width='100%'><tr><td><b>PID</b></td><td><b>Time</b></td><td><b>Type</b></td><td width='100%'><b>Information</b></td></tr>");
+
+		try
+		{
+			var i = opener._performanceLogPositions.length;			
+		}
+		catch (e)
+		{
+			return;
+		}
+
+		var arrPIDS = new Array();
+		for(var x=0;x<i;x++)
+		{
+			var strKey = opener._performanceLogPositions[x];
+			var oEntry = opener._performanceLog[strKey];
+			if(oEntry)
+			{
+				if(arrStarted[strKey])
+				{
+					//-- end of entry
+					indentCount--;
+					arrStarted[strKey] = false;
+				}
+				else
+				{
+					opener._performanceLog[strKey].pid = x;
+					var bTime = oEntry.browsertimer;
+					var nTime = oEntry.networktimer;
+					var  strDisplay = (indentCount==0)?"":"style='display:none;'";
+					var strMsg = "<tr ic='"+indentCount+"' "+strDisplay+" ondblclick='_expand_children(this);'><td>" + x + "</td><td noWrap>" + oEntry.time + "ms<br>[S:"+oEntry.phptimer+"] [N:"+nTime+"] [B:"+bTime+"]</td><td>" + oEntry.type + "</td><td>" + oEntry.msg + "</td></tr>";
+
+					arrStarted[strKey] = true;
+					arrLog.push(strMsg);
+					indentCount++;
+				}
+			}
+		}
+		arrLog.push("</table>");
+		document.getElementById("tblDebug").innerHTML = arrLog.join("");
+	}
+
+	function _expand_children(aRow)
+	{
+		var iExpanded = aRow.getAttribute("expanded");
+		if(iExpanded=="1")
+		{
+			aRow.setAttribute("expanded","0");
+			var expandIC = new Number(aRow.getAttribute("ic"));
+			while(1==1)
+			{
+				if(aRow==null || aRow.nextSibling==null)break;
+				var nextIC = new Number(aRow.nextSibling.getAttribute("ic"));
+				if(nextIC>expandIC)	
+				{
+					aRow.nextSibling.setAttribute("expanded","0");
+					aRow.nextSibling.style.display="none";
+				}
+				else if(nextIC<=expandIC) break;
+				aRow =	aRow.nextSibling;
+			}
+		}
+		else
+		{
+			var mRow = aRow;
+			var expandIC = new Number(aRow.getAttribute("ic"));
+			var checkIC = expandIC+1;
+			var boolExp = false;
+			while(1==1)
+			{
+				if(aRow==null || aRow.nextSibling==null)break;
+				var nextIC = new Number(aRow.nextSibling.getAttribute("ic"));
+				if(nextIC==checkIC)	
+				{
+					boolExp=true;
+					aRow.nextSibling.style.display="block";
+					var nextNextRow = aRow.nextSibling.nextSibling;
+					if(nextNextRow!=null && (nextNextRow.getAttribute("ic")>nextIC))
+					{
+						aRow.nextSibling.style.backgroundColor='#FFFFD4';
+					}
+					aRow.nextSibling.childNodes[0].style.paddingLeft = (15*checkIC) + "px";
+				}
+				else if(nextIC<checkIC) break;
+				aRow =	aRow.nextSibling;
+			}
+			if(boolExp)
+			{
+				mRow.setAttribute("expanded","1");
+				mRow.style.backgroundColor='#FFFFD4';//'#E3EFFF';
+			}
+		}
+	}
+
+	function init()
+	{
+		get_debug();
+	}
+	function clear_log()
+	{
+		opener.debugclear();
+		get_debug();
+	}
+</script>
+<body onload="init()" onunload="opener._dwin=null;">
+<button onclick="clear_log()">Clear Log</button> S: Server Side Processing, N: Network Request, B: Browser Processing
+<div id='tblDebug'></div>
+</body>
+</html>

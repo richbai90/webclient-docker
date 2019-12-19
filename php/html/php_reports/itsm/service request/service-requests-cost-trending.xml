@@ -1,0 +1,44 @@
+<report title="Service Request Cost Trending" reportstyle="trend" dsn="swdata" uid="" pwd="" singlelevel="0">
+	<columns>
+		<aggregate dbname="request_cost" dbtable="opencall" aggregate="1" aggFunction="sum" graph="1" level="1">Total Cost</aggregate>
+		<column dbname="callref" dbtable="opencall" conversion="callref" level="2">Call Reference</column>
+		<column dbname="logdatex" dbtable="opencall" conversion="customerdate" level="2">Log Date</column>
+		<column dbname="suppgroup" dbtable="opencall" conversion="suppgroup" level="2">Support Group</column>
+		<column dbname="owner" dbtable="opencall" conversion="owner" level="2">Owner</column>
+		<column dbname="probcode" dbtable="opencall" conversion="probcode" level="2">Profile Name</column>
+	</columns>
+	<tables>
+		<table name="opencall" type="master"/>
+	</tables>
+	<criteria>
+		<userinput type="daterange" binding="opencall.resolve_datex" int="1" op="=">
+			<prompt>Requests resolved on and between</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.itsm_fk_service" dsn="swdata" dbtable="config_itemi" keycol="pk_auto_id" txtcol="description" filter=" where ck_config_type='ME->SERVICE' and isactivebaseline='Yes'" int="0" op="=">
+			<prompt>Service</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.fk_company_id" dsn="swdata" dbtable="opencall" keycol="fk_company_id" txtcol="companyname" filter=" where fk_company_id IS NOT NULL  and fk_company_id &lt;&gt;'' group by opencall.fk_company_id,opencall.companyname" int="0" op="=">
+			<prompt>Organisation</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.site" dsn="swdata" dbtable="site" keycol="site_name" txtcol="site_name" filter="" int="0" op="=">
+			<prompt>Site</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.fk_dept_code" dsn="swdata" dbtable="department" keycol="pk_dept_code" txtcol="dept_name" filter="" int="0" op="=">
+			<prompt>Department</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.costcenter" dsn="swdata" dbtable="costcent" keycol="costcenter" txtcol="costcenter" filter="" int="0" op="=">
+			<prompt>Charge Centre</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.suppgroup" dsn="swdata" dbtable="opencall" keycol="suppgroup" txtcol="suppgroup" filter=" group by opencall.suppgroup"  int="0" op="=">
+			<prompt>Support Group</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.owner" dsn="swdata" dbtable="opencall" keycol="owner" txtcol="owner" filter=" where opencall.owner IS NOT NULL and opencall.owner &lt;&gt;''  group by opencall.owner   " int="0" op="=">
+			<prompt>Analyst</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.probcode"  dsn="swdata" dbtable="pcdesc" keycol="code" txtcol="info" filter="" int="0" op="=">
+			<prompt>Profile Name</prompt>
+		</userinput>
+		<static>opencall.callclass = 'Service Request'  AND opencall.appcode IN (![$GLOBALS['datasetfilterlist']]!)</static>
+	</criteria>
+	<trend dbname="resolve_datex" dbtable="opencall"/>
+</report>

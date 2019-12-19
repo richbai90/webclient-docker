@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>bpm_add_ocauth</name>
+			<title>Stage Authoriser</title>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>true</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>bpm_oc_auth</name>
+				<type>Main Details Table</type>
+				<flags>2</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var strManager = "";
+
+function oAuth()
+{
+	return _swdoc.bpm_oc_auth;
+}
+
+function MF()
+{
+	return _swdoc.mainform;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnDataSaved</name>
+					<code>
+						<![CDATA[OnDataSaved()
+{
+	//-- send notification to authoriser (if analsyt)
+	if (_swdoc.oAuth().authortype=="Analyst")
+	{
+		var strCallref = app.g.callref_pad(_swdoc.GetArg('fk_callref'));
+		var xmlmc = new XmlMethodCall;
+	
+		// Set up our input parameters
+		xmlmc.SetValue("in_to", _swdoc.oAuth().fk_auth_id);
+		xmlmc.SetValue("in_subject", "Request Authorisation Required For " + strCallref);
+		xmlmc.SetValue("in_text", "The request " + strCallref + " requires your authorisation. Please process according to your business rules");
+	
+		// Invoke the method
+		if(xmlmc.Invoke("VPME", "genericSendSwNotification"))
+		{
+			
+		}
+		else
+		{
+			MessageBox(xmlmc.GetLastError());
+		}
+	}
+	
+	var xmlmc = new XmlMethodCall;
+
+	// Set up our input parameters
+	xmlmc.SetValue("callref", _swdoc.GetArg('fk_callref'));
+	xmlmc.SetValue("authid", _swdoc.oAuth().fk_auth_id);
+	xmlmc.SetValue("bpm_stage_id", _swdoc.GetArg('fk_stage_id'));
+	xmlmc.SetValue("authtype", _swdoc.oAuth().authortype);
+
+	// Invoke the method
+	if(xmlmc.Invoke("VPME", "bpmEmailOnFlyAuthoriser"))
+	{
+		
+	}
+	else
+	{
+		MessageBox(xmlmc.GetLastError());
+	}
+
+	//-- update call to show that waiting auth
+	app.g.update_callvalue(_swdoc.GetArg('fk_callref'),"1","bpm_waitingauth",true);
+
+
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>371</width>
+				<height>105</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>0</index>
+						<caption>Authoriser</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>50</top>
+							<left>16</left>
+							<right>126</right>
+							<bottom>68</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_oc_auth.fk_auth_id</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>1</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>50</top>
+							<left>130</left>
+							<right>342</right>
+							<bottom>68</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_oc_auth.fk_auth_id</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>2</index>
+						<caption>Authoriser Type</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>28</top>
+							<left>16</left>
+							<right>126</right>
+							<bottom>46</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_oc_auth.authortype</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_authtype</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>3</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>28</top>
+							<left>130</left>
+							<right>342</right>
+							<bottom>46</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_oc_auth.authortype</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<defaultValue>Analyst</defaultValue>
+							<listItems>Analyst|Customer|</listItems>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_search</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>4</index>
+						<caption>...</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>48</top>
+							<left>324</left>
+							<right>342</right>
+							<bottom>68</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Label1</name>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>5</index>
+						<caption>Weighting</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>73</top>
+							<left>71</left>
+							<right>126</right>
+							<bottom>89</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_oc_auth.weighting</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<controlGroup>authWeighting</controlGroup>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_weighting</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>6</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>72</top>
+							<left>130</left>
+							<right>342</right>
+							<bottom>90</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_oc_auth.weighting</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Numeric</textInputFormat>
+						<properties>
+							<defaultValue>50</defaultValue>
+							<image>#eeeeee</image>
+							<borderColor>#c0c0c0</borderColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<controlGroup>authWeighting</controlGroup>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>btn_search_OnPressed</name>
+						<code>
+							<![CDATA[btn_search_OnPressed()
+{
+	switch(_swdoc.oAuth().authortype)
+	{
+		case "Analyst":
+			//-- get analyst
+			app.g.pick_analyst("Select an Authoriser", function(oAnalyst)
+			{
+				if	(oAnalyst)
+				{
+					_swdoc.oAuth().fk_auth_id=oAnalyst.id;
+					_swdoc.oAuth().authorname=oAnalyst.name;
+					_swdoc.UpdateFormFromData();
+				}
+			});
+			break;
+		case "Customer":
+			//-- get customer
+			app.g.search_for("customers", false, "", function(oRes)
+			{
+				if(oRes)
+				{
+					arrKeys = oRes.selectedkeys.split(",");
+					arrNames = oRes.selectedother.split(",");
+					_swdoc.oAuth().fk_auth_id=arrKeys[0];
+					_swdoc.oAuth().authorname=arrNames[0];
+					_swdoc.UpdateFormFromData();
+				}
+			});
+			break;	
+		case "Licensed Approver":
+			//-- get customer
+			app.g.popup("TbLicensedApprover", "s=1",function(oRes){
+				if(oRes)
+				{
+					if (""!=oRes.document.selectedkey){
+						_swdoc.oAuth().fk_auth_id=oRes.document.selectedkey;
+						_swdoc.oAuth().authorname=oRes.document.selectedfirstname + " " + oRes.document.selectedsurname;
+						if (" " == _swdoc.oAuth().authorname) _swdoc.oAuth().authorname = oRes.document.selectedkey;
+								_swdoc.UpdateFormFromData();
+					}
+				}
+			});			
+			break;				
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded()
+{
+	//-- pop defaults
+	if(_swdoc.oAuth().pk_auth_id<1)
+	{
+		_swdoc.oAuth().flg_status= "0";
+		_swdoc.oAuth().flg_isonfly= 1;
+		
+		_swdoc.oAuth().status= "Pending authorisation";
+		app.g.popuplate_form_fromargs("bpm_oc_auth", _swdoc, false, true);
+	}
+	
+	var authWeighting = _swdoc.GetArg("unanimous");
+	if(authWeighting==1)
+	{
+		app._evi(_swdoc.MF().authWeighting, false);
+	}
+	
+	var strPickList = "Analyst|Customer";
+	_swdoc.strManager = _swdoc.GetArg("fk_manager");
+	if(_swdoc.strManager!="")
+	{
+		strPickList += "|Customer's Manager";
+	}
+	
+	var h = app.g.submit_php("php/itsm/license_check.php", false);
+	var t = h.indexOf("licenses_in_use");
+	var licensed_for = h.substring(0,t);
+	var lf = parseInt(licensed_for.replace(/\D/g,""));
+	if(lf>0)
+	{
+		strPickList += "|Licensed Approver";
+	}
+	mainform.fld_authtype.pickList = strPickList;
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_authtype_OnValueChanged</name>
+						<code>
+							<![CDATA[fld_authtype_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	if(strValue=="Customer's Manager")
+	{
+		_swdoc.oAuth().fk_auth_id=_swdoc.strManager;
+		var oManager = app.g.get_record("userdb", _swdoc.oAuth().fk_auth_id);
+		_swdoc.oAuth().authorname=oManager.fullname;
+		app._een(mainform.btn_search,false);	
+	}
+	else
+	{
+		_swdoc.oAuth().fk_auth_id="";
+		_swdoc.oAuth().authorname="";	
+		app._een(mainform.btn_search,true);	
+	}
+	_swdoc.UpdateFormFromData();
+
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

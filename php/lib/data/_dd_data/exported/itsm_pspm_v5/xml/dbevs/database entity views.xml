@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espDbevs>
+	<dbev>
+		<name>Customers</name>
+		<icon>7</icon>
+		<table>userdb</table>
+		<treeBrowser>Customers</treeBrowser>
+		<searchTitle>Search for Customers</searchTitle>
+		<searchColumns>keysearch, firstname, surname, email, companyname, costcenter, site, postcode, telext</searchColumns>
+		<searchResultColumns>keysearch, firstname, surname, email, costcenter, postcode, site, telext</searchResultColumns>
+		<maxSearchResults>100</maxSearchResults>
+		<searchOptions>1</searchOptions>
+		<html>true</html>
+		<form>false</form>
+		<version>0</version>
+		<formName>Form.TfCustomer</formName>
+	</dbev>
+	<dbev>
+		<name>Organisations</name>
+		<icon>0</icon>
+		<table>company</table>
+		<treeBrowser>Organisations</treeBrowser>
+		<searchTitle>Search For Organisations</searchTitle>
+		<searchColumns>pk_company_id, companyname, address_1, address_2, town, county, postcode, country, fk_accountmanager_id, fk_supportauthoriser_id, fk_company_type, fk_industry_type</searchColumns>
+		<searchResultColumns>pk_company_id, companyname, address_1, address_2, address_3, town, county, postcode, country, telephone, fax, www_address, fk_accountmanager_id, fk_supportauthoriser_id, fk_company_type, fk_industry_type, fk_company_id</searchResultColumns>
+		<maxSearchResults>100</maxSearchResults>
+		<searchOptions>0</searchOptions>
+		<html>false</html>
+		<form>false</form>
+		<version>0</version>
+		<formName>Form.TfCompany</formName>
+	</dbev>
+	<dbev>
+		<name>Configuration Database</name>
+		<icon>0</icon>
+		<table>config_itemi</table>
+		<treeBrowser>Configuration Items</treeBrowser>
+		<searchTitle>Configuration Database</searchTitle>
+		<searchColumns>ck_config_item, ck_config_type, cmdb_status, companyname, fk_cost_center, fk_impact_level, fk_urgency_level, fk_sla, isactive, isactivebaseline, isauthorised</searchColumns>
+		<searchResultColumns>ck_config_item, ck_config_type, description, cmdb_status, fk_status_level, fk_cost_center, fk_impact_level, fk_urgency_level, fk_sla, isactive, isactivebaseline, isauthorised, pk_auto_id</searchResultColumns>
+		<maxSearchResults>100</maxSearchResults>
+		<searchOptions>0</searchOptions>
+		<html>false</html>
+		<form>false</form>
+		<version>0</version>
+		<formName>Form.cmdb_default_item</formName>
+		<filter>isactivebaseline=&apos;Yes&apos; and ck_config_type not like &apos;ME-&gt;%&apos;</filter>
+	</dbev>
+</espDbevs>

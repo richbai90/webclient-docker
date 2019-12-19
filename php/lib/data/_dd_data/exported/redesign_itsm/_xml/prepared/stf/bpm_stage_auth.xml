@@ -1,0 +1,971 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>bpm_stage_auth</name>
+			<title>Stage Authoriser</title>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>true</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>bpm_stage_auth</name>
+				<type>Main Details Table</type>
+				<flags>2</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var _swdoc = (IsObjectDefined("_bHtmlWebClient"))?top:_swdoc;
+
+function oAuth()
+{
+	return _swdoc.bpm_stage_auth;
+}
+
+function MF()
+{
+	return _swdoc.mainform;
+}
+
+function enable_fields(strValue)
+{
+	if(strValue=="Customer's Manager")
+	{
+		app._een(_swdoc.MF().btn_search,false);	
+	}
+	else if(strValue=="Customer")
+	{
+		app._een(_swdoc.MF().btn_search,false);	
+	}
+	else if (strValue=="Affected Business Areas")
+	{
+		app._een(_swdoc.MF().btn_search,false);	
+	}
+	else
+	{
+		app._een(_swdoc.MF().btn_search,true);	
+	}
+}
+
+function get_callclass()
+{
+	var callclass = "";
+	var oParams = {};
+	oParams.wf_id = _swdoc.GetArg("fk_workflow_id");
+	var oRS = app.g.get_sqrecordset("general/get_bpm_callclass",oParams);
+	
+	while(oRS.Fetch())
+	{
+		callclass = app.g.get_field(oRS, "CALLCLASS");
+	}
+	return callclass;
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>371</width>
+				<height>234</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>0</index>
+						<caption>Authoriser</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>36</top>
+							<left>6</left>
+							<right>116</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_stage_auth.authorname</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>1</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>36</top>
+							<left>120</left>
+							<right>332</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_stage_auth.authorname</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>2</index>
+						<caption>Authoriser Type</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>14</top>
+							<left>6</left>
+							<right>116</right>
+							<bottom>32</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_stage_auth.authortype</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_authtype</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>3</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>14</top>
+							<left>120</left>
+							<right>332</right>
+							<bottom>32</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_stage_auth.authortype</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<defaultValue>Analyst</defaultValue>
+							<listItems>Analyst|Customer|Customer&apos;s Manager|</listItems>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_search</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>4</index>
+						<caption>...</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>34</top>
+							<left>314</left>
+							<right>332</right>
+							<bottom>54</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>5</index>
+						<caption>Weighting</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>59</top>
+							<left>6</left>
+							<right>116</right>
+							<bottom>77</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_stage_auth.weighting</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lb_weighting</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>6</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>59</top>
+							<left>120</left>
+							<right>332</right>
+							<bottom>77</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_stage_auth.weighting</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Numeric</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<defaultValue>25</defaultValue>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_aba_notes2</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>7</index>
+						<caption>The allocated weighting for all Affected Business Areas will be shared between each Affected Business Area.</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Center</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>135</top>
+							<left>19</left>
+							<right>356</right>
+							<bottom>165</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>true</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_aba_notes3</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>8</index>
+						<caption>The result will be rounded up to the nearest whole number.</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Center</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>167</top>
+							<left>19</left>
+							<right>356</right>
+							<bottom>185</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>true</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_aba_notes4</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>9</index>
+						<caption>For example; if the overall allocated weighting is 25 and there are 4 Affected Business Areas against the Request, a weighting of 7 will be allocated to each Affected Business Area.</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Center</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>185</top>
+							<left>19</left>
+							<right>356</right>
+							<bottom>227</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>true</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect1</name>
+						<type>Rectange</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>10</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#c0c0c0</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>92</top>
+							<left>11</left>
+							<right>363</right>
+							<bottom>234</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_aba_notes1</name>
+						<type>Text</type>
+					</general>
+					<appearance>
+						<index>11</index>
+						<caption>Important Note for Affected Business Areas</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Center</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>85</top>
+							<left>19</left>
+							<right>243</right>
+							<bottom>103</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>true</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_aba_notes5</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>12</index>
+						<caption>Authorisation requests from Affected Business Areas are only available within Change Requests</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Center</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>104</top>
+							<left>19</left>
+							<right>356</right>
+							<bottom>134</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>true</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>btn_search_OnPressed</name>
+						<code>
+							<![CDATA[btn_search_OnPressed()
+{
+	switch(_swdoc.oAuth().authortype)
+	{
+		case "Analyst":
+			//-- get analyst
+			app.g.pick_analyst("Select an Authoriser", function(oAnalyst)
+			{
+				if(oAnalyst)
+				{
+					_swdoc.oAuth().fk_auth_id=oAnalyst.id;
+					_swdoc.oAuth().authorname=oAnalyst.name;
+				}
+				_swdoc.UpdateFormFromData();
+			});
+			break;
+		case "Customer":
+			//-- get customer
+			app.g.search_for("customers", false, "", function(oRes)
+			{
+				if(oRes)
+				{
+					_swdoc.oAuth().fk_auth_id=oRes.selectedkeys;
+					_swdoc.oAuth().authorname=oRes.selectedtext;
+				}
+				_swdoc.UpdateFormFromData();
+			});
+			break;			
+		case "Customer's Manager":
+			//-- get customer
+			_swdoc.oAuth().fk_auth_id="CUSTMGR";
+			_swdoc.oAuth().authorname="Customer's Manager";
+			_swdoc.UpdateFormFromData();
+			break;	
+		case "Licensed Approver":
+			//-- get customer
+			app.g.popup("TbLicensedApprover", "s=1",function(oRes){
+				if(oRes)
+				{
+					if (""!=oRes.document.selectedkey){
+						_swdoc.oAuth().fk_auth_id=oRes.document.selectedkey;
+						_swdoc.oAuth().authorname=oRes.document.selectedfirstname + " " + oRes.document.selectedsurname;
+						if (" " == _swdoc.oAuth().authorname) _swdoc.oAuth().authorname = oRes.document.selectedkey;
+								_swdoc.UpdateFormFromData();
+					}
+				}
+			});			
+			break;		
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded()
+{
+	//-- pop defaults
+
+	$strMgr = "|Customer's Manager";
+	var intMgr = _swdoc.GetArg("CUSTMGR");
+	if(intMgr>-1)
+	{
+		$strMgr = "";
+		_swdoc.MF().lb_authtype.pickList = "Analyst|Customer";
+	}
+	$strCust = "|Customer";
+	var intCust = _swdoc.GetArg("CUSTOMER");
+	if(intCust>-1)
+	{
+		$strCust = "";
+	}
+	
+	// DTH: Catering for Affected Business Areas. Can only include one entry; this will request authorisation from all Affected Buseiness Areas
+	var callclass = _swdoc.get_callclass();
+	$strBusArea = "";
+	if(callclass=="Change Request" || callclass=="Change Proposal")
+	{
+		$strBusArea = "|Affected Business Areas";
+		var intBusArea = _swdoc.GetArg("BUSAREA");
+		if(intBusArea>-1)
+		{
+			$strBusArea = "";
+		}
+	}
+
+	$strServOwn = "|Service Owner";
+	var intBusArea = _swdoc.GetArg("SERVOWN");
+	if(intBusArea>-1)
+	{
+		$strServOwn = "";
+	}
+	
+	$strTechOwn = "|Technical Owner";
+	var intBusArea = _swdoc.GetArg("TECHOWN");
+	if(intBusArea>-1)
+	{
+		$strTechOwn = "";
+	}
+
+	$strCIOwn = "|Configuration Item Owner";
+	var intBusArea = _swdoc.GetArg("CIOWN");
+	if(intBusArea>-1)
+	{
+		$strCIOwn = "";
+	}
+		
+	$strLicensedApprover = "|Licensed Approver";
+	var h = app.g.submit_php("php/itsm/license_check.php", false);
+	var t = h.indexOf("licenses_in_use");
+	var licensed_for = h.substring(0,t);
+	var lf = parseInt(licensed_for.replace(/\D/g,""));
+	if(lf<1)
+	{
+		$strLicensedApprover = "";
+	}
+
+		
+	_swdoc.MF().lb_authtype.pickList = "Analyst"+$strMgr+$strCust+$strBusArea+$strServOwn+$strTechOwn+$strCIOwn+$strLicensedApprover+"|Portfolio - Business Approver|Portfolio - COTR Approver|Portfolio - ISSM Approver";
+
+	//-- NWJ - As requested by gerry we only support analyst authorisation
+	//_een(lb_authtype, false);
+	if(_swdoc.oAuth().pk_auto_id<1)
+	{
+		app.g.popuplate_form_fromargs("bpm_stage_auth", _swdoc, false, true);
+	}
+	_swdoc.enable_fields(bpm_stage_auth.authortype);
+	_swdoc.UpdateFormFromData();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>lb_authtype_OnValueChanged</name>
+						<code>
+							<![CDATA[lb_authtype_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	if(strValue=="Customer's Manager")
+	{
+		_swdoc.oAuth().fk_auth_id="CUSTMGR";
+		_swdoc.oAuth().authorname="<Pending Customer Assignment>";
+		app._een(mainform.btn_search,false);	
+	}
+	else if(strValue=="Customer")
+	{
+		_swdoc.oAuth().fk_auth_id="CUSTOMER";
+		_swdoc.oAuth().authorname="<Pending Customer Assignment>";
+		app._een(mainform.btn_search,false);	
+	}
+	else if (strValue=="Affected Business Areas")
+	{
+		_swdoc.oAuth().fk_auth_id="BUSAREA";
+		_swdoc.oAuth().authorname="<Pending Affected Business Area Assignment>";
+		app._een(mainform.btn_search,false);	
+	}
+	//SG F0112155
+	else if (strValue=="Service Owner")
+	{
+		_swdoc.oAuth().fk_auth_id="SERVOWN";
+		_swdoc.oAuth().authorname="<Pending Service Association>";
+		app._een(mainform.btn_search,false);	
+	}
+	else if (strValue=="Technical Owner")
+	{
+		_swdoc.oAuth().fk_auth_id="TECHOWN";
+		_swdoc.oAuth().authorname="<Pending Service Association>";
+		app._een(mainform.btn_search,false);	
+	}	
+	else if (strValue=="Configuration Item Owner")
+	{
+		_swdoc.oAuth().fk_auth_id="CIOWN";
+		_swdoc.oAuth().authorname="<Pending Configuration Item Association>";
+		app._een(mainform.btn_search,false);	
+	}		
+	//END F0112155
+	else if(strValue === "Portfolio - Business Approver") {
+        _swdoc.oAuth().fk_auth_id = "PORTBUS";
+        _swdoc.oAuth().authorname="<Pending Portfolio Assignment>";
+        _swdoc.oAuth().weighting=100;
+        app._een(mainform.btn_search,false);
+        app._een(mainform.lb_weighting,false);
+    }
+    else if(strValue === "Portfolio - COTR Approver") {
+        _swdoc.oAuth().fk_auth_id = "PORTCOTR";
+        _swdoc.oAuth().authorname="<Pending Portfolio Assignment>";
+        _swdoc.oAuth().weighting=100;
+        app._een(mainform.btn_search,false);
+        app._een(mainform.lb_weighting,false);
+    }
+    else if(strValue === "Portfolio - ISSM Approver") {
+        _swdoc.oAuth().fk_auth_id = "PORTISSM";
+        _swdoc.oAuth().authorname="<Pending Portfolio Assignment>";
+        _swdoc.oAuth().weighting=100;
+        app._een(mainform.btn_search,false);
+        app._een(mainform.lb_weighting,false);
+    }	
+	else
+	{
+		_swdoc.oAuth().fk_auth_id="";
+		_swdoc.oAuth().authorname="";	
+		app._een(mainform.btn_search,true);	
+	}
+	_swdoc.UpdateFormFromData();
+
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

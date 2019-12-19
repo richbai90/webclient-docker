@@ -1,0 +1,1051 @@
+/* 
+Version:		1.1 (tables)
+Date:			19 Feb 2007
+Author:		Dave Ellis - dave.ellis@noko.co.uk
+Function:	To provide structure for SupportWorks Today
+ */
+
+body{
+	margin: 0px;
+	padding:0 0px 0 0;
+	background-color: #FFFFFF;
+	/*background-image: url(../img/structure/swt_bg_tr.gif);*/
+	background-repeat: no-repeat;
+	background-position: top right;
+	min-width: 600px;  /*FAILS IN IE 6! */
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 76%;
+	color: #474747;
+}
+
+/*#IE6MinWidth{
+    width:expression(document.body.clientWidth < 760? "740px": document.body.clientWidth > 1090? "1050px" : "auto" );
+}*/
+
+img{
+	border: 0;
+}
+
+#wrapper{
+	background-color:transarent;
+	float:left;
+	width:100%;	
+	/*border-right:240px solid transarent; /* The width and color of the 'actionsColumn' */
+	/*margin-right:-240px;*/
+	display:inline; /* IE Fix*/
+}
+
+#contentColumn{ /* main column */
+	float:left;
+	width:100%;
+	margin-right:-100%;
+	/*background-image: url(../img/structure/swt_bg_tl.gif);*/
+	background-repeat: no-repeat;
+	background-position: top left;
+}
+
+#actionsColumn{ /* Left hand column */
+	float:right;
+	width:240px;
+	margin-right:-240px;
+	margin-top: 10px;
+	position:relative;
+}
+
+#contentWrapper{
+	margin:15px;
+	padding-top:0;
+	overflow:hidden;
+	background-color: transparent;
+}
+
+* html #contentWrapper{
+	height:1%; /* IE Fix*/
+}
+
+#contentWrapper p{
+	margin:0;
+}
+
+/* Content area layout */
+
+#swtPageTop{
+	width: 100%;
+	background-image: url(../img/structure/swt_page_tr.gif);
+	background-repeat: no-repeat;
+	background-position: top right;
+}
+
+#swtInfoBody{
+	background-image: url(../img/structure/swt_page_bg.gif);
+	background-repeat: repeat-y;
+	background-position: top right;
+	padding:  0 15px 10px 10px;
+	background-color: #ffffff;
+	border-left: 1px solid #718292;
+	/*float: left;*/
+	font-size: 0.9em;
+}
+
+#swtPageBottom{
+	width: 100%;
+	height: 19px;
+	background-image: url(../img/structure/swt_page_br.gif);
+	background-repeat: no-repeat;
+	background-position: bottom right;
+}
+
+/* Content area headings */
+
+.sectionHead{
+	/*float: left;*/
+	padding: 10px 0 8px 0;
+}
+
+.sectionHead table{
+	width: 100%;
+	height: 25px;
+	border-collapse: collapse;
+}
+
+
+table.sectionTitle h1{
+	color: #ffffff;
+	font-size: 1em;
+	font-weight: bold;
+	margin: 0;
+}
+
+td.titleCell{
+	background-image: url(../img/structure/sesctionHead_left.gif);
+	background-repeat: no-repeat;
+	background-position: top left;
+	padding: 3px 0 0 5px;
+	vertical-align: top;
+}
+
+td.statusCell{
+	background-image: url(../img/structure/sesctionHead_right.gif);
+	width: 80px;
+	background-repeat: no-repeat;
+	background-position: top right;
+	padding: 3px 8px 0 5px;
+	vertical-align: top;
+	border-collapse: collapse;
+	color: #ffffff;
+	font-size: 1em;
+	font-weight: bold;
+	text-align: right;
+}
+
+
+/* ITSM items */
+
+.itsmItem{
+	margin: 0 6px 5px 0;
+	padding: 0 0 0 18px;
+	clear: both;
+	height: 1%; /* fix */
+	background-image: url(../img/icons/green_arrow.gif);
+	background-repeat: no-repeat;
+	background-position: 2px 2px;
+}
+
+.itsmItemText{
+	float: left;
+	padding: 0 90px 0 0;
+}
+
+.itsmItemStatus{
+	float: right;
+	text-align: right;
+}
+
+.itsmStatusActive{
+	color: #328A0B;
+	font-weight: bold;
+}
+
+td.itsmStatusActive a{
+	color: #328A0B;
+	font-weight: bold;
+}
+
+.itsmStatusInactive{
+	color: #FE0707;
+	font-weight: bold;
+}
+
+td.itsmStatusInactive a{
+	color: #FE0707;
+	font-weight: bold;
+}
+
+.itsmStatusImpacted{
+	color: #FFC663;
+	font-weight: bold;
+}
+
+td.itsmStatusImpacted a{
+	color: #FFC663;
+	font-weight: bold;
+}
+
+.itemDescriptionEmph{
+	font-weight: bold;
+}
+
+.itemDisplayNone
+{
+	display:none;
+}
+
+.itemDisplayInline
+{
+	display:Inline;
+}
+
+.blue{
+	background-color: #FAFAFD;
+}
+
+.textblue
+{
+	color:#8592B5;
+	font-weight: bold;
+}
+
+/* Left hand side - Calendar */
+.calendar{
+	border:1px solid #718292;
+	margin: 5px 5px 0 0;
+	padding: 2px ;
+	background-image: url(../img/structure/calendar_bg.png);
+	float: left;
+}
+
+td.calendarText{
+	width: 150px;
+	font-size: 1.2em;
+	font-weight: bold;
+	color: #789AC5;
+	padding-top: 9px;
+	vertical-align:top;
+	text-align:right;
+}
+
+td.calendarDayText
+{
+	text-align: right;
+	width: 150px;
+	font-size: 4.2em;
+	font-weight: bold;
+	color: #789AC5;
+	padding-top: 0px;
+	vertical-align:top;
+}
+
+td.calendarDayType
+{
+	font-size: 0.9em;
+	font-weight: bold;
+	color: #789AC5;
+	padding-bottom:25px;
+	padding-top: 0px;
+}
+
+td.calendarImg{
+	text-align: right;
+	padding-bottom: 2px;
+}
+
+
+
+/* Left hand side - action boxes */
+
+#actionsColumn table{
+	width: 100%;
+}
+
+.actionBox{
+	border:1px solid #718292;
+	margin: 5px 5px 0 0;
+	padding: 2px ;
+	background-color: #ffffff;
+	float: left;
+}
+
+td.actionTitle{
+	text-decoration: none;
+	font-weight: bold;
+	color: #396B99;
+	width: 100%;
+}
+
+td.actionTitle a{
+	color: #396B99;
+	text-decoration: none;
+	display: block;
+	padding: 0 0 0 0px;
+	/*background-image: url(../img/icons/blue_contract.gif);
+	background-repeat: no-repeat;
+	background-position: 0 2px;*/
+}
+
+td.actionTitle a.expand{
+	/*background-image: url(../img/icons/blue_expand.gif);
+	background-repeat: no-repeat;
+	background-position: 0 2px;*/
+}
+
+td.actionTitle a:hover{
+	color: #396B99;
+	/*color: #78B8F3;*/
+}
+
+
+td.actionCount{
+	color: #9B1E1E;
+	text-align: right;
+	font-weight: bold;
+}
+
+
+.actionItemWrapper{
+	border-top: 1px solid #474747;
+	margin-top: 2px;
+	padding-top: 1px;
+}
+
+.actionItem{
+	width:100%;
+	font-size: 0.85em;
+	margin-bottom: 5px;
+}
+
+.actionItem a{
+	padding: 0 0 0 13px;
+	background-image: url(../img/icons/green_arrow.gif);
+	background-repeat: no-repeat;
+	background-position: 0 2px;
+	color: #474747;
+	text-decoration: none;
+}
+
+.actionItem a:hover{
+	color: #78B8F3;
+}
+
+
+td.actionItemCount{
+	font-weight: bold;
+	text-align: right;
+}
+
+
+.expandIcon{
+	background-image: url(../img/icons/blue_expand.gif);
+	background-repeat: no-repeat;
+}
+
+
+.green{
+	color: #328A0B;
+}
+
+.actionUnderline{
+	display: block;
+	border-bottom: 1px solid #718292;
+	height: 2px;
+	margin: 0 0 3px 0;
+	width:223px;
+	clear: both;
+	float: left;
+	line-height: 0.1em;
+}
+
+
+
+.actionItemLink{
+	float: left;
+
+}
+
+.actionItemLink a{
+	text-decoration: none;
+	color: #474747;
+}
+
+.actionItemLink a:hover{
+	color: #78B8F3;
+}
+
+
+
+/* Table Layout */
+
+.itemWrapper a{
+	text-decoration: none;
+	font-weight: bold;
+}
+
+.itemWrapper table td{
+	vertical-align: top;
+	background-image: url(../img/structure/item_separator.gif);
+	background-repeat: repeat-x;
+	padding: 3px 0 3px 0;
+}
+table.itemTitle{
+	width: 100%;
+}
+
+.itemDescriptionTable td{
+	vertical-align: top;
+	padding: 0 0 8px 0;
+}
+
+td.leftCol{
+	width: 13px;
+	padding: 0;
+}
+
+td.leftCol img{
+	margin-top: 2px;
+}
+
+td.rightCol{
+	width: 60px;
+	text-align: right;
+}
+
+td.rightCol a{
+	padding-right: 6px;
+}
+
+/* Status styles */
+.high a{
+	color: #9B1E1E;
+}
+
+.high a:hover{
+	color: #E53939;
+}
+
+.medium a{
+	color: #C18A07
+}
+
+.medium a:hover{
+	color: #FDBC23;
+}
+
+.low a{
+	color: #328A0B;
+}
+
+.low a:hover{
+	color: #66CB39;
+}
+
+table.fsc {
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+}
+
+table.fsc th {
+    padding: 20px 0 0 0;
+    border-bottom: 1px solid #CCC;
+    text-align: left;
+    position: relative;
+}
+
+table.fsc th.first {
+    padding: 0;
+}
+
+table.fsc th span.range {
+    color: #CCC;
+    font-size: 0.8em;
+    font-weight: normal;
+    line-height: 1em;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+table.fsc tr {
+    color: #000000;
+}
+
+table.fsc td {
+    vertical-align: top;
+    border-bottom: 1px solid #EEEEEE;
+    padding: 2px;
+    font-size: 0.9em;
+    font-weight: normal;
+    line-height: 1em;
+}
+
+table.fsc td.ongoing {
+    white-space: nowrap;
+    padding: 2px 5px 2px 12px;
+    background: url('../img/icons/fsc_progress.png') 0 4px no-repeat;
+    color: #CCCC00;
+}
+
+table.fsc td.overdue {
+    white-space: nowrap;
+    padding: 2px 5px 2px 12px;
+    background: url('../img/icons/fsc_overdue.png') 2px 3px no-repeat;
+    color: #CC0000;
+}
+
+table.fsc td.starttime {
+    white-space: nowrap;
+    padding: 2px 5px 2px 12px;
+    background: url('../img/icons/fsc_start.png') 0 4px no-repeat;
+}
+
+table.fsc td.finishtime {
+    white-space: nowrap;
+    padding: 2px 5px 2px 12px;
+    background: url('../img/icons/fsc_finish.png') 0 4px no-repeat;
+}
+
+table.fsc td.info {
+    padding: 2px 0 2px 12px;
+    width: 100%;
+}
+
+table.fsc tr td.info {
+    background: url('../img/icons/fsc_inactive.png') 0 4px no-repeat;
+}
+
+table.fsc tr.active td.info {
+    background: url('../img/icons/fsc_active.png') 0 4px no-repeat;
+}
+
+table.fsc tr.overdue td.info {
+    background: url('../img/icons/fsc_active.png') 0 4px no-repeat;
+}
+
+table.fsc td.info a {
+    padding: 0 5px 0 0;
+}
+
+table.fsc td.info a.changerequest {
+    
+}
+
+table.fsc td.info a.releaserequest {
+    color: #F99A00;
+}
+
+table.fsc td.title span.callclass {
+    color: #8E9AAF;
+}
+
+/*
+#swt_t1_topleft {
+
+	background-color:green;
+}
+
+#swt_t1_topright {
+	float:right;
+}
+
+#swt_t1_bottomleft {
+	float:left;
+}
+
+#swt_t1_bottomright {
+	float:right;
+}*/
+
+
+
+.gadgets-holder {
+	width:630px;
+
+}
+
+#gadgetholder {
+	margin-right:10px;
+	margin-top:15px;
+	float:left;	
+	width:300px;	/* This allows two graphs per line, reduce if you want more per line*/
+	height:200px;
+	border: 1px solid #718292;
+}
+
+.gadgettitle {
+	padding-top:4px;
+	padding-bottom:4px;
+	text-align:center;
+	/*color:#8592B5;*/
+	color:grey;
+	font-weight: bold;
+	background-color:silver;
+}
+
+/* Styling for data tables - with dotted lines */
+.dataTable
+{
+	border-collapse: collapse;	
+}
+
+.dataTable thead
+{
+	font-weight: bold;
+	text-align: left;
+	color: #328A0B;	
+}
+
+.dataTable-thead-asc
+{
+	background-image: url(../img/icons/arr_up.gif);
+	background-repeat: no-repeat;
+	background-position: right;
+
+}
+
+.dataTable-thead-desc
+{
+	background-image: url(../img/icons/arr_down.gif);
+	background-repeat: no-repeat;
+	background-position: right;
+}
+
+.dataTable tfoot
+{
+	font-weight: normal;
+	text-align: right;
+	
+}
+
+.dataTable thead th, .dataTable tbody td, .dataTable tfoot td
+{
+	text-align: left;
+	padding:5px;
+}
+
+.dataTable thead tr
+{	
+	background-image: url(../img/structure/dotted_underline.gif);
+	background-repeat: repeat-x;
+	background-position: bottom;
+}
+
+.datatable-lookfor-btn
+{
+	background-image: url(../img/icons/go-16.gif);
+	background-repeat: none;
+	background-position: center;
+	cursor:pointer;
+}
+
+
+.row-data
+{
+	background-image: url(../img/structure/dotted_underline.gif);
+	background-repeat: repeat-x;
+	background-position: bottom;
+	cursor:pointer;
+}
+
+
+.row-data-withpreview
+{
+	background-color:#efefef;
+	background-image: none;
+	background-repeat: none;
+	background-position: bottom;
+	cursor:pointer;
+}
+
+.row-data-invisible
+{
+	background-image: url(../img/structure/dotted_underline.gif);
+	background-repeat: repeat-x;
+	background-position: bottom;
+	cursor:pointer;
+	display:none;
+}
+
+
+.row-data-withpreview-invisible
+{
+	background-color:#efefef;
+	background-image: none;
+	background-repeat: none;
+	background-position: bottom;
+	cursor:pointer;
+	display:none;
+}
+
+.row-preview
+{
+	background-image: url(../img/structure/dotted_underline.gif);
+	background-repeat: repeat-x;
+	background-position: bottom;
+	cursor:pointer;
+}
+
+/* Styling for form data tables - without cell lines */
+
+.tbl-first
+{
+	background-image: url(../img/icons/arr_ll.gif);
+	background-repeat: no-repeat;
+	background-position: left;	
+	cursor:pointer;
+}
+
+.tbl-prev
+{
+	background-image: url(../img/icons/arr_left.gif);
+	background-repeat: no-repeat;
+	background-position: left;
+	cursor:pointer;
+}
+
+.tbl-next
+{
+	background-image: url(../img/icons/arr_right.gif);
+	background-repeat: no-repeat;
+	background-position: right;
+	cursor:pointer;
+}
+
+.tbl-last
+{
+	background-image: url(../img/icons/arr_rr.gif);
+	background-repeat: no-repeat;
+	background-position: right;
+	cursor:pointer;
+}
+
+
+.form-dataTable
+{
+	border-collapse: collapse;	
+}
+
+.form-dataTable thead
+{
+	font-weight: bold;
+	text-align: left;
+	color: #328A0B;	
+}
+
+.form-dataTable-thead-asc
+{
+	background-image: url(../img/icons/arr_up.gif);
+	background-repeat: no-repeat;
+	background-position: right;
+
+}
+
+.form-dataTable-thead-desc
+{
+	background-image: url(../img/icons/arr_down.gif);
+	background-repeat: no-repeat;
+	background-position: right;
+}
+
+.form-dataTable tfoot
+{
+	font-weight: normal;
+	text-align: right;
+	
+}
+
+.form-dataTable thead th, .form-dataTable tbody td, .form-dataTable tfoot td
+{
+	padding:5px;
+}
+
+.form-dataTable thead tr
+{
+	
+	background-image: url(../img/structure/dotted_underline.gif);
+	background-repeat: repeat-x;
+	background-position: bottom;
+}
+
+
+td.dataLabel
+{
+	font-weight:bold;
+}
+
+td.dataValue
+{
+	font-size:11px;
+	background-color:#fafafa;
+	border-bottom:1px solid #ffffff;
+}
+
+
+table.fsc {
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+}
+
+table.fsc th {
+    padding: 20px 0 0 0;
+    border-bottom: 1px solid #CCC;
+    text-align: left;
+    position: relative;
+}
+
+table.fsc th.first {
+    padding: 0;
+}
+
+table.fsc th span.range {
+    color: #CCC;
+    font-size: 0.8em;
+    font-weight: normal;
+    line-height: 1em;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+table.fsc tr {
+    color: #000000;
+}
+
+table.fsc td {
+    vertical-align: top;
+    border-bottom: 1px solid #EEEEEE;
+    padding: 2px;
+    font-size: 0.9em;
+    font-weight: normal;
+    line-height: 1em;
+}
+
+table.fsc td.ongoing {
+    white-space: nowrap;
+    padding: 2px 5px 2px 12px;
+    background: url('../img/icons/fsc_progress.png') 0 4px no-repeat;
+    color: #CCCC00;
+}
+
+table.fsc td.overdue {
+    white-space: nowrap;
+    padding: 2px 5px 2px 12px;
+    background: url('../img/icons/fsc_overdue.png') 2px 3px no-repeat;
+    color: #CC0000;
+}
+
+table.fsc td.starttime {
+    white-space: nowrap;
+    padding: 2px 5px 2px 12px;
+    background: url('../img/icons/fsc_start.png') 0 4px no-repeat;
+}
+
+table.fsc td.finishtime {
+    white-space: nowrap;
+    padding: 2px 5px 2px 12px;
+    background: url('../img/icons/fsc_finish.png') 0 4px no-repeat;
+}
+
+table.fsc td.info {
+    padding: 2px 0 2px 12px;
+    width: 100%;
+}
+
+table.fsc tr td.info {
+    background: url('../img/icons/fsc_inactive.png') 0 4px no-repeat;
+}
+
+table.fsc tr.active td.info {
+    background: url('../img/icons/fsc_active.png') 0 4px no-repeat;
+}
+
+table.fsc tr.overdue td.info {
+    background: url('../img/icons/fsc_active.png') 0 4px no-repeat;
+}
+
+table.fsc td.info a {
+    padding: 0 5px 0 0;
+}
+
+table.fsc td.info a.changerequest {
+    
+}
+
+table.fsc td.info a.releaserequest {
+    color: #F99A00;
+}
+
+table.fsc td.title span.callclass {
+    color: #8E9AAF;
+}
+
+
+/* NAVIGATION */
+
+#navColumn{ /* main column */
+	margin-bottom:20px;
+	width:		156px;
+	float:left;
+	/*border:		1px solid red;*/
+	background-color: #EFEFF7;
+	/*background-image: url(../img/structure/nav_bg.gif);
+	background-repeat: repeat-x;
+	background-position: top left;*/
+}
+
+/* NAVIGATION level one */
+#navColumn ul{
+	padding:10px 0 0 0 ; 
+	margin:10px 0 0 0px; 
+	list-style:none;
+	background-image: url(../img/structure/nav_dottedline.gif);
+	background-repeat: no-repeat;
+	background-position: bottom;
+
+}
+#navColumn ul li{
+	background-image: url(../img/structure/nav_dottedline.gif);
+	background-repeat: no-repeat;
+	padding-top:6px;
+	padding-bottom: 5px;
+	margin-left:10px;	
+	display:block;
+	
+}
+#navColumn ul a{
+	background-image: url(../img/structure/nav_nochild.gif);
+	background-position: top left;
+	background-repeat: no-repeat;
+	padding:0px 0 0px 15px;
+	margin:0px 0 0px 2px;
+	font-weight: bold;
+	text-decoration: none;
+	display:block;
+	width:156px;
+}
+#navColumn ul a:hover{
+	color: #060330;
+}
+
+/* NAVIGATION States (affect all levels) */
+#navColumn .withchild{
+	background-image: url(../img/structure/nav_plus.gif);
+}
+
+#navColumn .withchildselected{
+	background-image: url(../img/structure/nav_minus.gif);
+	color: #060330;
+	font-weight: bold;
+}
+
+#navColumn .withchildunselected{
+	background-image: url(../img/structure/nav_minus.gif);
+}
+
+#navColumn .selected
+{
+	color: #060330;
+	text-decoration: underline;
+	ont-weight: bold;
+}
+
+
+#navColumn .childrenhidden
+{
+	display:none;
+}
+
+#navColumn .childrenvisible
+{
+	display:block;
+}
+/* NAVIGATION level 2 (and onwards) */
+
+#navColumn ul ul{
+	padding: 0 0 0 0;
+	margin-top:6px;
+	background-image:none;
+}
+
+#navColumn ul ul li{
+	background-image:none;
+	padding-top:1px
+}
+#navColumn ul ul a{
+	background-image: url(../img/structure/nav_triangle.gif);
+	font-weight: normal;
+	width:140px;
+}
+
+
+.boxWrapper{
+	margin: 0px;
+	padding: 0px;
+	background-image: url(../img/structure/box_header_bg.gif);
+	background-repeat: no-repeat;
+	background-position: top right;
+	
+	
+	
+}
+
+.boxFooter{
+
+	margin: 0 0px 0 0px;
+	padding: 0px;
+	background-image: url(../img/structure/box_footer_bg.gif);
+	background-repeat: no-repeat;
+	background-position: bottom right;
+}
+.boxFooter_reportresult{
+
+	margin: 0px 0px 0px 0px;
+	padding: 0px;
+	background-image: url(../img/structure/box_footer_bg.gif);
+	background-repeat: no-repeat;
+	background-position: bottom right;
+}
+
+.boxContent{
+	margin: 0 20px 0 20px;
+	padding: 0px;
+	
+}
+.boxContent_reportresult{
+	margin: 0 0px 0 0px;
+	padding: 0px;
+}
+
+.boxMiddle{
+	border-left: 1px solid #718292;
+	margin: 0px;
+	padding: 0px;
+	background-image: url(../img/structure/box_content_bg.gif);
+	background-repeat: repeat-y;
+	background-position: top right;
+}
+.boxMiddle_reportresult{
+	border-left: 1px solid #718292;
+	margin: 0px 20px 0px 20px;
+	padding: 0px;
+	background-image: url(../img/structure/box_content_bg.gif);
+	background-repeat: repeat-y;
+	background-position: top right;
+}
+
+.spacer{
+	height:0px;
+	width:0px;
+	line-height:0px;
+}

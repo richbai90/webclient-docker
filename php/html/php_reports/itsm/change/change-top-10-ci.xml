@@ -1,0 +1,47 @@
+<report title="Top 10 CIs Causing Changes" reportstyle="list" dsn="swdata" uid="" pwd="">
+	<columns>
+		<column dbname="ck_config_item" dbtable="config_itemi" level="1">Configuration Item</column>
+		<aggregate dbname="callref" dbtable="opencall" aggregate="1" aggFunction="Count" graph="1" level="1">Total Calls</aggregate>
+		<column dbname="callref" dbtable="opencall" conversion="callref" level="2">Call Reference</column>
+		<column dbname="callclass" dbtable="opencall" conversion="callclass" level="2">Type</column>
+		<column dbname="logdatex" dbtable="opencall" conversion="customerdate" level="2">Log Date</column>
+		<column dbname="status" dbtable="opencall" conversion="callstatus" level="2">Status</column>
+		<column dbname="cust_name" dbtable="opencall" conversion="" level="2">Customer</column>
+		<column dbname="probcode" dbtable="opencall" conversion="probcode" level="2">Problem Code</column>
+		<column dbname="itsm_title" dbtable="opencall" conversion="" level="2">Summary</column>
+	</columns>
+	<tables>
+		<table name="opencall" type="master"/>
+		<table name="cmn_rel_opencall_ci" type="related" join_type="left" join="cmn_rel_opencall_ci.fk_callref = opencall.callref"/>
+		<table name="config_itemi" type="related" join_type="left" join="config_itemi.pk_auto_id = cmn_rel_opencall_ci.fk_ci_auto_id"/>
+	</tables>
+	<criteria>
+		<numberofrecords>10</numberofrecords>
+		<order dbname="callref)'" dbtable="'count(opencall" order="desc"></order>
+		<userinput type="daterange" binding="opencall.logdatex" int="1" op="=">
+			<prompt>Requests logged on and between</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.fk_company_id" dsn="swdata" dbtable="opencall" keycol="fk_company_id" txtcol="companyname" filter=" where fk_company_id IS NOT NULL  and fk_company_id &lt;&gt;'' group by opencall.fk_company_id,opencall.companyname" int="0" op="=">
+			<prompt>Organisation</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.site" dsn="swdata" dbtable="site" keycol="site_name" txtcol="site_name" filter="" int="0" op="=">
+			<prompt>Site</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.suppgroup" dsn="swdata" dbtable="opencall" keycol="suppgroup" txtcol="suppgroup" filter=" group by opencall.suppgroup" int="0" op="=">
+			<prompt>Support Group</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.owner" dsn="swdata" dbtable="opencall" keycol="owner" txtcol="owner" filter=" where opencall.owner IS NOT NULL and opencall.owner &lt;&gt;''  group by opencall.owner   " int="0" op="=">
+			<prompt>Analyst</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.probcode" dsn="swdata" dbtable="pcdesc" keycol="code" txtcol="info" filter="" int="0" op="=">
+			<prompt>Problem Profile Code</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="config_itemi.ck_config_type" dsn="swdata" dbtable="config_typei" keycol="pk_config_type" txtcol="type_display" filter=""  int="0" op="=">
+			<prompt>Configuration Type</prompt>
+		</userinput>
+		<userinput type="inputtext" binding="numberofrecords" int="0" op="=">
+			<prompt>Specify Number of records to return</prompt>
+		</userinput>
+		<static>opencall.callclass='Change Request' AND opencall.status not in (17) and opencall.appcode IN (![$GLOBALS['datasetfilterlist']]!) and config_itemi.pk_auto_id IS NOT NULL order by 2 DESC</static>
+	</criteria>
+</report>

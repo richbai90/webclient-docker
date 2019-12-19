@@ -1,0 +1,52 @@
+<vcm_config version="2.0">
+<color>
+  <line selected="FF0000" normal="000000"/>
+  <ciobject selected="FF00FF" normal="000000" line="FFFF00" text="000000"/>
+  <grabber normal="0000FF"/>
+</color>
+<settings>
+  <view dragdrop="1" tooltip="1" leveltoshow="1" minobjformgroup="20" zoom="100"/>
+  <ciobject showtext="1" imagesize="32"/>
+  <data>
+    <database 			 name="swdata"/>
+    <config_item		 name="config_itemi">
+    	<ck_config_item	 name ="ck_config_item"/>
+    	<ck_config_type	 name ="ck_config_type"/>
+    	<pk_auto_id		 name ="pk_auto_id"/>
+    	<ck_bln			 name ="ck_bin"/>
+    </config_item>
+    	    
+    <config_relation 		 name="config_reli">
+    	<fk_parent_ci_id	 name="fk_parent_id"/>
+    	<fk_child_ci_id		 name="fk_child_id"/>
+    	<pk_auto_id			 name="pk_auto_id"/>
+    	<fk_dependency_type	 name="fk_dependency_type"/>
+    	<child_depends_on	 name="flg_operational"/>
+    </config_relation>
+    
+    <config_type 			 name="config_typei">
+    	<extended_form		 name="extended_form"/>
+    	<type_description	 name="desc"/>
+    	<pk_config_type		 name="pk_config_type"/>
+    	<extended_table		 name="extended_table"/>
+    	<www_image_path		 name="www_image_path"/>
+    </config_type>
+    
+    <config_type_status_levels 	name="ct_statusl">
+    	<description			name="description"/>
+    	<ck_config_type			name="fk_config_type"/>
+    	<ck_status_level		name="status_level"/>
+    	<pk_auto_id				name="pk_auto_id"/>
+    </config_type_status_levels>
+    
+    <config_dependency_types 	 name="config_reltype">
+    	<line_colour			 name="line_colour"/>
+    	<pk_dependency_type		 name="pk_reltype"/>
+    	<line_style				 name="line_style"/>
+    </config_dependency_types>
+  </data>
+</settings>
+</vcm_config>
+
+
+

@@ -1,0 +1,240 @@
+<div  class="container-fluid">
+  <div class="row row-top-buffer">
+    <div class="col-xs-6 col-xs-offset-3">
+      <div  class="alert alert-info"
+            ng-if="activeSession == true && backingUpData">
+        <strong>Backup in progress!</strong> Please wait while we back up your wizard questions before continuing...
+        <span class="pull-right">
+          <i class="fa fa-spinner fa-pulse fa-lg fa-fw"></i>
+        </span>
+      </div>
+      <div  class="alert alert-info"
+            ng-if="activeSession == true && loadingData">
+        Retrieving your wizard data. Please wait...
+        <span class="pull-right">
+          <i class="fa fa-spinner fa-pulse fa-lg fa-fw"></i>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div  class="row"
+        ng-show="activeSession == true && !loadingData">
+    <div class="col-xs-12">
+
+      <div  class="alert alert-danger"
+        ng-if="activeSession && boolBackupCheckError">
+        <strong>Backup Creation Error:</strong><br />{{strBackupCheckError}}
+      </div>
+      <div  class="alert alert-danger"
+        ng-if="activeSession && boolBackupCreateError">
+        <strong>Backup Creation Error:</strong><br />{{strBackupCreateError}}
+      </div>
+      <uib-accordion close-others="false" ng-show="loadingData == false && !boolBackupCheckError && !boolBackupCreateError">
+        <div  ng-repeat="(keyWizard, valWizard) in wizServ.wizardsArray">
+
+          <div class="row row-top-buffer">
+            <!--Wizards-->
+            <uib-accordion-group is-open="true">
+              <uib-accordion-heading>
+                <strong>{{valWizard.title}}</strong> [{{valWizard.pk_name}}]
+              </uib-accordion-heading>
+              <!--Wizard Stages-->
+              <uib-accordion>
+                <div ng-repeat="(keyStage, valStage) in valWizard.stages">
+                  <uib-accordion-group class="{{accordionClass(valStage)}}">
+                    <uib-accordion-heading>
+                      Stage: <strong>{{valStage.title}}</strong>
+                    </uib-accordion-heading>
+                    <div class="alert alert-warning"
+                        ng-if="valStage.jumpFail">
+                      <strong>WARNING!</strong> The question below, highlighted with
+                      <span class="fa fa-fw fa-lg fa-exclamation-triangle text-danger"></span>, is a multi-choice question, but has been set to Jump
+                      to another stage/wizard depending on the given answer. You will need to edit this question in the main Supportworks client, and
+                      set the question to be a single-select input type.
+                    </div>
+                    <!--Wizard Questions -->
+                    <div class="table-responsive">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th width="13%">Question</th>
+                            <th width="29%">Default Answer</th>
+                            <th width="29%">Primary Filter</th>
+                            <th width="29%">Secondary Filter</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="question in valStage.questions"
+                              class="{{tableRowClass(question)}}"
+                              ng-form="rowForm">
+                            <td>
+                              <span ng-if="question.jumpFail" class="fa fa-fw fa-lg fa-exclamation-triangle text-danger"></span>{{question.question}}
+                            </td>
+                            <td>
+                              <div ng-if="question.defaultvalue">
+                                <div class="form-group">
+                                  <textarea rows="4"  ng-model="question.defaultvalue" class="form-control input-sm" name="q_{{question.pk_qid}}_dv" id="q_{{question.pk_qid}}_dv"></textarea>
+                                  <table width="100%" style="table-layout: fixed; word-break:break-all;">
+                                    <tr>
+                                      <td width="50%" valign="top">
+                                        <span ng-if="question.defaultvalue && question.defaultvalue != question.b_defaultvalue"
+                                              role="button"
+                                              uib-tooltip="This is the original value of this field"
+                                              tooltip-placement="bottom"><i class="fa fa-fw fa-exclamation-circle"></i><small>{{question.b_defaultvalue}}</small></span>
+
+                                      </td>
+                                      <td width="50%" valign="top">
+                                        <div class="btn-group pull-right">
+                                          <button ng-if="question.showSuggestion"
+                                              class="btn btn-success btn-sm"
+                                              type="button"
+                                              ng-click="suggestReplace(question, 'defaultvalue')"
+                                              uib-tooltip="Attempt to convert the above Default Value to be compatible with the new Web SelfService"
+                                              tooltip-placement="bottom">
+                                              <span class="fa fa-fw fa-lg fa-magic"></span>
+                                          </button>
+                                          <button ng-if="!question.showSuggestion"
+                                            class="btn btn-danger btn-sm"
+                                            type="button"
+                                            ng-click="restorePrevious(question, 'defaultvalue')"
+                                            uib-tooltip="Restore previous value"
+                                            tooltip-placement="bottom">
+                                            <span class="fa fa-fw fa-lg fa-recycle"></span>
+                                          </button>
+                                          <button class="btn btn-primary btn-sm"
+                                            type="button"
+                                            ng-click="updateSetting(question, 'defaultvalue', valStage, keyStage, keyWizard)"
+                                            uib-tooltip="Update question with values specified."
+                                            tooltip-placement="bottom"
+                                            ladda="wizServ.updatingValue">
+                                              <span class="fa fa-fw fa-lg fa-check"></span>
+                                          </button>
+                                          <button class="btn btn-warning btn-sm"
+                                            type="button"
+                                            ng-click="restoreSetting(question, 'defaultvalue', valStage, keyStage, keyWizard)"
+                                            uib-tooltip="Reset question"
+                                            tooltip-placement="bottom"><span class="fa fa-fw fa-lg fa-random"></span>
+                                          </button>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <div ng-if="question.filter">
+                                <div class="form-group">
+                                  <textarea rows="4" ng-model="question.filter" class="form-control input-sm" name="q_{{question.pk_qid}}_fl" id="q_{{question.pk_qid}}_fl"></textarea>
+                                  <table width="100%" style="table-layout: fixed; word-break:break-all;">
+                                    <tr>
+                                      <td width="50%" valign="top">
+                                        <span ng-if="question.filter && question.filter != question.b_filter"
+                                        role="button"
+                                        uib-tooltip="This is the original value of this field"
+                                        tooltip-placement="bottom"><i class="fa fa-fw fa-exclamation-circle"></i><small>{{question.b_filter}}</small></span>
+                                      </td>
+                                      <td width="50%" valign="top">
+                                        <span class="btn-group pull-right">
+                                          <button ng-if="question.showSuggestion"
+                                            class="btn btn-success btn-sm"
+                                            type="button"
+                                            ng-click="suggestReplace(question, 'filter')"
+                                            uib-tooltip="Attempt to convert the above Filter to be compatible with the new Web SelfService"
+                                            tooltip-placement="bottom">
+                                            <span class="fa fa-fw fa-lg fa-magic"></span>
+                                          </button>
+                                          <button ng-if="!question.showSuggestion"
+                                            class="btn btn-danger btn-sm"
+                                            type="button"
+                                            ng-click="restorePrevious(question, 'filter')"
+                                            uib-tooltip="Restore previous value"
+                                            tooltip-placement="bottom">
+                                            <span class="fa fa-fw fa-lg fa-recycle"></span>
+                                          </button>
+                                          <button class="btn btn-primary btn-sm"
+                                            type="button"
+                                            ng-click="updateSetting(question, 'filter', valStage, keyStage, keyWizard)"
+                                            uib-tooltip="Update question with values specified."
+                                            tooltip-placement="bottom"
+                                            ladda="wizServ.updatingValue">
+                                            <span class="fa fa-fw fa-lg fa-check"></span>
+                                          </button>
+                                          <button class="btn btn-warning btn-sm"
+                                            type="button"
+                                            ng-click="restoreSetting(question, 'filter', valStage, keyStage, keyWizard)"
+                                            uib-tooltip="Reset question"
+                                            tooltip-placement="bottom"><span class="fa fa-fw fa-lg fa-random"></span>
+                                          </button>
+                                        </span>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <div ng-if="question.sec_filter">
+                                <div class="form-group">
+                                  <textarea rows="3" cols="25" ng-model="question.sec_filter" class="form-control input-sm" name="q_{{question.pk_qid}}_sf" id="q_{{question.pk_qid}}_sf"></textarea>
+                                  <table width="100%" style="table-layout: fixed; word-break:break-all;">
+                                    <tr>
+                                      <td width="50%" valign="top">
+                                        <span ng-if="question.sec_filter && question.sec_filter != question.b_sec_filter"
+                                          role="button"
+                                          uib-tooltip="This is the original value of this field"
+                                          tooltip-placement="bottom"><i class="fa fa-fw fa-exclamation-circle"></i><small>{{question.b_sec_filter}}</small></span>
+                                      </td>
+                                      <td width="50%" valign="top">
+                                        <span class="btn-group pull-right">
+                                          <button ng-if="question.showSuggestion"
+                                            class="btn btn-success btn-sm"
+                                            type="button"
+                                            ng-click="suggestReplace(question, 'sec_filter')"
+                                            uib-tooltip="Attempt to convert the above Secondary Filter to be compatible with the new Web SelfService"
+                                            tooltip-placement="bottom">
+                                            <span class="fa fa-fw fa-lg fa-magic"></span>
+                                          </button>
+                                          <button ng-if="!question.showSuggestion"
+                                            class="btn btn-danger btn-sm"
+                                            type="button"
+                                            ng-click="restorePrevious(question, 'sec_filter')"
+                                            uib-tooltip="Restore previous value"
+                                            tooltip-placement="bottom">
+                                            <span class="fa fa-fw fa-lg fa-recycle"></span>
+                                          </button>
+                                          <button class="btn btn-primary btn-sm"
+                                            type="button"
+                                            ng-click="updateSetting(question, 'sec_filter', valStage, keyStage, keyWizard)"
+                                            uib-tooltip="Update question with values specified."
+                                            tooltip-placement="bottom"
+                                            ladda="wizServ.updatingValue">
+                                            <span class="fa fa-fw fa-lg fa-check"></span>
+                                          </button>
+                                          <button class="btn  btn-warningbtn-sm"
+                                            type="button"
+                                            ng-click="restoreSetting(question, 'sec_filter', valStage, keyStage, keyWizard)"
+                                            uib-tooltip="Reset question"
+                                            tooltip-placement="bottom"><span class="fa fa-fw fa-lg fa-random"></span>
+                                          </button>
+                                        </span>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </uib-accordion-group>
+                </div>
+              </uib-accordion>
+            </uib-accordion-group>
+          </div>
+        </div>
+      </uib-accordion>
+    </div>
+  </div>
+</div>

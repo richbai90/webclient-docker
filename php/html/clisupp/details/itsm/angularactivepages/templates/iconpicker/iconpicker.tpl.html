@@ -1,0 +1,23 @@
+<div class="container-fluid"
+      ng-show="activeSession == true">
+  <div class="row row-top-buffer">
+    <div class="col-xs-12">
+      <h5>Select your Service Icon:</h5>
+      <hb-iconpicker icon-set="fa" ng-model="faIconSelected.value" items-per-page="36" col-size="6">
+      </hb-iconpicker>
+      <button class="btn btn-primary"
+        ng-click="submitIconChange()">
+        Submit
+      </button>
+    </div>
+  </div>
+  <div class="row row-top-buffer">
+    <div class="col-xs-12">
+      <div ng-repeat="alert in alerts track by $index">
+        <div class="alert alert-{{alert.type}} fade in">
+          <i class="fa fa-times fa-fw fa-lg pull-right" ng-click="closeAlert($index)" aria-label="close"></i>{{alert.msg}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

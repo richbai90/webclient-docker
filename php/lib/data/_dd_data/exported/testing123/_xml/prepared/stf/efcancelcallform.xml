@@ -1,0 +1,1096 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>EfCancelCallForm</name>
+			<title>Cancel Call Form</title>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>true</showMenubar>
+				<showToolbar>false</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>updatedb</name>
+				<type>Main Details Table</type>
+				<flags>205</flags>
+				<assignments>
+				</assignments>
+			</table>
+			<table>
+				<name>opencall</name>
+				<type>Extended Details Table</type>
+				<mainDetailsColumn>callref</mainDetailsColumn>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>OnFormLoading</name>
+					<code>
+						<![CDATA[OnFormLoading(strFormName, strClass)
+{
+	//-- If the analyst does not have permissions to modify the status of call
+	//--  then they should not be able to cancel a call
+	if (!app.session.HaveRight(ANALYST_RIGHT_A_GROUP,ANALYST_RIGHT_A_CANMODIFYCALLS))
+	{
+    MessageBox("I am sorry, you do not have sufficient privileges to perform that action.  Please contact your system administrator");
+    return false;
+	}
+	
+	//-- Get list of comma separated callrefs from the form
+	_swdoc.CallrefsCommaString = _swdoc._form["callrefs"];
+	
+	//-- F0097544
+	if(_swdoc.CallrefsCommaString=="")
+	{
+		//-- see if we have passed any in
+		_swdoc.CallrefsCommaString = _swdoc.GetArg("callrefs");
+	}
+	
+	//-- Check if the call can be locked, if it cannot be locked then it is in use and 
+	//-- therefore we should not be able to cancel the call so we stop the form loading
+	if(!app.global.LockCalls(_swdoc.CallrefsCommaString, "CANCEL"))
+	{
+		return false;
+	}
+	
+	//-- get the status and class for our callref/s
+    var rsCalls = new SqlQuery;
+    var strParams = "crfs="+app.pfu(_swdoc.CallrefsCommaString);
+    if(!rsCalls.InvokeStoredQuery("form/cancelcall/get_classes_for_calls", strParams))
+    {
+   		MessageBox("Unable to query call values. Please contact your Supportworks Administrator..", MB_ICONSTOP);
+   		app.global.UnlockCalls(_swdoc.CallrefsCommaString);
+   		return false;
+    }
+    else
+    {
+		//--
+		//-- loop through our returned rows and get state and classes
+		var strCurrentCallClass = "";
+		while(rsCalls.Fetch())
+		{			
+			//-- simply want to check if we have selected to resolve or close perate call classes
+			strCurrentCallClass = rsCalls.GetValueAsString("callclass");
+			if(!app.itsm.can_cancel(strCurrentCallClass, true))
+			{
+				app.global.UnlockCalls(_swdoc.CallrefsCommaString);
+			 	return false;			
+			 }
+		}	
+	}
+	
+	//-- Create an array containing the list of callrefs
+	_swdoc.Callrefs = _swdoc.CallrefsCommaString.split(",");
+
+	//-- Start creating the form title and make it "Cancel Call" or "Cancel Calls" if there 
+	//-- are more than one callref in the array
+	var FormTitle = (_swdoc.Callrefs.length > 1) ? "Cancel Calls " : "Cancel Call ";
+	
+	//-- loop through the callrefs
+	for(i=0;i<_swdoc.Callrefs.length; i++)
+	{
+		if( i > 0)
+			FormTitle += ", ";
+			
+		//-- Convert the call ref to "F000000x" format and add it to the title string
+		FormTitle += app.g.pad_callref(_swdoc.Callrefs[i]);
+	}
+	
+	//-- Set the _swdoc title
+	_swdoc.SetTitle(FormTitle);
+	
+	//-- Q? Function Not documented
+	_swdoc.ResetModiedFlag("updatedb");
+		
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnFormClosing</name>
+					<code>
+						<![CDATA[OnFormClosing()
+{
+	if (_swdoc.boolForceClose)
+	{
+		return true;
+	}
+
+	var funcUnlockReset = function()
+	{
+		//-- Unlock the call(s) we have been cancelling
+		app.global.UnlockCalls(_swdoc.CallrefsCommaString);
+		
+		//-- This is not documented
+		_swdoc.ResetData();
+	
+		return true;
+	}
+	
+	//Check for Changes to any of the data fields
+	if(_swdoc.bFormFieldChanged)
+	{		
+		MessageBox("You have unsaved data on this form. Do you still want to close this form?", MB_ICONQUESTION | MB_YESNO, function(intDecision)
+		{
+			if (intDecision == IDNO)
+			{
+				return false;
+			}
+			else
+			{
+				funcUnlockReset();
+				_swdoc.boolForceClose = true;
+				_swdoc.CloseForm();
+			}	
+		});		
+	}
+	else
+	{
+		return funcUnlockReset();
+	}
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var _swdoc = (IsObjectDefined("_bHtmlWebClient"))?top:_swdoc;
+
+var bFormFieldChanged = false;	//This var is used to check for changes to data fields and is set to true when any 
+								//field data is changed
+								
+var boolForceClose = false;]]>
+					</code>
+				</method>
+				<method>
+					<name>OnSaveData</name>
+					<code>
+						<![CDATA[OnSaveData()
+{
+	// This should never get called, but if for some reason it does, we only want this form
+	// to close if it is cancelled or if the analyst clicks one of the update buttons.
+	MessageBox("Please use the [Cancel] button to process this cancel action.");
+	return false;
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>554</width>
+				<height>361</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>Rect1</name>
+						<type>Rectange</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>true</toolbarButtonStyle>
+							<cache>true</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>0</index>
+						<backgroundColor>#d4d0c8</backgroundColor>
+						<foregroundColor>#dddddd</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>-1</top>
+							<left>0</left>
+							<right>560</right>
+							<bottom>24</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>CaptionPanel2</name>
+						<type>CaptionBar</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>true</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>1</index>
+						<caption>Details</caption>
+						<backgroundColor>#f1f1f1</backgroundColor>
+						<foregroundColor>#003366</foregroundColor>
+						<font  size="10" bold="1">Trebuchet (MS)</font>
+						<alignment>Left</alignment>
+						<fillStyle>Vertical Gradient</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>28</top>
+							<left>2</left>
+							<right>393</right>
+							<bottom>171</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#d8d8d8</backgroundColor2>
+							<imageHSpace>10</imageHSpace>
+							<slope>12</slope>
+							<borderColor>#d3c9b6</borderColor>
+							<headerHeight>23</headerHeight>
+							<hasBorder>1</hasBorder>
+							<panelBorderColor>#d3c9b6</panelBorderColor>
+							<fillStyle>0</fillStyle>
+							<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+							<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>cb_reason</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>2</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>145</top>
+							<left>17</left>
+							<right>284</right>
+							<bottom>163</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<listItems>Customer has corrected problem|This is a duplicate of the call whose reference is|Other reason (state below)|</listItems>
+							<defaultValue>Customer has corrected problem</defaultValue>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_duplicateref</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>3</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>145</top>
+							<left>290</left>
+							<right>385</right>
+							<bottom>163</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>true</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_reasontext</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>4</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>208</top>
+							<left>7</left>
+							<right>546</right>
+							<bottom>352</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>updatedb.updatetxt</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>true</protected>
+							<noMacroExpand>true</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>4</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<borderColor>#c0c0c0</borderColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>CaptionPanel3</name>
+						<type>CaptionBar</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>true</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>5</index>
+						<caption>Options</caption>
+						<backgroundColor>#f1f1f1</backgroundColor>
+						<foregroundColor>#003366</foregroundColor>
+						<font  size="10" bold="1">Trebuchet (MS)</font>
+						<alignment>Left</alignment>
+						<fillStyle>Vertical Gradient</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>28</top>
+							<left>401</left>
+							<right>550</right>
+							<bottom>171</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#d8d8d8</backgroundColor2>
+							<imageHSpace>10</imageHSpace>
+							<slope>12</slope>
+							<borderColor>#d3c9b6</borderColor>
+							<headerHeight>23</headerHeight>
+							<hasBorder>1</hasBorder>
+							<panelBorderColor>#d3c9b6</panelBorderColor>
+							<fillStyle>0</fillStyle>
+							<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+							<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_updatepublic</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>6</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>56</top>
+							<left>406</left>
+							<right>535</right>
+							<bottom>74</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<flagItems>Update to be public^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnOk</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>true</toolbarButtonStyle>
+							<cache>true</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>7</index>
+						<caption>Cancel Call</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>0</top>
+							<left>3</left>
+							<right>103</right>
+							<bottom>24</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<eventButtonIcon>ImageList=Helpdesk Tools;IconIndex=7</eventButtonIcon>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>8</index>
+						<caption>You should enter the reason for cancelling the call below. You should only cancel a call if the call is to be totally disregarded. You can reactivate the call at a later date if you wish.</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>62</top>
+							<left>14</left>
+							<right>383</right>
+							<bottom>113</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>true</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text1</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>9</index>
+						<caption>Reason for Cancelling Call</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>126</top>
+							<left>13</left>
+							<right>158</right>
+							<bottom>140</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_callref</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>10</index>
+						<caption>Call Reference</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>126</top>
+							<left>286</left>
+							<right>363</right>
+							<bottom>140</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>true</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>CaptionPanel1</name>
+						<type>CaptionBar</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>true</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>11</index>
+						<caption>Other Information</caption>
+						<backgroundColor>#f1f1f1</backgroundColor>
+						<foregroundColor>#003366</foregroundColor>
+						<font  size="10" bold="1">Trebuchet (MS)</font>
+						<alignment>Left</alignment>
+						<fillStyle>Vertical Gradient</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>178</top>
+							<left>2</left>
+							<right>550</right>
+							<bottom>359</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#d8d8d8</backgroundColor2>
+							<imageHSpace>10</imageHSpace>
+							<slope>12</slope>
+							<borderColor>#d3c9b6</borderColor>
+							<headerHeight>23</headerHeight>
+							<hasBorder>1</hasBorder>
+							<panelBorderColor>#d3c9b6</panelBorderColor>
+							<fillStyle>0</fillStyle>
+							<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+							<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>btnOk_OnPressed</name>
+						<code>
+							<![CDATA[btnOk_OnPressed()
+{
+	// -- Create a string of formatted Callref(s) 
+	var strCallrefs = "";
+	var arrCallrefs = _swdoc.CallrefsCommaString.split(",");
+	for(var i=0; i < arrCallrefs.length; i++)
+	{
+		// -- Get call info from helpdesk::getCallSummaryInfo
+		var oCallInfo = app.g.getCallSummaryInfo(arrCallrefs[i]);
+		
+		if(strCallrefs!="") strCallrefs+= ",";
+		strCallrefs += oCallInfo.formattedcallref;
+	}
+	
+	// -- Check that the reason for cancelling the call IS entered
+	if(tb_reasontext.text.length<2)
+	{
+		MessageBox("Enter your reason for cancelling this call.", MB_OK);
+		return false;
+	}
+	
+	// -- Check that a Callref is entered, when the reason for cancellation is duplicate reference
+	if((cb_reason.text == "This is a duplicate of the call whose reference is")  && ((tb_duplicateref.text < 1) || (tb_duplicateref.text == "F0000000")))
+	{
+		MessageBox("Enter the Call reference of the duplicate call.", MB_OK);
+		return false;
+	}
+	
+	// -- Confirm that the analyst wishes to cancel the call showing a list of the calls to be closed			
+	var strMsg = "";
+	strMsg = "Are you sure you want to cancel the selected calls?\n\n";
+	if(strCallrefs!="")
+		strMsg+= strCallrefs;
+		
+	// -- If the analyst does not select Yes then quit otherwise cancel the call
+	MessageBox(strMsg, MB_ICONQUESTION | MB_YESNO, function(intDecision)
+	{
+		if (intDecision != IDYES)
+		{
+			return false;
+		}
+		else
+		{
+			// -- Cancel a call using XMLMC API
+			var xmlmc = new XmlMethodCall;
+			// -- API method
+			var strMethod = "cancelCalls";	
+			// -- Find modified values in UPDATEDB table
+			var arrExtraUpdateDbValues = new Array();
+			var strUpdateDbValues = "";
+			if(rec = _swdoc.GetRecord("updatedb"))
+			{
+				var nColCount = rec.GetCount();
+				for(x = 0; x < nColCount; x++)
+				{
+					if(!rec.IsModified(x))
+						continue;
+					arrExtraUpdateDbValues[rec.GetColumnName(x)] = rec.GetValue(x);
+				}
+			}
+			for (fieldName in arrExtraUpdateDbValues)
+			{
+				strUpdateDbValues += "<"+fieldName+">"+ app.global.PrepareForXML(arrExtraUpdateDbValues[fieldName])+"</"+fieldName+">";
+			}
+			
+			// ** API params ** //
+			for(x in arrCallrefs)
+				xmlmc.SetValue("callRef", arrCallrefs[x]);
+			xmlmc.SetValue("description",rec.updatetxt);
+			xmlmc.SetValue("publicUpdate",flg_updatepublic.value);
+			if(strUpdateDbValues!="")
+				xmlmc.SetParamAsComplexType("extraUpdateDbValues", strUpdateDbValues);
+			// ** EO API params ** //
+			
+			// -- Invoke XMLMC API
+			if(xmlmc.Invoke("helpdesk",strMethod))
+			{
+				var strXML = (app.bWebClient)? xmlmc._lastresult:xmlmc.GetReturnXml();
+				var objRes = app.XMCResult(strXML);
+				if(!objRes.success)
+				{
+					MessageBox("The " + strMethod + " API method was rejected by the server.");
+					return false;
+				}
+				_swdoc.bFormFieldChanged = false;
+			}
+			else
+			{
+				(app.bWebClient)? MessageBox(xmlmc._lastresult):MessageBox(xmlmc.GetReturnXml());
+			}
+			
+			// -- Close the form	
+			_swdoc.CloseForm();
+		}
+	});
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded()
+{
+	//-- Set the cancellation reason text
+	app._ete(cb_reason,"Customer has corrected problem");
+		
+	//-- Set the cancellation description text
+	_swdoc.updatedb.updatetxt = "This call has been cancelled because the user has resolved the problem and called to cancel the request.";
+	_swdoc.UpdateFormFromData();
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>tb_duplicateref_OnValueChanged</name>
+						<code>
+							<![CDATA[tb_duplicateref_OnValueChanged(strValue)
+{
+	//-- If a duplicate reference has been entered then we remove any leading F character
+	//-- and send the resulting numeric callref to be formatted to the form "Fxxxxxxx"
+	if(tb_duplicateref.text.length)
+	{
+		var strCallRef = strValue.replace(/\D/g,'');
+		var strSQL = "SELECT H_FORMATTEDCALLREF FROM OPENCALL WHERE CALLREF IN(" + strCallRef + ")";
+		var oRS = app.g.get_recordset(strSQL,"sw_systemdb");
+		var strFmtCallRefList = "";
+		while(oRS.Fetch())
+		{
+			if(strFmtCallRefList!="") strFmtCallRefList+= ",";
+			strFmtCallRefList += app.g.get_field(oRS,"h_formattedcallref");
+		}
+		if(strFmtCallRefList=="")
+			MessageBox("This Call Reference does not exist.", MB_OK | MB_ICONINFORMATION);
+		
+		//-- Check that the numeric part of the callref is within the range 1-999999999,
+		//-- if it is out of range then inform the analyst and clear the field
+		if(strCallRef < 1 || strCallRef > 999999999) 
+		{
+			MessageBox("This Call Reference is invalid.", MB_OK | MB_ICONINFORMATION);
+			app._ete(tb_duplicateref , "");
+			_swdoc.updatedb.updatetxt = "This call has been cancelled because it was a duplicate log of " + strFmtCallRefList;
+			_swdoc.UpdateFormFromData();
+			return;
+		}
+		else
+			app._ete(tb_duplicateref , strFmtCallRefList);
+	}
+
+	//-- Set the text in the reason for cancellation field		
+	_swdoc.updatedb.updatetxt = "This call has been cancelled because it was a duplicate log of " + tb_duplicateref.text; 
+	_swdoc.UpdateFormFromData();
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>cb_reason_OnValueChanged</name>
+						<code>
+							<![CDATA[cb_reason_OnValueChanged(strValue)
+{
+	//-- Depending on the option selected in the drop down box the relevant fields will be hidden, shown or set 
+	//-- as required for the chosen option, by default "Customer has corrected the problem" is the selected option
+		
+	if(strValue == "Customer has corrected problem")
+	{
+		//-- If "Customer has corrected the problem" option is selected from the list hide the duplicate 
+		//call label and field and enable the reason text to be edited
+		app._evi(lbl_callref,false);
+		app._ete(tb_duplicateref,"");
+		app._evi(tb_duplicateref,false);
+		app._een(tb_reasontext,false);
+	   	_swdoc.updatedb.updatetxt = "This call has been cancelled because the user has resolved the problem and called to cancel the request.";
+	}
+	else if(strValue == "This is a duplicate of the call whose reference is")
+	{
+		//-- If the option is selected to cancel a call as it is a duplicate then enable the duplicate label and field,
+		//-- fill in the text description and disable the field to prevent changes
+		app._evi(lbl_callref,true);
+		app._evi(tb_duplicateref,true);
+		_swdoc.updatedb.updatetxt = "This call has been cancelled because it was a duplicate log of " + dd.tables.opencall.columns.callref.FormatValue(tb_duplicateref.text);
+		app._een(tb_reasontext,false);
+	}
+	else if(strValue == "Other reason (state below)")
+	{
+		//-- If "Other Reason" option is selected from the list hide the duplicate call label and field
+		//-- and enable the reason text to be edited
+		app._evi(lbl_callref,false);
+		app._ete(tb_duplicateref,"");
+		app._evi(tb_duplicateref,false);
+		app._een(tb_reasontext,true);
+		_swdoc.updatedb.updatetxt = "<Type your reason for cancelling the call>";
+	}
+	
+	//-- Update the data bound to the form to ensure the update text is correct
+	_swdoc.UpdateFormFromData();
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>OnFieldValueChanged</name>
+						<code>
+							<![CDATA[OnFieldValueChanged(strName, strValue)
+{
+	//-- This value is set when a field value has been changed.
+	//-- We check this variable on from closing to see if there are any data changes that need to be saved.
+	_swdoc.bFormFieldChanged = true;
+
+
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

@@ -1,0 +1,109 @@
+<smartform>
+	<menu>
+		<leftaction>
+			<title>Home</title>
+			<action noparse="1">_process_navigation('[:_swm_app_path]/views/home.xml')</action>
+		</leftaction>
+		<centeraction>
+			<title>Authorisations</title>
+		</centeraction>
+		<rightaction>
+			<title></title>
+			<action></action>
+		</rightaction>
+	</menu>
+	<content>
+	<layer type='datalist'>
+		<includes>
+			<!-- define any files to include i.e is you have bespoke complexconversion functions -->
+			<include>[:_swm_app_path]/_helpers/myphpincludefile.php</include>
+		</includes>
+		<list>
+			<type>xml</type>
+			<data>
+				<rspointer>rs</rspointer>
+				<db>swdata</db>
+				<formatted>true</formatted><!-- return formatted values as well - have to do 2 sql calls -->
+				<sql>
+					<std>select opencall.h_formattedcallref, opencall.callclass,opencall.callref, opencall.cust_id, opencall.cust_name,opencall.status, opencall.priority, opencall.logdatex, opencall.fixbyx, opencall.itsm_title, opencall.h_condition, opencall.escalation, bpm_oc_auth.status as auth_status from opencall, bpm_oc_auth where bpm_oc_auth.fk_auth_id='[:_swm_sqlprep_aid]' and bpm_oc_auth.status='Pending Authorisation' and bpm_oc_auth.authortype='Analyst' and bpm_oc_auth.fk_callref=opencall.callref and opencall.status not in (6,16,17,18,19)</std>
+					<ora></ora>
+					<ms></ms>
+				</sql>
+				<orderby>callref</orderby>
+				<complexconversions>
+					<!-- pointers to php functions that will return converted values for given column.tagname i.e. condition.color -->
+					<condition>
+						<styling>_get_oc_condition_styling</styling>
+						<level>_get_oc_condition_level</level>
+					</condition>
+					<escalation>
+						<progressbar>_get_oc_escalation_progressbar</progressbar>
+					</escalation>
+					<h_formattedcallref>
+						<withinsla>_get_callref_format</withinsla>
+					</h_formattedcallref>
+				</complexconversions>
+			</data>
+			<!-- html markup to output data - note the embedded data rs.<column>.<columnproperty> -->
+			<outputprocessor>
+				<!-- could show a header -->
+				<nodataoutput><![CDATA[<center><div class='datanormal'><br>There are no Authorisations at this time</div></center>]]></nodataoutput>
+				<headeroutput noparse="1"><![CDATA[<div class='grptitle'><span class='grptitlecontainer'><span class='grptitle' width='100%'>My Authorisation</span></span></div>
+				]]></headeroutput>
+				<rowprocessor>
+					<!-- define exclusions by testing data ?? no implemented yet-->
+					<exclusions>
+						<excludeif>rs.itsm_title==''</excludeif>
+					</exclusions>
+
+					<!-- define if we want to get any other record data to be used (i.e. related or extended table info) -->
+					<relateddata>
+						<data>
+						</data>
+					</relateddata>
+
+					<!-- how to echo out the row data -->
+					<rowoutput><![CDATA[
+						<div class='listrow' style="cursor:pointer;" >
+							<!-- callref + title + mini cols + actions-->
+							<table border='0' width="100%">
+								<tr callref="[:rs.callref.value]" callreffmt="[:rs.h_formattedcallref.formattedvalue]"  xmlpath='[:_swm_app_path]/views/authorisations/call.details.xml' action='Authorise' onclick='_open_auth_action(this);'>
+									<!-- summary -->
+									<td width="75%">
+										<table border='0' width="100%">
+											<tr >
+												<!-- summary -->
+												<td width="75%">
+													<span  class='datanormal nmlfontsize'>[:rs.h_formattedcallref.withinsla]</span>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<span  class='datanormal'>
+														[:rs.callclass.htmlvalue] - [:rs.itsm_title.htmlvalue]
+													</span>
+												</td>
+											</tr>
+										</table>
+									</td>
+									<td width="20%" align="right">
+											[:rs.auth_status.formattedvalue]
+									</td>
+									<td width="5%" align="right">
+										<img src="client/_system/images/icons/arrow.jpg">
+									</td>
+								</tr>
+							</table>
+						<div class='listrow-splitter'>[:rs.escalation.progressbar]</div>
+						</div>]]>
+					</rowoutput>
+					<rowaction>
+						<target>[:_swm_app_path]/views/servicedesk/call.detail.php</target>
+					</rowaction>
+				</rowprocessor>
+				<footeroutput><![CDATA[]]></footeroutput>
+			</outputprocessor>
+		</list>
+	</layer>
+	</content>
+</smartform>

@@ -1,0 +1,40 @@
+<smartform>
+	<menu>
+		<leftaction>
+			<title>Service Requests</title>
+			<action noparse="1">_process_navigation('[:_swm_app_path]/views/servicedesk/servicerequests/servicerequests.xml')</action>
+		</leftaction>
+		<centeraction>
+			<title>Log Service Request</title>
+		</centeraction>
+		<rightaction>
+			<title></title>
+			<action></action>
+		</rightaction>
+	</menu>
+	<content>
+		<layer type='logcall'>
+			<settings>
+				<entity type='customer' mandatory="1"/>
+				<entity type='service_catalog' mandatory="1"/>
+				<entity type='service_sla' mandatory="1"/>
+				<entity type='bpm' mandatory="1" callclass="Service Request"/>
+				<entity type='file'>
+					<fileloc>[:_swm_app_path]/generic/logcallinput/input.details.php</fileloc>
+					<filecompleteloc>[:_swm_app_path]/generic/logcallinput/display.details.php</filecompleteloc>
+					<mandatory>
+						<opencall_itsm_title>Summary</opencall_itsm_title>
+						<updatedb_updatetxt>Description</updatedb_updatetxt>
+					</mandatory>
+				</entity>
+				<defaultvalues>
+					<opencall_callclass>Service Request</opencall_callclass>
+					<opencall_suppgroup>[:_swm_gid]</opencall_suppgroup>
+					<opencall_owner>[:_swm_aid]</opencall_owner>
+					<updatedb_udsource>Mobile Portal</updatedb_udsource>
+					<updatedb_udcode>New Service Request Call</updatedb_udcode>
+				</defaultvalues>
+			</settings>
+		</layer>
+	</content>
+</smartform>

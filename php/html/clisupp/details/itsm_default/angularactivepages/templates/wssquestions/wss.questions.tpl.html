@@ -1,0 +1,23 @@
+<div class="container-fluid">
+  <div class="row row-top-buffer">
+    <div class="col-xs-12">
+      <div ng-repeat="stage in arrQuestionAnswers">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <strong>{{stage.stageTitle}}</strong>
+          </div>
+          <div class="panel-body">
+            <dl ng-repeat="question in stage.questions">
+              <dt>
+                {{question.question}}
+              </dt>
+              <dd>
+                {{question.question_ans}}
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

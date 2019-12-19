@@ -1,0 +1,10 @@
+<datatable dsn="swdata" keycol="pk_auto_id" keyvar="in_callref" onrowclick="" onrowdblclick="" onmouseover="return false;" onmouseout="return false;" action="" url="">
+	<columns>
+		<column id="ck_config_item" conversion="">Identifier</column>
+		<column id="ck_config_type" conversion="">Type</column>
+		<column id="fk_status_level" conversion="">Status</column>
+	</columns>
+	<from>cmn_rel_opencall_ci, config_itemi</from>
+	<where>fk_callref in (![$GLOBALS['inCICallref']]!) and fk_ci_auto_id = config_itemi.pk_auto_id and relcode = '![$GLOBALS['relCICALLType']]!'</where>
+	<orderby></orderby>
+</datatable>

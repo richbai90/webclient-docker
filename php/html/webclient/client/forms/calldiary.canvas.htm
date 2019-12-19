@@ -1,0 +1,193 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<link rel="stylesheet" href="form.canvas.css" type="text/css" />
+<style>
+	body
+	{
+		overflow:hidden;
+	}
+</style>
+<script src='../js/jquery-1.11.1.min.js'></script>
+<script>
+
+	var _top = this;
+	var _swform = null;
+	var _swdoc = top;
+
+
+	//-- pointers to app items
+	var app = top.info.__app;
+	var jqDoc = null;
+	var jqTopDoc = null;
+	var dd = app.dd;
+	var g= app.g;
+	document.PassedInFilter = "";
+
+	function _onshow()
+	{
+		document.body.style.display="";
+		if(_swform==null)
+		{
+			_load_form_canvas();
+		}
+		
+	}
+
+	var iBodyWidth = 0;
+	var iBodyHeight = 0;
+	function _resize_form()
+	{
+		if(document.getElementById("sl_browse")!=null)
+		{
+			//-- 91965 - adjust processing for ie10 and above
+			if(!app.isIE || app.isIE10Above)
+			{
+				var intAdjust = (app.isSafari)?3:3;
+				document.getElementById("sl_browse").style.height = document.body.clientHeight - intAdjust - document.getElementById("Rect1").offsetHeight;
+				document.getElementById("sl_browse").style.width = document.body.clientWidth-2;
+			}
+			else
+			{
+				document.getElementById("sl_browse").style.height = document.body.offsetHeight - document.getElementById("Rect1").offsetHeight - 2;
+				document.getElementById("sl_browse").style.width = document.body.clientWidth;
+			}			
+		}
+	}
+
+	function _onhide()
+	{
+	}
+
+	function _load_form_canvas()
+	{
+		_swform = top._swdoc._load_alt_sysform("_sys_cdf_diarytable","cdf","diary");
+		if(_swform)
+		{
+			for(strID in _swform)
+			{
+				try
+				{
+					_top[strID] = _swform[strID];
+					document[strID] = _swform[strID];					
+				}
+				catch (e)
+				{
+				}
+			}
+
+			document.PassedInFilter = "callref = " + top.document.opencall.callref;
+			_swform._draw();
+			sl_browse.source = (top.document.opencall.status<15)?"syscache":"swdata";
+			sl_browse.source = "swdata"; //-- cp fix
+			sl_browse._previewcolumn = "updatetxt";
+
+			if(!app.isIE)
+			{
+				var intAdjust = (app.isSafari)?3:3;
+				document.getElementById("sl_browse").style.height = document.body.clientHeight - intAdjust - document.getElementById("Rect1").offsetHeight;
+				document.getElementById("sl_browse").style.width = document.body.clientWidth -2 ;
+			}
+			else
+			{
+
+				document.getElementById("sl_browse").style.height = document.body.offsetHeight - document.getElementById("Rect1").offsetHeight - 2;
+				document.getElementById("sl_browse").style.width = document.body.clientWidth;
+			}			
+			//-- 
+			setTimeout("_filter_diary_list()",1)
+		}
+	}
+
+
+	function sl_browse_OnItemDoubleClicked(nRow,nCol)
+	{
+		//-- call webclient method to open system form
+		//alert(nRow)
+		var iKey = sl_browse.GetItemTextRaw(sl_browse.curSel,app.dd.tables[sl_browse.table].PrimaryKey);//sl_browse.GetItemText(nRow, "udid");
+		if(iKey!="")
+		{ 
+			app.OpenWebClientForm("_sys_cdf_diaryform",iKey,"",true,"cdf",window,undefined);
+		}
+		return false;
+	}
+
+	function btn_find_OnPressed()
+	{
+		//--
+		var strVal = g.pfs(tb_lookfor.text);
+		var strCol = "updatetxt";
+		
+		if(strVal=="") return;
+		if(strCol=="")return;
+		
+		strVal = "'%" + strVal + "%'";
+		var op = " like "
+
+		var strFilter = strCol + op + strVal;
+		//-- apply passed in filter
+		if(document.PassedInFilter!="") strFilter += " and " + document.PassedInFilter;
+
+		sl_browse.source = (top.document.opencall.status<15)?"syscache":"swdata";	
+		sl_browse.source = "swdata"; //-- cp fix
+		_slf(sl_browse,strFilter);
+		sl_browse.SetRowSelected(0);
+		
+		_een(btn_clear,true);
+	}
+
+	function btn_clear_OnPressed()
+	{	
+		_ete(tb_lookfor,"");
+
+		sl_browse.source = (top.document.opencall.status<15)?"syscache":"swdata";		
+		_slf(sl_browse,document.PassedInFilter);
+		sl_browse.SetRowSelected(0);
+	
+		_swform.SetTimer(1,100);
+	}
+
+	function diary_OnTimer(tiD)
+	{
+		_swform.KillTimer(tiD)
+		_een(btn_clear,false);
+
+	}
+
+	function _filter_diary_list()
+	{
+		sl_browse.source = (top.document.opencall.status<15)?"syscache":"swdata";
+		sl_browse.source = "swdata"; //-- cp fix
+		_swform.sl_browse.sortDescending = false;
+		_swform.sl_browse._filter(document.PassedInFilter)
+	}
+
+	function _handle_drag_drop(ev)
+	{
+		app.stopEvent(ev);
+		return false;
+	}
+
+	function onloadEvents()
+	{
+	
+		jqDoc = $(document); //-- so can use jquery		
+		jqTopDoc = top.jqDoc;
+		
+		//-- add browser class to body
+		if(top.app.browserClassName!="")
+		{
+			jqDoc.find("body").addClass(top.app.browserClassName);
+		}
+	}	
+	
+</script>
+
+
+<!-- main js -->
+<script src='js/min/swjs.classes.js'></script>
+<body onload="onloadEvents()" style="display:none;overflow:hidden;" style='background-color:#efefef;' oncontextmenu="return false;" ondrop="return _handle_drag_drop(event);" ondragover="return _handle_drag_drop(event);" ondragenter="return _handle_drag_drop(event);">
+</body>
+</html>

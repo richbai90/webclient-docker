@@ -1,0 +1,270 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<link rel="stylesheet" href="form.canvas.css" type="text/css" />
+
+	<!-- rich text editor -->
+	<script language="JavaScript" type="text/javascript" src="thirdparty/wysiwyg/scripts/wysiwyg.js"></script>
+	<script language="JavaScript" type="text/javascript" src="js/min/sw.wysiwyg.override.js"></script>
+	<script src='../js/jquery-1.11.1.min.js'></script>		
+<script>
+
+	if(top.info!=undefined)
+	{
+		var _swdoc = top._swdoc;
+
+		//-- pointers to app items
+		var app = top.info.__app;
+		var dd = app.dd;
+		var _form = null;
+		var _formdoc = document;
+
+		var infobar = top.infobar;
+		
+		//-- load xmm js
+		if(top.strMainFormJavascript!=undefined)
+		{
+			
+			eval(top.strMainFormJavascript);				
+		}
+		else
+		{
+			alert("Client Error : The mainform javascript is undefined. Please contact your Administrator");
+		}
+
+	}
+
+	function _hide_popup_items(oEv)
+	{
+		try
+		{
+			_form._close_open_menubuttons();
+			_form._close_open_lists();	
+			_hide_date_popup(oEv);
+		}
+		catch (e)
+		{
+		}
+	}
+
+	function _hide_date_popup(oEv)
+	{
+		if(document['_datecontrol_clicked']==undefined)document['_datecontrol_clicked']=false;
+
+		if(document['_datecontrol_clicked'])
+		{
+			document['_datecontrol_clicked']=false;
+			return false;
+		}
+
+		var formDP = document.getElementById("__sw_element_date_picker");
+		if(oEv==undefined)
+		{
+			if(formDP!=null)
+			{
+				formDP.style.display="none";
+				formDP.targetelement.setAttribute("hidden","true");
+			}
+		}
+		else
+		{
+
+			//-- check if we have date picker already
+			var srcEle = app.ev_source(oEv);
+			if(formDP!=null)
+			{
+				if(formDP.targetelement == srcEle) 
+				{
+					if(app.clicked_datebox_trigger(srcEle,oEv))return true;
+				}
+				else
+				{
+					//-- check if clicked on calendar
+					var pNode = srcEle.parentNode;
+					while(pNode!=null) 
+					{
+						if(formDP == pNode) 
+						{
+							//-- clicked inside date dropdown
+							return true;
+						}
+						pNode = pNode.parentNode;
+					}
+				}
+				
+				formDP.style.display="none";
+				formDP.targetelement.setAttribute("hidden","true");
+			}
+		}
+	}	
+
+
+	var jqDoc = $(document); //-- so can use jquery		
+	var jqTopDoc = null;
+	function _onload_initialise()
+	{
+		if(top.app!=undefined)
+		{
+			jqTopDoc = top.jqDoc;
+			
+			//-- add browser class to body
+			if(top.app.browserClassName!="")
+			{
+				jqDoc.find("body").addClass(top.app.browserClassName);
+			}
+			
+			top._initialise_swdocument();			
+			
+		}
+	}
+
+	var extform;
+	var mainform;
+	var _top = this;
+	var jqBody;
+	function _init_top_var_pointers()
+	{	
+		mainform = top.mainform;
+		extform = top.extform;
+		
+
+		//--associate mainform functions to mainform object so can be called from doc level or extform
+		for(strID in top._arr_mainform_js_names)
+		{
+			mainform[strID] = _top[strID];
+		}
+
+		for(strID in mainform._controlgroups)
+		{
+			_top[strID] = mainform._controlgroups[strID];
+		}
+	}
+
+	function _onhide()
+	{
+	}
+
+	function _onshow()
+	{
+		document.body.style.display="";
+	}
+
+
+	var _initsize = false;
+	function _resize_form(frameWidth,frameHeight)
+	{
+		if(jqBody==undefined)jqBody = $(document.body);
+	
+		if(mainform!=undefined && mainform._bDrawn)
+		{
+			if(!_initsize)
+			{
+				_initsize=true;
+
+				if(app.__cached_forms[top._cacheformname].origwidth!=undefined)
+				{
+					mainform._origwidth = app.__cached_forms[top._cacheformname].origwidth;
+					mainform._origheight = app.__cached_forms[top._cacheformname].origheight;
+				}
+				else
+				{
+					app.__cached_forms[top._cacheformname].origwidth = mainform._origwidth;
+					app.__cached_forms[top._cacheformname].origheight = mainform._origheight;
+				}
+			}
+
+			try
+			{
+				mainform._width = frameWidth - 3; //top.GetWinWidth()-4;
+				mainform._height = frameHeight - 6; //top.GetWinHeight()-5;		
+
+				mainform.width = mainform._width;
+				mainform.height = mainform._height;
+			}
+			catch (e)
+			{
+				
+			}
+			mainform._resize_controls();
+			//-- if we need overflow then enable it
+			document.body.style.overflow = "hidden";
+			var wDiff = mainform._width - $(document.body).width();
+			var hDiff = mainform._height - $(document.body).height();
+			if( wDiff>14 || hDiff>14)
+			{
+				var i = app.getOverflowWH(document.body);
+			
+				if(i.height < -16)
+				{
+					document.body.style.overflow = "auto"
+				}
+				else if(i.width < -16)
+				{
+					document.body.style.overflow = "auto";
+				}
+			}
+		}
+	}
+
+
+
+	//-- sw form timer
+	var _arrtimers = new Array();
+	function _SetTimer(nTimerID, nMilliseconds)
+	{
+		app._CURRENT_JS_WINDOW = top.window;
+		if(_top['OnTimer']!=undefined)
+		{
+			//-- in sw we tend to use timers as forms are in a ready state - in webclient this isnt needed - so if less than 1000 then likely they are waiting for refesh - so in webclient jsut set to 0
+			if(nMilliseconds<1000)nMilliseconds=0;
+
+			_arrtimers[nTimerID] = setInterval("OnTimer("+nTimerID+")",nMilliseconds);
+		}
+	}
+
+	function _KillTimer(nTimerID)
+	{
+		clearInterval(_arrtimers[nTimerID])
+	}
+
+	function _unload_form()
+	{
+		try{if(!top._bClosingForm)top.window.location.reload();}catch(e){}
+		window.onerror=function()
+		{
+			return true;
+		}
+
+		return true;
+	}
+
+
+	function _handle_drag_drop(ev)
+	{
+		app.stopEvent(ev);
+		return false;
+	}
+
+	//-- 88751 - issue with safari running on windows - keydown must return false on modal forms (https://discussions.apple.com/thread/3336946?start=0&tstart=0)
+	if(top.__bFormIsModal && app.isSafari && app.isWindows)
+	{
+		document.onkeydown=function(e)
+		{
+			var iKeyCode = app.getKeyCode(e);
+			if(iKeyCode>47)return false; //-- only ret false for alpha numeric chars
+		}
+	}
+</script>
+
+
+
+<!-- main js -->
+<script src='js/min/swjs.classes.js'></script>
+<!-- load this last as it referes to app.-->
+<script src='../js/system/swc.constants.js'></script>
+
+</head>
+<body onload='_onload_initialise();' onunload="_unload_form();" onmousedown='_hide_popup_items(event);' ondrop="return _handle_drag_drop(event);" ondragover="return _handle_drag_drop(event);" ondragenter="return _handle_drag_drop(event);">
+</body>
+</html>

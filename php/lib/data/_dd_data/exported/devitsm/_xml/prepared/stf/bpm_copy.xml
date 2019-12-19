@@ -1,0 +1,1299 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>bpm_copy</name>
+			<title>Copy BPM Process</title>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>true</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var _swdoc = (IsObjectDefined("_bHtmlWebClient"))?top:_swdoc;
+var boolRefresh = false;
+var arrWFSwap = new Array();
+var arrProgress = new Array();
+var arrStages = new Array();
+var intType = -1;
+
+function MF()
+{
+	return _swdoc.mainform;
+}
+
+function bpm_process_copy()
+{
+	_swdoc.arrWFSwap = new Array();
+	_swdoc.arrProgress = new Array();
+	_swdoc.arrStages = new Array();
+
+	var newWFValue = _swdoc.MF().dst_process.value;
+	var oldWFValue = _swdoc.MF().src_process.value;
+	var oldConditionId = 0;
+	var newConditionId = 0;
+	var oldStageId = 0;
+	var newStageId = 0;
+
+	_swdoc.arrWFSwap["pk_workflow_id"]=newWFValue;
+	_swdoc.arrWFSwap["fk_workflow_id"]=newWFValue;
+	_swdoc.arrWFSwap["flg_active"]=0;
+	_swdoc.arrWFSwap[oldWFValue]=newWFValue;
+
+	_swdoc.intType = 0;
+	if(_swdoc.MF().src_condition.value!="")
+	{
+		if(_swdoc.MF().dst_stage.value=="")
+		{
+			MessageBox("The destination stage is mandatory for copying a condition, please select a destination stage.");
+			return false;
+		}	
+		else
+		{
+			var oRec = app.g.get_sqrecordset("form/bpm_copy/get_stage", "_swc_title="+pfu(_swdoc.MF().src_stage.value)+"&_swc_fk_workflow_id="+pfu(oldWFValue));
+			if(oRec.Fetch())
+			{
+				oldStageId = app.g.get_field(oRec, "pk_stage_id"); 
+			}
+
+			var oRec = app.g.get_sqrecordset("form/bpm_copy/get_stage", "_swc_title="+pfu(_swdoc.MF().dst_stage.value)+"&_swc_fk_workflow_id="+pfu(newWFValue));
+			if(oRec.Fetch())
+			{
+				newStageId = app.g.get_field(oRec, "pk_stage_id"); 
+			}
+
+			var oRec = app.g.get_sqrecordset("form/bpm_copy/get_conditions", "_swc_fk_stage_id="+pfu(oldStageId)+"&_swc_title="+pfu(_swdoc.MF().src_condition.value));
+			if(oRec.Fetch())
+			{
+				oldConditionId = app.g.get_field(oRec, "pk_condition_id"); 
+			}
+		}
+	}
+	else
+	{
+		if(_swdoc.MF().src_stage.value!="")
+		{
+			if(_swdoc.MF().dst_process.value=="")
+			{
+				MessageBox("The destination process is mandatory for copying a stage, please select a destination process.");
+				return false;
+			}	
+			else
+			{
+				var oRec = app.g.get_record("bpm_workflow", _swdoc.MF().dst_process.value);
+				if(!oRec)
+				{
+					MessageBox("The destination process must be an existing process for copying a stage, please select a destination process.");
+					return false;
+				}
+			}
+			_swdoc.intType = 1;
+			var oRec = app.g.get_sqrecordset("form/bpm_copy/get_stage", "_swc_title="+pfu(_swdoc.MF().src_stage.value)+"&_swc_fk_workflow_id="+pfu(oldWFValue));
+			if(oRec.Fetch())
+			{
+				oldStageId = app.g.get_field(oRec, "pk_stage_id"); 
+			}
+		}
+		else
+		{
+			if(_swdoc.MF().src_process.value!="")
+			{
+				if(_swdoc.MF().dst_process.value=="")
+				{
+					MessageBox("The destination process is mandatory for copying a process, please select a destination process.");
+					return false;
+				}
+				else
+				{
+					var oRec = app.g.get_record("bpm_workflow", _swdoc.MF().dst_process.value);
+					if(oRec)
+					{
+						var strMessage = "The destination process name already exists, and could be used by this or another Service Desk - please enter a different name.";
+						MessageBox(strMessage);
+						return false;
+					}
+				}	
+				_swdoc.intType = 2;
+			}
+		}
+	}
+
+	if(_swdoc.intType==0)
+	{
+		_swdoc.bpm_condition_copy(oldWFValue,newWFValue,oldStageId,newStageId,oldConditionId);
+	}
+	else if(_swdoc.intType==1)
+	{
+		var newStageId = _swdoc.bpm_stage_copy(oldWFValue,newWFValue,oldStageId);
+		_swdoc.bpm_condition_copy(oldWFValue,newWFValue,oldStageId,newStageId,0);
+	}
+	else if(_swdoc.intType==2)
+	{
+		_swdoc.bpm_workflow_copy(oldWFValue,newWFValue);
+	}
+
+	_swdoc.boolRefresh = true;
+	_swdoc.CloseForm();
+	return true;
+}
+
+function bpm_workflow_copy(oldWFValue,newWFValue)
+{
+	var oWorkflow = app.g.get_record("bpm_workflow", oldWFValue);
+
+	app.g.copy_sw_record("bpm_workflow", oWorkflow, "",_swdoc.arrWFSwap);
+	//-- Clear graphxml
+	var strParams = "&wf="+pfu(newWFValue);
+	app.g.submitsqs("form/bpm_copy/delete_graph", strParams);
+	//-- copy progress
+	var strParams = "wf="+pfu(oldWFValue);
+	var aRS = app.g.get_sqrecordset("form/bpm_copy/get_wf_progress",strParams);
+	while(aRS.Fetch())
+	{
+		var oldProgId = app.g.get_field(aRS,"pk_progid");
+		var newProgId = _swdoc.bpm_progress_copy(oldProgId,newWFValue);
+		_swdoc.arrProgress[oldProgId] = newProgId;
+	}
+	//-- copy stages
+	var strParams = "wf="+pfu(oldWFValue);
+	var aRS = app.g.get_sqrecordset("form/bpm_copy/get_wf_stages",strParams);
+	while(aRS.Fetch())
+	{
+		var oldStageId = app.g.get_field(aRS,"pk_stage_id");
+		var newStageId = _swdoc.bpm_stage_copy(oldWFValue,newWFValue,oldStageId)
+		_swdoc.arrStages[oldStageId] = newStageId;
+		if(oldStageId == oWorkflow["fk_firststage_id"])
+		{
+			var strParams = "sid="+pfu(newStageId)+"&wf="+pfu(newWFValue);
+			app.g.submitsqs("form/bpm_copy/set_first_stage", strParams);
+		}
+	}
+	//-- copy conditions
+	var strParams = "wf="+pfu(oldWFValue);
+	var aRS = app.g.get_sqrecordset("form/bpm_copy/get_wf_condition",strParams);
+	while(aRS.Fetch())
+	{
+		var oldConditionId = app.g.get_field(aRS,"pk_condition_id");
+		var strNewValue = _swdoc.bpm_condition_copy(oldWFValue,newWFValue,0,0,oldConditionId);	
+	}
+	//-- F0105031 copy audit trail
+	var strParams = "wf="+pfu(oldWFValue);
+	var aRS = app.g.get_sqrecordset("form/bpm_copy/get_wf_audit_fields",strParams);
+	while(aRS.Fetch())
+	{
+		var oldAuditId = app.g.get_field(aRS,"pk_auto_id");
+		var newAuditId = _swdoc.bpm_audit_copy(oldAuditId,newWFValue);
+	}
+	//-- EOF F0105031
+}
+
+
+function bpm_stage_copy(oldWFValue,newWFValue,oldStageId)
+{
+	var newStageValue = 0;
+
+	var oStage = app.g.get_record("bpm_stage", oldStageId);
+
+	var arrSwapFields = new Array();
+	arrSwapFields["fk_workflow_id"]=newWFValue;
+	
+	if(_swdoc.intType>0 && _swdoc.intType<2)
+	{
+		//-- copy status values
+		var strParams = "wf="+pfu(newWFValue);
+		var aRS = app.g.get_sqrecordset("form/bpm_copy/get_max_seq_stages",strParams);
+		if(aRS.Fetch())
+		{
+			var seqVal = app.g.get_field(aRS,"seq");
+			seqVal++;
+			oStage['seq'] = seqVal;
+		}
+	}
+
+	var intTemp = app.g.copy_sw_record("bpm_stage", oStage, "",arrSwapFields);
+	if(intTemp>0)
+	{
+		arrSwapFields["fk_stage_id"]=intTemp;
+		//-- copy status values
+		var strParams = "sid="+pfu(oldStageId);
+		var aRS = app.g.get_sqrecordset("form/bpm_copy/get_stage_status",strParams);
+		while(aRS.Fetch())
+		{
+			var colValue = app.g.get_field(aRS,"pk_auto_id");
+			var strNewValue = _swdoc.bpm_status_copy(colValue,intTemp,arrSwapFields);
+		}
+
+		//-- copy authorisers
+		var aRS = app.g.get_sqrecordset("form/bpm_copy/get_stage_auths",strParams);
+		while(aRS.Fetch())
+		{
+			var colValue = app.g.get_field(aRS,"pk_auto_id");
+			var strNewValue = _swdoc.bpm_auth_copy(colValue,intTemp,arrSwapFields);
+		}
+
+		//-- copy tasks
+		var aRS = app.g.get_sqrecordset("form/bpm_copy/get_stage_tasks",strParams);
+		while(aRS.Fetch())
+		{
+			var colValue = app.g.get_field(aRS,"pk_auto_id");
+			var strNewValue = _swdoc.bpm_task_copy(colValue,intTemp,arrSwapFields);
+		}
+
+		return intTemp;
+	}
+	return newStageValue;
+}
+
+function bpm_progress_copy(strValue,newWFValue)
+{
+	var newStageValue = 0;
+
+	var oProgress = app.g.get_record("bpm_progress", strValue);
+
+	var arrSwapFields = new Array();
+	arrSwapFields["fk_workflow_id"]=newWFValue;
+
+	var intTemp = app.g.copy_sw_record("bpm_progress", oProgress, "",arrSwapFields);
+	if(intTemp>0)
+		return intTemp;
+	return newStageValue;
+}
+
+function bpm_auth_copy(strValue,newWFValue,arrSwapFields)
+{
+	var newStageValue = 0;
+
+	var oProgress = app.g.get_record("bpm_stage_auth", strValue);
+	if(arrSwapFields==undefined)
+		var arrSwapFields = new Array();
+//	arrSwapFields["fk_workflow_id"]=newWFValue;
+
+	var intTemp = app.g.copy_sw_record("bpm_stage_auth", oProgress, "",arrSwapFields);
+	if(intTemp>0)
+		return intTemp;
+	return newStageValue;
+}
+
+function bpm_task_copy(strValue,newWFValue,arrSwapFields)
+{
+	var newStageValue = 0;
+
+	var oProgress = app.g.get_record("bpm_stage_task", strValue);
+	if(arrSwapFields==undefined)
+		var arrSwapFields = new Array();
+
+	var intTemp = app.g.copy_sw_record("bpm_stage_task", oProgress, "",arrSwapFields);
+	if(intTemp>0)
+		return intTemp;
+	return newStageValue;
+}
+
+function bpm_condition_copy(oldWFValue,newWFValue,oldStageId,newStageId,oldConditionId)
+{
+	var newStageValue = 0;
+	var strParams = "_swc_fk_stage_id="+pfu(oldStageId);
+	
+	if(oldConditionId>0)
+		strParams = "_swc_pk_condition_id="+pfu(oldConditionId);
+
+	var aRS = app.g.get_sqrecordset("form/bpm_copy/get_conditions",strParams);
+	while(aRS.Fetch())
+	{
+		oldConditionId = app.g.get_field(aRS,"pk_condition_id");
+
+		var oProgress = app.g.get_record("bpm_cond", oldConditionId);
+		if(arrSwapFields==undefined)
+			var arrSwapFields = new Array();
+		arrSwapFields["fk_workflow_id"]=newWFValue;
+	
+		if(_swdoc.intType==2)
+		{
+			if(oProgress['set_progress_fail']>0)oProgress['set_progress_fail'] = _swdoc.arrProgress[oProgress['set_progress_fail']];
+			if(oProgress['set_progress']>0)oProgress['set_progress'] = _swdoc.arrProgress[oProgress['set_progress']];
+			if(oProgress['set_workflow']!="")oProgress['set_workflow'] = _swdoc.arrWFSwap[oProgress['set_workflow']];
+			if(oProgress['set_stage']>0)oProgress['set_stage'] = _swdoc.arrStages[oProgress['set_stage']];
+			if(oProgress['fk_stage_id']>0)oProgress['fk_stage_id'] = _swdoc.arrStages[oProgress['fk_stage_id']];
+		}
+		else
+		{
+			oProgress['set_progress_fail']=0;
+			oProgress['set_progress']=0;
+			oProgress['set_workflow']="";
+			oProgress['set_stage']=0;
+			oProgress['fk_stage_id']=newStageId;
+		}
+	
+		var intTemp = app.g.copy_sw_record("bpm_cond", oProgress, "",arrSwapFields);
+		if(intTemp>0)
+		{
+			arrSwapFields["fk_cond_id"]=intTemp;
+			//-- copy authorisers
+			var strParams = "cid="+pfu(oldConditionId);
+			var oRS = app.g.get_sqrecordset("form/bpm_copy/get_condition_vpmes",strParams);
+			while(oRS.Fetch())
+			{
+				var colValue = app.g.get_field(oRS,"pk_auto_id");
+				var strNewValue = _swdoc.bpm_vpme_copy(colValue,intTemp,arrSwapFields);
+			}
+		}
+	}	
+	return newStageValue;
+}
+
+function bpm_vpme_copy(strValue,newWFValue,arrSwapFields)
+{
+	var newStageValue = 0;
+	var oProgress = app.g.get_record("bpm_cond_vpme", strValue);
+	if(arrSwapFields==undefined)
+		var arrSwapFields = new Array();
+
+	var intTemp = app.g.copy_sw_record("bpm_cond_vpme", oProgress, "",arrSwapFields);
+
+	if(intTemp>0)
+		return intTemp;
+	return newStageValue;
+}
+
+function bpm_status_copy(strValue,newWFValue,arrSwapFields)
+{
+	var newStageValue = 0;
+
+	var oProgress = app.g.get_record("bpm_stage_sts", strValue);
+	if(arrSwapFields==undefined)
+		var arrSwapFields = new Array();
+
+	var intTemp = app.g.copy_sw_record("bpm_stage_sts", oProgress, "",arrSwapFields);
+
+	if(intTemp>0)
+		return intTemp;
+	return newStageValue;
+}
+
+//-- F0105031 copy audit fields
+function bpm_audit_copy(strValue,newWFValue)
+{
+	var newAuditValue = 0;
+
+	var oAudit = app.g.get_record("bpm_audit_fields", strValue);
+
+	var arrSwapFields = new Array();
+	arrSwapFields["fk_workflow_id"]=newWFValue;
+
+	var intTemp = app.g.copy_sw_record("bpm_audit_fields", oAudit, "",arrSwapFields);
+	if(intTemp>0)
+		return intTemp;
+	return newAuditValue;
+}
+//-- EOF F0105031]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>657</width>
+				<height>125</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>src_process</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>0</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>18</top>
+							<left>100</left>
+							<right>300</right>
+							<bottom>36</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>bpm_workflow</distinctTable>
+							<distinctColumn>pk_workflow_id</distinctColumn>
+							<storedQuery>requests.filter_bpm_selection</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>src_stage</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>1</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>100</left>
+							<right>300</right>
+							<bottom>58</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>bpm_stage</distinctTable>
+							<distinctColumn>title</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<storedQuery>common.filterByTableValues</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>src_condition</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>2</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>63</top>
+							<left>100</left>
+							<right>300</right>
+							<bottom>81</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>bpm_cond</distinctTable>
+							<distinctColumn>title</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<storedQuery>common.filterByTableValues</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>dst_process</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>3</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>18</top>
+							<left>437</left>
+							<right>637</right>
+							<bottom>36</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>bpm_workflow</distinctTable>
+							<distinctColumn>pk_workflow_id</distinctColumn>
+							<storedQuery>requests.filter_bpm_selection</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>dst_stage</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>4</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>437</left>
+							<right>637</right>
+							<bottom>58</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>bpm_stage</distinctTable>
+							<distinctColumn>title</distinctColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<storedQuery>common.filterByTableValues</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>dst_condition</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>5</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>63</top>
+							<left>437</left>
+							<right>637</right>
+							<bottom>81</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Distinct Pick List</type>
+						<flags>
+							<invisible>true</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+							<pickListOrderDesc>false</pickListOrderDesc>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<borderColor>#c0c0c0</borderColor>
+							<image>#eeeeee</image>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>bpm_cond</distinctTable>
+							<distinctColumn>pk_condition_id</distinctColumn>
+							<displayColumn>title</displayColumn>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<storedQuery>common.filterByTableValues</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_copy</name>
+						<type>EventButton</type>
+					</general>
+					<appearance>
+						<index>6</index>
+						<caption>Copy</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>90</top>
+							<left>474</left>
+							<right>554</right>
+							<bottom>116</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_cancel</name>
+						<type>EventButton</type>
+					</general>
+					<appearance>
+						<index>7</index>
+						<caption>Cancel</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>90</top>
+							<left>558</left>
+							<right>638</right>
+							<bottom>116</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor>#ff9900</backgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text1</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>8</index>
+						<caption>Source Process</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>18</top>
+							<left>9</left>
+							<right>96</right>
+							<bottom>36</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text2</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>9</index>
+						<caption>Source Stage</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>9</left>
+							<right>96</right>
+							<bottom>58</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text3</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>10</index>
+						<caption>Source Condition</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>63</top>
+							<left>9</left>
+							<right>96</right>
+							<bottom>81</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text4</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>11</index>
+						<caption>Destination Process</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>18</top>
+							<left>306</left>
+							<right>433</right>
+							<bottom>36</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text5</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>12</index>
+						<caption>Destination Stage</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>306</left>
+							<right>433</right>
+							<bottom>58</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Text6</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>13</index>
+						<caption>Destination Condition</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>63</top>
+							<left>306</left>
+							<right>433</right>
+							<bottom>81</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>true</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>btn_copy_OnPressed</name>
+						<code>
+							<![CDATA[btn_copy_OnPressed()
+{
+	// TODO: Add your event handler code here
+	_swdoc.bpm_process_copy();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>src_process_OnValueChanged</name>
+						<code>
+							<![CDATA[src_process_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	if(strValue!="")
+	{
+		_slf(src_stage,"_swc_fk_workflow_id="+pfu(strValue));
+		_eva(src_stage,"");
+		_een(src_stage,true);
+		_eva(src_condition,"");
+		_een(src_condition,false);
+	
+	}
+	else
+	{
+		_een(src_stage,false);
+		_eva(src_stage,"");
+		_eva(src_condition,"");
+		_ete(src_stage,"");
+		_ete(src_condition,"");
+	}
+	
+//	_swdoc.UpdateFormFromData();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded(bDataReloaded)
+{
+	// TODO: Add your event handler code here
+	var src_workflow = _swdoc.GetArg("src_workflow");
+	if(src_workflow!="")
+	{
+		_eva(mainform.src_process,src_workflow);
+		_een(mainform.src_stage,true);
+		_slf(mainform.src_stage,"_swc_fk_workflow_id="+pfu(src_workflow));
+	}
+	
+	var src_stage = _swdoc.GetArg("src_stage");
+	if(src_stage!="")
+	{
+		_eva(mainform.src_stage,src_stage);
+		_een(mainform.src_stage,true);
+		_een(mainform.src_condition,true);
+	}
+
+	var src_condition = _swdoc.GetArg("src_condition");
+	if(src_condition!="")
+	{
+		_eva(mainform.src_condition,src_condition);
+		_een(mainform.src_stage,true);
+		_een(mainform.src_condition,true);
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>dst_process_OnValueChanged</name>
+						<code>
+							<![CDATA[dst_process_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	if(strValue!="")
+	{
+		//-- F0104899
+		var strParams = "wf="+pfu(strValue);
+		var intCount = app.g.sqs_rowcount("form/bpm_copy/cnt_bpm", strParams);
+		if(intCount<1)
+		{
+			_een(dst_stage,false);
+		}
+		else
+		{
+			_slf(dst_stage,"_swc_fk_workflow_id="+pfu(strValue));
+			_een(dst_stage,true);
+		}
+		_eva(dst_stage,"");
+	}
+	else
+	{
+		_een(dst_stage,false);
+	}
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>src_stage_OnValueChanged</name>
+						<code>
+							<![CDATA[src_stage_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	if(strValue!="")
+	{
+		var oRec = app.g.get_sqrecordset("form/bpm_copy/get_stage", "_swc_title="+pfu(strValue)+"&"+src_stage.filter);
+		if(oRec.Fetch())
+		{
+			var strStageId = app.g.get_field(oRec, "pk_stage_id"); 
+			_slf(src_condition,"_swc_fk_stage_id="+pfu(strStageId));
+			_een(src_condition,true);
+			_eva(src_condition,"");
+		}
+	
+	}
+	else
+	{
+		_een(src_condition,false);
+		_eva(src_condition,"");
+	}
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_cancel_OnPressed</name>
+						<code>
+							<![CDATA[btn_cancel_OnPressed()
+{
+	// TODO: Add your event handler code here
+	_swdoc.CloseForm();
+
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

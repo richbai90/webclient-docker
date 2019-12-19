@@ -1,0 +1,453 @@
+
+#datatable-colresizer
+{
+	position:absolute;
+	width:2px;
+	background-color:#000000;
+	font-size:0px;
+	display:none;
+	z-Index:2000;
+}
+
+.dhtml_table_holder
+{
+	display:block;
+	position:relative;
+	border-width:0px 0px 1px 0px;
+	border-style:solid;
+	border-color:#D5D4DF #D5D4DF #D5D4DF #D5D4DF;
+	height:100%;
+	width:100%;
+	overflow:hidden;
+}
+
+.dtable_filter_lbl
+{
+	position:relative;
+	*top:-2px;
+	font-size:11px;
+	margin-right:3px;
+	
+}
+.dtable_filter_lb
+{
+	border:1px solid #808080;
+	width:150px;
+	font-size:11px;
+	margin:2px 0px 4px 2px;
+}
+
+.dhtml_mes_table_holder
+{
+	overflow:hidden;
+	position:relative;
+	height:100%;
+	width:100%;
+}
+
+.dhtml_table_filters
+{
+	overflow:hidden;
+	border-width:0px 0px 0px 0px;
+	border-style:solid;
+	border-color:#E87F08 #E87F08 #D5D4DF #E87F08;
+	color:#D5D4DF;
+}
+
+
+.dhtml_table_header
+{
+	overflow:hidden;
+	border-width:1px 1px 1px 1px;
+	border-style:solid;
+	border-color:#D5D4DF #D5D4DF #D5D4DF #D5D4DF;
+
+	
+	padding-top:2px;
+	/* 11.03.2011 - gradient*/
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#E1E1E1'); 
+	background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#E1E1E1)); 
+	background: -moz-linear-gradient(top,  #FFFFFF,  #E1E1E1);
+	background: -ms-linear-gradient(top,  #FFFFFF,  #E1E1E1);
+}
+.nobordertop
+{
+	border-width:0px 1px 1px 1px;
+}
+.dhtml_table_header table
+{
+	empty-cells:show; 
+	table-layout:fixed;
+	border-collapse: collapse;
+	margin:0;padding:0;
+}
+
+.dhtml_table_header td
+{
+	border-width:0px 1px 0px 0px;
+	border-style:solid;
+	border-color:#D5D4DF #D5D4DF #D5D4DF #D5D4DF;
+	text-overflow:ellipsis;
+	overflow:hidden;
+	white-space:nowrap;
+	padding-right:4px;
+}
+
+.headertd-ASC
+{
+	border-width:0px 1px 0px 0px;
+	border-style:solid;
+	border-color:#D5D4DF #D5D4DF #D5D4DF #D5D4DF;
+	text-overflow:ellipsis;
+	overflow:hidden;
+	white-space:nowrap;
+	padding-right:4px;
+
+	background-image:url(tableimages/arr_up.gif);
+	background-repeat: no-repeat;
+	background-position:right center;
+
+}
+
+.headertd-DESC
+{
+	border-width:0px 1px 0px 0px;
+	border-style:solid;
+	border-color:#D5D4DF #D5D4DF #D5D4DF #D5D4DF;
+	text-overflow:ellipsis;
+	overflow:hidden;
+	white-space:nowrap;
+	padding-right:4px;
+
+	background-image:url(tableimages/arr_down.gif);
+	background-repeat: no-repeat;
+	background-position:right center;
+}
+
+.dhtml_table_header div
+{
+	text-overflow:ellipsis;
+	overflow:hidden;
+	white-space:nowrap;
+	cursor:default;
+
+	font-size:11px;
+	color:#696969;
+	height:16px;
+	padding-left:1px;
+}
+
+.dhtml_div_data
+{
+	display:block;
+	width:100%;
+	height:100%;
+	background-color:#ffffff;
+	overflow:auto;
+	cursor:default;
+
+	font-size:10px;
+
+	border-width:0px 1px 1px 1px;
+	border-style:solid;
+	border-color:#D5D4DF #D5D4DF #D5D4DF #D5D4DF;
+
+}
+
+.dhtml_table_data
+{
+	table-layout:fixed;
+	border-collapse: collapse;
+	background: #fff;
+	margin:0;padding:0;
+}
+
+.dhtml_table_data td
+{
+	border-width:0px 1px 1px 0px;
+	border-style:solid;
+	border-color:#D5D4DF #D5D4DF #D5D4DF #D5D4DF;
+
+	padding:2px;
+	padding-right:4px;	
+	text-overflow:ellipsis;
+	overflow:hidden;
+	white-space:nowrap;
+}
+
+.dhtml_table_data div
+{
+	text-overflow:ellipsis;
+	overflow:hidden;
+	white-space:nowrap;
+	font-size:11px;
+}
+
+.dhtml_table_data a
+{
+	font-size:11px;
+}
+
+.text-strike-16
+{
+	text-decoration:line-through;
+	color:green;
+}
+
+.text-strike-1
+{
+	text-decoration:none;
+	color:gray;
+}
+
+.sw_esc_1
+{
+	background-color:gray;
+}
+
+.sw_esc_2
+{
+	background-color:green;
+}
+
+.sw_esc_3
+{
+	background-color:yellow;
+	background-color:#FFBF00;
+	
+}
+
+.sw_esc_4
+{
+	background-color:blue;
+}
+
+.sw_esc_5
+{
+	background-color:#CD00CD;
+}
+
+.sw_esc_6
+{
+	background-color:red;
+}
+
+
+.paging_text
+{
+	font-size:11px;
+	color:#808080;
+}
+.paging_left
+{
+	width:10px;
+	background-image:url(tableimages/paging_left.gif);
+	background-repeat: no-repeat;
+	background-position:center center;
+	cursor:pointer;
+}
+
+.paging_right
+{
+	width:10px;
+	background-image:url(tableimages/paging_right.gif);
+	background-repeat: no-repeat;
+	background-position:center center;
+	cursor:pointer;
+}
+.paging_end
+{
+	width:10px;
+	background-image:url(tableimages/paging_end.gif);
+	background-repeat: no-repeat;
+	background-position:center center;
+	cursor:pointer;
+}
+.paging_start
+{
+	width:10px;
+	background-image:url(tableimages/paging_start.gif);
+	background-repeat: no-repeat;
+	background-position:center center;
+	cursor:pointer;
+}
+
+/* view styles */
+/* email table */
+.email-attachment
+{
+	background-image:url(tableimages/email-attachment.png);
+	background-repeat: no-repeat;
+	background-position:center center;
+	height:14px;
+}
+
+.email-priority
+{
+	background-image:url(tableimages/email-priority-high.png);
+	background-repeat: no-repeat;
+	background-position:center center;
+	height:14px;
+}
+
+.email-status
+{
+	background-image:url(tableimages/email-status.png);
+	background-repeat: no-repeat;
+	background-position:center 0px;
+	height:14px;
+	
+}
+
+/* call status text color */
+.cs-normal
+{
+	color:#696969;
+}
+.cs-esc
+{
+	color:#800000;
+}
+.cs-hold
+{
+	color:#648F64;
+	font-style:italic;
+}
+.cs-un
+{
+	color:#618CB6;
+}
+
+/* call conditions */
+.sw_cc_txt
+{
+	position:relative;
+	top:2px;
+}
+.sw_cc
+{
+	width:16px;
+	height:16px;
+	float:left;
+}
+
+.sw_cc1
+{
+	background:url('tableimages/callconditions.png') 0px 0px;
+}
+
+.sw_cc2
+{
+	background:url('tableimages/callconditions.png') -16px 0px;
+}
+
+.sw_cc3
+{
+	background:url('tableimages/callconditions.png') -32px 0px;
+}
+
+.sw_cc4
+{
+	background:url('tableimages/callconditions.png') -48px 0px;
+}
+
+.sw_cc5
+{
+	background:url('tableimages/callconditions.png') -64px 0px;
+}
+
+.sw_cc6
+{
+	background:url('tableimages/callconditions.png') -80px 0px;
+}
+
+.sw_cc7
+{
+	background:url('tableimages/callconditions.png') -96px 0px;
+}
+
+.sw_cc8
+{
+	background:url('tableimages/callconditions.png') -112px 0px;
+}
+
+.sw_cc9
+{
+	background:url('tableimages/callconditions.png') -128px 0px;
+}
+
+.sw_cc10
+{
+	background:url('tableimages/callconditions.png') -144px 0px;
+}
+
+.sw_cc11
+{
+	background:url('tableimages/callconditions.png') -160px 0px;
+}
+
+.sw_cc12
+{
+	background:url('tableimages/callconditions.png') -176px 0px;
+}
+
+.sw_cc13
+{
+	background:url('tableimages/callconditions.png') -192px 0px;
+}
+
+.sw_cc14
+{
+	background:url('tableimages/callconditions.png') -208px 0px;
+}
+
+.sw_cc15
+{
+	background:url('tableimages/callconditions.png') -224px 0px;
+}
+
+.sw_cc16
+{
+	background:url('tableimages/callconditions.png') -240px 0px;
+}
+
+.sw_cc17
+{
+	background:url('tableimages/callconditions.png') -256px 0px;
+}
+
+.sw_cc18
+{
+	background:url('tableimages/callconditions.png') -272px 0px;
+}
+
+.sw_cc19
+{
+	background:url('tableimages/callconditions.png') -288px 0px;
+}
+
+.sw_cc20
+{
+	background:url('tableimages/callconditions.png') -304px 0px;
+}
+
+.sw_cc21
+{
+	background:url('tableimages/callconditions.png') -320px 0px;
+}
+
+.sw_cc22
+{
+	background:url('tableimages/callconditions.png') -336px 0px;
+}
+
+.sw_cc23
+{
+	background:url('tableimages/callconditions.png') -352px 0px;
+}
+
+
+.sw_cc24
+{
+	background:url('tableimages/callconditions.png') -368px 0px;
+}

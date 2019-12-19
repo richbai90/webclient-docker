@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>bpm_stage_status</name>
+			<title>Stage Status Value</title>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>true</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>bpm_stage_sts</name>
+				<type>Main Details Table</type>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var strCurrentStatus = "";
+
+function SSTATUS()
+{
+	return _swdoc.bpm_stage_sts;
+}
+
+function MF()
+{
+	return mainform;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnFormLoaded</name>
+					<code>
+						<![CDATA[OnFormLoaded(strFormName, strclass)
+{
+	// TODO: Add your event handler code here
+	_swdoc.SetTitle("Stage Status Value - " + _swdoc.SSTATUS().fk_workflow_id);
+
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>399</width>
+				<height>63</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<type>FieldName</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>0</index>
+						<caption>Status</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Right</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>24</top>
+							<left>-5</left>
+							<right>74</right>
+							<bottom>42</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_stage_sts.status</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>fld_status</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>1</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>24</top>
+							<left>79</left>
+							<right>385</right>
+							<bottom>42</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>bpm_stage_sts.status</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<sqlSource>swdata</sqlSource>
+							<distinctTable>bpm_stage_sts</distinctTable>
+							<distinctColumn>status</distinctColumn>
+							<listFilter>fk_workflow_id = &apos;&amp;[bpm_stage_sts.fk_workflow_id]&apos;</listFilter>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded()
+{
+	var boolUpdate = (_swdoc.SSTATUS().pk_auto_id!=0);
+	if(boolUpdate)
+	{
+		//-- updating
+		_swdoc.strCurrentStatus = _swdoc.SSTATUS().status;
+	}
+	else
+	{
+		_swdoc.SSTATUS().fk_workflow_id = _swdoc.GetArg("fk_workflow_id");
+		_swdoc.SSTATUS().fk_stage_id = _swdoc.GetArg("fk_stage_id");
+
+	}
+	
+	//-- set form modified to false as users complain about closing forms and getting prompted to save / cancel when they
+	//-- havent done anything.
+	_swdoc.ResetModiedFlag("bpm_stage_sts");
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>fld_status_OnValueChanged</name>
+						<code>
+							<![CDATA[fld_status_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	var oParams = {};
+	oParams.sid = _swdoc.SSTATUS().fk_stage_id;
+	oParams.sts = strValue;
+	oParams.pid = _swdoc.SSTATUS().pk_auto_id;
+	var intRowCount = app.g.staticfilter_rowcount("bpm_stage_sts", "bpm_stage_status.fld_status", oParams);
+	if(intRowCount>0)
+	{
+		MessageBox("A status of "+strValue+" has already been defined for this stage.");
+		_swdoc.SSTATUS().status = _swdoc.strCurrentStatus;
+		_swdoc.UpdateFormFromData();
+		return false;
+	}
+	else
+	{
+		_swdoc.strCurrentStatus = strValue;
+	}
+	
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

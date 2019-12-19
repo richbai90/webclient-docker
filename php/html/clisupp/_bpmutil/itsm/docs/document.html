@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+            <html xmlns="http://www.w3.org/1999/xhtml">
+            <head>
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+                <title>BPM Import / Export Utility Guide</title>
+            </head>
+<div id="content"><div id="1" class="level1 section">
+<h2><span class="mw-headline">The Business Process Import/Export Utility User Guide</span></h2>
+</div><div id="1.1" class="level2 section">
+<h3><span class="mw-headline">Introduction</span></h3>
+<p>The Business Process Import/Export Utility can be used to export Business Processes from Supportworks Database into a XML file and import Business Processes from a XML file into Supportworks Data.</p>
+<p><img src="docs/images/image-001.png" alt="[image-001.png]"/></p>
+<p>This utility is launched from within the <b>File &gt; Manage Settings &gt; Process Settings</b> tab of the Supportworks Client - see the Supportworks ITSM Enterprise Administration Guide for more information.</p>
+</div><div id="1.1.1" class="level3 section">
+<h4><span class="mw-headline">Functions available</span></h4>
+<p>Utility functions available include:</p>
+<ul><li><b>Export</b>: Export one or more processes from Supportworks, generating an XML file</li>
+<li><b>Manage Files</b>: upload, download or delete generated XML files</li>
+<li><b>Import</b>: Import one or more generated XML files into Supportworks as processes.</li>
+</ul><p><img src="docs/images/image-002.png" alt="[image-002.png]"/></p>
+</div><div id="1.1.2" class="level3 section">
+<h4><span class="mw-headline">Prerequisites</span></h4>
+<p>You will need an ODBC connection for connecting to the Supportworks Server.</p>
+</div><div id="1.2" class="level2 section">
+<h3><span class="mw-headline">Export</span></h3>
+<p>The <b>Export</b> option provides a simple way to transfer data between Supportworks databases, even if the data reside on different database platforms.</p>
+<p>It allows users to export single, multiple, or all Business Processes in a database into XML format.</p>
+<p><img src="docs/images/image-003.png" alt="[image-003.png]"/></p>
+<p>Where:</p>
+<ul><li><b>Data Sources:</b> the data sources that the system you are connected to has been configured for. The default value corresponds to the default DSN that Supportworks is configured to use.</li>
+<li><b>Username</b> and <b>password</b>: only required if you select a non-default data source.</li>
+</ul><p>Select <b>View Processes</b> to list the processes available for export.</p>
+<p>For example:</p>
+<p><img src="docs/images/image-004.png" alt="[image-004.png]"/></p>
+<p>Select the process(es) you want to export from the list, then select <b>Export Process</b> to generate XML files - one file for each process.</p>
+</div><div id="1.3" class="level2 section">
+<h3><span class="mw-headline">Manage Files</span></h3>
+<p>This option shows all generated XML files which are currently available for use for the Utility.</p>
+<p>For example:</p>
+<p><img src="docs/images/image-005.png" alt="[image-005.png]"/></p>
+<p>You can download or delete these files.</p>
+<p>To upload new files into the utility (for use to import into Supportworks), select the file using the Browse button, then click <b>Upload File</b>.</p>
+<p>(<b>Note:</b> only XML files can be accepted for upload)</p>
+</div><div id="1.4" class="level2 section">
+<h3><span class="mw-headline">Import</span></h3>
+<p>This option provides users with the option to import generated XML files of Business Processes into a Supportworks database.</p>
+<p>For example:</p>
+<p><img src="docs/images/image-006.png" alt="[image-006.png]"/></p>
+<p>Where <b>Data Source</b>, <b>Username</b> and <b>Password</b> are all as for the Export function.</p>
+<p>Select the process file(s) required, then select <b>Import Process</b> to import that Process or Processes into the Supportworks system.</p>
+</div><div id="1.4.1" class="level3 section">
+<h4><span class="mw-headline">Generation of primary keys</span></h4>
+<p>During the import new primary keys will be created for some tables (For example, <b>pk_auto_id</b> within the stage table will be automatically generated).</p>
+<p>These automatically generated primary keys exist as foreign keys in related tables.</p>
+<p>During the import these foreign keys will be updated with the values of the newly generated primary keys.</p></div></div></body>
+            </html>

@@ -1,0 +1,30 @@
+<report title="OLAs Outside Response Time" reportstyle="list" dsn="swdata" uid="" pwd="">
+	<tables>
+		<table name="opencall" type="master"/>
+		<table name="itsmsp_slad_ola"   type="related" join_type="" join="opencall.itsm_sladef = itsmsp_slad_ola.pk_ola_id"/>
+		<!--<table name="sw_systemdb.opencall_sla"   type="related" join_type="" join="opencall.callref = opencall_sla.callref"/>-->
+	</tables>
+	<columns>
+		<column dbname="callref" dbtable="opencall" conversion="callref" level="1">OLA Reference</column>
+		<column dbname="slad_ola" dbtable="itsmsp_slad_ola" conversion="" level="1">OLA Name</column>
+		<column dbname="status" dbtable="opencall" conversion="callstatus" level="1">OLA Status</column>
+		<!--<freetext dbname="TimeInBreach" conversion="hhmmss" level="1">((opencall_sla.resp_ctr)*(-1))</freetext>-->
+		<column dbname="resp_time" dbtable="opencall" conversion="hhmmss" level="1">Actual Response Time</column>
+	</columns>
+	<criteria>
+		<userinput type="daterange" binding="opencall.logdatex" int="1" op="=">
+			<prompt>Please Specify a Date Range</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.fk_company_id" dsn="swdata" dbtable="opencall" keycol="fk_company_id" txtcol="companyname" filter=" where fk_company_id IS NOT NULL  and fk_company_id &lt;&gt;'' group by opencall.fk_company_id,opencall.companyname" int="0" op="=">
+			<prompt>Organisation</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.site" dsn="swdata" dbtable="site" keycol="site_name" txtcol="site_name" filter="" int="0" op="=">
+			<prompt>Site</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.probcode" dsn="swdata" dbtable="pcdesc" keycol="code" txtcol="info" filter="" int="0" op="=">
+			<prompt>Task Profile</prompt>
+		</userinput>
+		<!--<static>callclass='OLA Task' and opencall_sla.resp_ctr&lt;0 </static>-->
+		<static>callclass='OLA Task' and opencall.appcode IN (![$GLOBALS['datasetfilterlist']]!)</static>
+	</criteria>
+</report>

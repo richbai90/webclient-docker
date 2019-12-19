@@ -1,0 +1,3207 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>EfIssueForm</name>
+			<title>EfIssueForm</title>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>true</showMenubar>
+				<showToolbar>true</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>swissues</name>
+				<type>Main Details Table</type>
+				<flags>5</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>OnFormLoading</name>
+					<code>
+						<![CDATA[OnFormLoading(strFormName, strClass)
+{
+	//F0105345 - Disable Issues within ITSM application
+	//Can be re-enabled by adding String value to Application Settings Name: EnableIssues Value:Yes 
+	if(dd.GetGlobalParamAsString("Application Settings/EnableIssues") != "Yes")
+	{
+		MessageBox("Issues are not supported within this application.", MB_ICONSTOP);
+		return false;
+	}
+
+	//-- Default form variables
+	_swdoc.bSaveMode = false;
+	
+	//-- Declare and set the form title
+	_swdoc.strFormTitle = "Create New Issue";
+	
+	//-- Try to obtain the IssueRef if there is one	
+	if(_swdoc._form["Issueref"])
+	{
+		_swdoc.swissues.issueref = _swdoc._form["Issueref"];
+		_swdoc.strFormTitle = "View/Edit Issue " + _swdoc.swissues.issueref;
+		
+		_swdoc.UpdateFormFromData();
+		
+		//-- this clears the modified flags on the _swdoc
+		_swdoc.ResetModiedFlag("swissues");
+	}
+	else //Set the form field default values
+	{
+		_swdoc.swissues.issuetype = ISSUE_TYPE_HOT;
+		_swdoc.swissues.status = ISSUE_STATUS_OPEN;
+		_swdoc.swissues.starttimex = app.global.GetCurrentEpocTime();
+		_swdoc.swissues.resolvebyx = app.global.GetCurrentEpocTime();
+		_swdoc.swissues.mastercallref = 0;
+	}
+
+	_swdoc.SetTitle(_swdoc.strFormTitle);
+	
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnFormClosing</name>
+					<code>
+						<![CDATA[OnFormClosing()
+{
+	//-- check if the form data has been modified, if it has prompt the analyst to save changes
+	//-- and if Yes is clicked carry out a save
+	if(_swdoc.bFormFieldChanged)
+	{
+		var strMessage = (_swdoc.swissues.issueref.length == 0) ? "Your issue has not yet been created, do you want to create the issue before the form is closed?\n\nClick Yes to create the issue and close this form\nClick No to close this form without creating this issue\nClick Cancel to return to this form" : 
+															"There is unsaved data on this form.  Do you want to save it before closing the form?\n\nClick Yes to create the issue and close this form\nClick No to close this form without saving this issue\nClick Cancel to return to this form";
+		switch(MessageBox(strMessage,MB_ICONQUESTION |  MB_YESNOCANCEL ))
+		{
+		case IDYES:
+			if(mainform.tb_summary.text.length > 0)
+			{
+				mainform.CreateUpdateIssue();
+			}
+			else
+			{
+				strMessage = (_swdoc.swissues.issueref.length == 0) ? "You must enter an issue summary before this issue can be created" : "You must enter an issue summary before this issue can be saved";
+				MessageBox(strMessage, MB_ICONEXCLAMATION | MB_OK);
+				return false;
+			}
+			break;
+		case IDNO:
+			break;
+		case IDCANCEL:
+			return false;
+		}
+	}
+	
+	//Unlock calls associated to this issue
+	var strCommSepCallrefs = mainform.GetCommaSepCallrefsString();
+	if(strCommSepCallrefs.length)
+		app.global.UnlockCalls(strCommSepCallrefs);
+		
+	//This is undocumented, not sure what it does
+	_swdoc.ResetData();
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var bFormFieldChanged = false;	//This var is used to check for changes to data fields and is set to true when any 
+								//field data is changed]]>
+					</code>
+				</method>
+				<method>
+					<name>(User Defined Functions)</name>
+					<code>
+						<![CDATA[function AddCallsToIssue( strCommaSepCallrefs )
+{
+	//////////////////////////////////////////////////////////////
+	// This function is used to add call references to an Issue //
+	//////////////////////////////////////////////////////////////
+	
+	//-- Check that there is an Issue Reference to attach call to, if not then quit
+	if(_swdoc.swissues.issueref.length == 0)
+		return false;
+	
+	//-- Check that we have a HelpdeskSession connection to attach the call, if not then quit	
+	var con = new HelpdeskSession;
+	if(!con.Connect())
+	{
+		return false;
+	}
+	
+	//-- Add the call(s) to the issue, if this fails then close the connection and quit
+	if(!con.AddCallToIssue(_swdoc.swissues.issueref, strCommaSepCallrefs))
+	{
+		con.Close();
+		return false;
+	}
+	
+	//-- If call successfully added to Issue then we close the HelpdeskSession connection here
+	con.Close();
+		
+	return true;
+}
+
+function LogAndAddCustomerCall()
+{
+	//////////////////////////////////////////////////////////////////////////////////////
+	// This function logs a new call based on the details contained in the master		//
+	// call for a customer selected through a Tree Browser dialog and then assigns this //
+	// to the Issue																		//
+	//////////////////////////////////////////////////////////////////////////////////////
+	
+	//-- Check that the issue has a master call reference set as this will form the basis of the 
+	//-- new call we will be logging and linking to this issue.  If no master call reference is
+	//-- is set then prompt the analyst that one must be set before carrying out this action.
+	if(_swdoc.swissues.mastercallref == 0)
+	{
+		var strMessage  = "There is no master call set for this issue, this is used to populate the call logged for this customer.\r\n";
+		    strMessage += "Select a master call reference from the calls in the issue and try again.";
+		MessageBox(strMessage);
+		return false;
+	}
+	
+	//-- Identify the SQL Tree Browser Form we should be opening from the setting in the DD
+	//-- If there is no value specified in the DD then default to the "Customer" form
+	var strPickCustomerForm = dd.GetGlobalParamAsString("Issue View/PickCustomerForm");
+
+	if(strPickCustomerForm.length == 0)
+		strPickCustomerForm = "Customer";
+	
+	
+	var arrSqlTreeForms = dd.GetSqlTreeBrowsersFormParameters(strPickCustomerForm );
+
+	//-- Get the CustomerID of the chosen customer from the Sql Tree Browser
+	var strCustId = app.global.OpenSqlTreeBrowserForm(strPickCustomerForm, true, true);
+	if(strCustId.length == 0)
+		return false;
+	
+	//-- Check we have an open HelpdeskSession connection
+	var con = new HelpdeskSession;
+	if(!con.Connect())
+	{
+		return false;
+	}
+	
+	//-- Log the new call against the selected customerID and associate it to this issue, if the
+	//-- action fails then close the HelpdeskSession connection and quit
+	if(!con.AddCustomerToIssue(_swdoc.swissues.issueref,arrSqlTreeForms[0].table ,strCustId))
+	{
+		con.Close();
+		return false;
+	}
+
+	//-- If call has been successfully logged and associated to the issue then close the HelpdeskSession connection
+	con.Close();
+	return true;
+}
+
+
+function CloseIssue()
+{	
+	/////////////////////////////////////////////////////////////////////////////////
+	// This function is used to close an issue and calls associated to it
+	/////////////////////////////////////////////////////////////////////////////////
+
+	if(_swdoc.swissues.issueref.length == 0)
+		return true;
+		
+	var strCommaSepCallrefs = mainform.GetCommaSepCallrefsString();
+		
+	//If there are calls associated to this Issue
+	if(strCommaSepCallrefs.length)
+	{
+		//Unlock call(s) associated to this issue
+		app.global.UnlockCalls(strCommaSepCallrefs);
+		
+		//-- Line Added DavidJH - 21.06.2005
+		//-- Accept any unassigned or unaccepted calls (if there are any) to enable the issue to be closed
+		mainform.ManuallyAcceptLinkedIssueCalls();
+		
+		//-- If call(s) cannot be closed then quit
+		if(!_swdoc.CanCloseCalls(strCommaSepCallrefs))
+			return false
+		
+		//-- Set the text to be used in the resolve/close form
+		var strCloseUpdateText = "Call closed as part of issue " + _swdoc.swissues.issueref;
+			
+		//-- Open the resolve/close form with the text set above (strCloseUpdateText) and the Issue Ref to be closed	
+		app.OpenCallResolveCloseForm(strCommaSepCallrefs, strCloseUpdateText, strCloseUpdateText, "", _swdoc.swissues.issueref);
+		return true
+	}
+	else //-- No calls associated to this Issue so we simply set Issue Status to "Closed" and save change
+	{
+		_swdoc.swissues.status = ISSUE_STATUS_CLOSED;
+		return mainform.CreateUpdateIssue();
+	}
+	
+	return false
+}
+
+function CanCloseCalls( CallrefsCommaString )
+{
+	////////////////////////////////////////////////////////////////////////////////////////
+	// This function checks a comma separated list of Call Refs and determines which ones //
+	// cannot be closed as they do not have a status from which a call can be closed. The //
+	// analyst will be alerted with a list of call refs that cannot be closed.			  //
+	////////////////////////////////////////////////////////////////////////////////////////
+
+	var strInvalidCallRefs = "";
+	var strValidCloseCallStatuses = "1,2,3,5,6,7,8,9,10,11,12,13,14";
+	
+	for(var i=0; i < mainform.sl_issuecallslist.rowCount(); i++)
+	{
+		var strStatus = mainform.sl_issuecallslist.GetItemTextRaw(i,1);
+		strStatus++;
+		strStatus--;
+		switch(strStatus)
+		{
+			case CS_PENDING:
+			case CS_UNASSIGNED:
+			case CS_UNACCEPTED:
+			case CS_OFFHOLD:
+			case CS_ONHOLD:
+			case CS_RESOLVED:
+			case CS_ESCALATEDOWNER:
+			case CS_ESCALATEDGROUP:
+			case CS_ESCALATEDALL:
+				break;
+			default:
+			{
+				if(strInvalidCallRefs.length)
+					strInvalidCallRefs += ", ";
+					
+				strInvalidCallRefs += mainform.sl_issuecallslist.GetItemText(i,0);
+				strInvalidCallRefs += " (" + mainform.sl_issuecallslist.GetItemText(i,1) + ")";	
+				break;
+			}
+		}
+	}
+	
+	if(strInvalidCallRefs.length)
+	{
+		MessageBox("The following calls cannot be closed due to them having invalid statuses. Please modify the(se) calls so that they can be closed or detach them from the issue before attempting to close it again.\n(the valid statuses for closing calls attached to issues are " 
+		+ strValidCloseCallStatuses + "\r\n\r\n" + strInvalidCallRefs, MB_ICONSTOP);
+		return false;
+	}
+	
+	return true;
+}
+
+
+function PopulateFromCall( nCallref )
+{
+	/////////////////////////////////////////////////////////////////////////////////////////////
+	// This function is used to retrieve either the call description or the issue description  //
+	// and assuming one of these is found we save this to a variable for use in populating the //
+	// summary and description fields in mainform.onFormLoaded.								   //
+	/////////////////////////////////////////////////////////////////////////////////////////////
+
+	//-- get the status and class for our callref/s
+    var SqlRecordSetObj	= new SqlQuery;
+    if(!SqlRecordSetObj.Query("SELECT prob_text FROM opencall WHERE callref = " + nCallref, "sw_systemdb"))
+    {
+     	//-- failed - check if we have an issue
+     	if(_swdoc.strIssueref.length == 0)
+     	{
+     		MessageBox("Unable to query call status values. Progress not possible.", MB_ICONSTOP);
+     		return false;
+     	}
+    }
+    
+    //-- set the variable for use later in retrieving the issue summary and description
+    if(SqlRecordSetObj.Fetch())
+    {
+    	_swdoc.swissues.description = SqlRecordSetObj.GetValueAsString(0);
+    	return true;
+    }
+    
+	return false;
+}
+
+
+function RemoveCalls( strCommaSepCallrefs )
+{
+	///////////////////////////////////////////////
+	// This function removes calls from an Issue //
+	///////////////////////////////////////////////
+
+	//-- If there is no Issue Ref to remove calls from then quit
+	if(_swdoc.swissues.issueref.length == 0)
+		return false;
+
+	var bRetVal = false;
+
+	//-- Check we have an open HelpdeskSession connection, if not we quit
+	var con = new HelpdeskSession;
+	if(!con.Connect())
+		return false;
+		
+	//-- Remove call(s) from the Issue
+	if(con.RemoveCallFromIssue(_swdoc.swissues.issueref, strCommaSepCallrefs))
+	{
+		
+	}
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnLoadRecord</name>
+					<code>
+						<![CDATA[OnLoadRecord(strTable, strKeyValue)
+{
+	//-- Attempt to the load the record data from cache to avoid the time delay 
+	//-- in retrieving the data from the database.  If this is not successful then 
+	//-- we return true to continue with the load from the database
+	if(_swdoc.LoadRecordData("syscache", strTable, strKeyValue))
+		return false;
+
+	return true;
+
+
+	return true;
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>550</width>
+				<height>339</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>tb_issuetype</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>0</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>3-D Sunken</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>53</top>
+							<left>11</left>
+							<right>218</right>
+							<bottom>70</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>swissues.issuetype</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Pick List (Numeric Mode)</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>true</comboNewValues>
+							<useDDPickList>false</useDDPickList>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<listItems>HOT^1|KNOWN^2|</listItems>
+							<defaultValue>1</defaultValue>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>dt_starttime</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>1</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>3-D Sunken</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>53</top>
+							<left>227</left>
+							<right>387</right>
+							<bottom>70</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>swissues.starttimex</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Date/Time Control</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<colorDateIndicator>false</colorDateIndicator>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<dateFormatMode>0</dateFormatMode>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_mastercallro</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>2</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>3-D Sunken</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>90</top>
+							<left>11</left>
+							<right>218</right>
+							<bottom>107</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<listItems>F0000016^16|</listItems>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>dt_resolvetime</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>3</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>3-D Sunken</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>90</top>
+							<left>227</left>
+							<right>387</right>
+							<bottom>107</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>swissues.resolvebyx</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Date/Time Control</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>true</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<colorDateIndicator>false</colorDateIndicator>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<dateFormatMode>0</dateFormatMode>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_summary</name>
+						<type>Field</type>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>4</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>3-D Sunken</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>196</top>
+							<left>12</left>
+							<right>537</right>
+							<bottom>213</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_issuedescription</name>
+						<type>Field</type>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>5</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>3-D Sunken</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>233</top>
+							<left>12</left>
+							<right>537</right>
+							<bottom>329</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>true</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>true</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>4</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect1</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>6</index>
+						<backgroundColor>#ccecff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Vertical Gradient</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>-10</top>
+							<left>0</left>
+							<right>555</right>
+							<bottom>344</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#336699</backgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect2</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>7</index>
+						<backgroundColor>#f8f8f8</backgroundColor>
+						<foregroundColor>#003366</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Vertical Gradient</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>31</top>
+							<left>3</left>
+							<right>396</right>
+							<bottom>155</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#ccecff</backgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect2</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>8</index>
+						<backgroundColor>#f8f8f8</backgroundColor>
+						<foregroundColor>#003366</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Vertical Gradient</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>31</top>
+							<left>400</left>
+							<right>545</right>
+							<bottom>155</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#ccecff</backgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>dt_resolvedtime</name>
+						<type>Field</type>
+					</general>
+					<appearance>
+						<index>9</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>3-D Sunken</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>129</top>
+							<left>227</left>
+							<right>387</right>
+							<bottom>146</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>swissues.resolved</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Date/Time Control</type>
+						<flags>
+							<invisible>true</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<colorDateIndicator>false</colorDateIndicator>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<dateFormatMode>0</dateFormatMode>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>flg_markpublic</name>
+						<type>Field</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>10</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>33</top>
+							<left>406</left>
+							<right>542</right>
+							<bottom>51</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+						<binding>swissues.flags</binding>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Form Flags</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>false</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<comboAutoUpdate>false</comboAutoUpdate>
+							<comboNewValues>false</comboNewValues>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<flagItems>Issue to be public^1|</flagItems>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Tab1</name>
+						<type>TabControl</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>11</index>
+						<caption>Tab1</caption>
+						<backgroundColor>#ded7ce</backgroundColor>
+						<foregroundColor>#f7f3ef</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>None</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>158</top>
+							<left>2</left>
+							<right>548</right>
+							<bottom>339</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<tabStyle>Top</tabStyle>
+					<tabSize>19</tabSize>
+					<items>
+						<item>
+							<name>Issue Details</name>
+							<properties>56=#d1e0ee|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#d1e0ee</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Calls</name>
+							<properties>56=#ffcc66|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#ffcc66</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+						<item>
+							<name>Affected Customers</name>
+							<properties>56=#c2cca2|_flags=0</properties>
+							<textBorder>None</textBorder>
+							<textBackgroundColor>#ffffff</textBackgroundColor>
+							<controlInfo>
+								<mouseOverCursor>Window Default</mouseOverCursor>
+								<properties>
+									<tabColor>#c2cca2</tabColor>
+								</properties>
+							</controlInfo>
+						</item>
+					</items>
+					<selectedTextFont  size="8">Arial</selectedTextFont>
+					<selectedTextColor>#000000</selectedTextColor>
+					<deselectedTextColor>#000000</deselectedTextColor>
+					<tabSlopeLeft>2</tabSlopeLeft>
+					<tabSlopeRight>2</tabSlopeRight>
+					<deselectedTabHeightOffset>1</deselectedTabHeightOffset>
+					<tabSpacing>0</tabSpacing>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<tabStyle>2</tabStyle>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnCreateIssue</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>true</toolbarButtonStyle>
+							<cache>true</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>12</index>
+						<caption>Save Changes</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>4</top>
+							<left>16</left>
+							<right>113</right>
+							<bottom>27</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>true</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<eventButtonIcon>ImageList=Issue;IconIndex=0</eventButtonIcon>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnAddCall</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>true</toolbarButtonStyle>
+							<cache>true</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>13</index>
+						<caption>Add Call(s) to Issue</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>4</top>
+							<left>115</left>
+							<right>236</right>
+							<bottom>27</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<eventButtonIcon>ImageList=Issue;IconIndex=1</eventButtonIcon>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnRemoveCall</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>true</toolbarButtonStyle>
+							<cache>true</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>14</index>
+						<caption>Remove Call(s)</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>4</top>
+							<left>240</left>
+							<right>350</right>
+							<bottom>27</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<eventButtonIcon>ImageList=Issue;IconIndex=2</eventButtonIcon>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnAddCusomer</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>true</toolbarButtonStyle>
+							<cache>true</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>15</index>
+						<caption>Log Call and Add</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>4</top>
+							<left>342</left>
+							<right>467</right>
+							<bottom>27</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<eventButtonIcon>ImageList=Issue;IconIndex=3</eventButtonIcon>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btnCloseIssue</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>true</toolbarButtonStyle>
+							<cache>true</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>16</index>
+						<caption>Close Issue</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>4</top>
+							<left>456</left>
+							<right>547</right>
+							<bottom>27</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<eventButtonIcon>ImageList=Issue;IconIndex=4</eventButtonIcon>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_starttime</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>17</index>
+						<caption>Start Time</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>37</top>
+							<left>225</left>
+							<right>337</right>
+							<bottom>51</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_resolveby</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>18</index>
+						<caption>Resolve by</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>74</top>
+							<left>225</left>
+							<right>287</right>
+							<bottom>86</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>50</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_issuetype</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>19</index>
+						<caption>Issue Type</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>37</top>
+							<left>9</left>
+							<right>82</right>
+							<bottom>49</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_summary</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>20</index>
+						<caption>Summary</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>180</top>
+							<left>11</left>
+							<right>67</right>
+							<bottom>194</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_description</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:0</group>
+					</general>
+					<appearance>
+						<index>21</index>
+						<caption>Description</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>215</top>
+							<left>12</left>
+							<right>212</right>
+							<bottom>229</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_resolvedtime</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>22</index>
+						<caption>Resolved:</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>113</top>
+							<left>224</left>
+							<right>337</right>
+							<bottom>127</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>true</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>Rect2</name>
+						<type>Rectange</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>true</toolbarButtonStyle>
+							<cache>true</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>23</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Vertical Gradient</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>4</top>
+							<left>3</left>
+							<right>545</right>
+							<bottom>27</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#e2f1ff</backgroundColor2>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>tb_mastercall</name>
+						<type>Field</type>
+						<group>Tab1:1</group>
+					</general>
+					<appearance>
+						<index>24</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>3-D Sunken</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>314</top>
+							<left>438</left>
+							<right>538</right>
+							<bottom>329</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<type>Text Edit</type>
+						<flags>
+							<invisible>false</invisible>
+							<readOnly>true</readOnly>
+							<mandatory>false</mandatory>
+							<mandatoryLabelBackground>false</mandatoryLabelBackground>
+							<mandatoryLabelText>false</mandatoryLabelText>
+							<allowNullValue>false</allowNullValue>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<readOnlyInit>false</readOnlyInit>
+							<autoCompleteField>false</autoCompleteField>
+							<editUnlimitedText>false</editUnlimitedText>
+							<url>false</url>
+						</flags>
+						<textLineCount>0</textLineCount>
+						<textInputFormat>Text</textInputFormat>
+						<properties>
+							<activeTextColor>#eeeeee</activeTextColor>
+							<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+							<listItems>F0000016^16|</listItems>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>lbl_mastercall</name>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:1</group>
+					</general>
+					<appearance>
+						<index>25</index>
+						<caption>Master Call:</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>297</top>
+							<left>434</left>
+							<right>494</right>
+							<bottom>311</bottom>
+						</position>
+						<scaling>
+							<top>100</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_SetMasterCall</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+						<group>Tab1:1</group>
+					</general>
+					<appearance>
+						<index>26</index>
+						<caption>Set Master Call</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>189</top>
+							<left>438</left>
+							<right>538</right>
+							<bottom>213</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<type>Text</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>27</index>
+						<caption>Master Call Reference Number</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Trebuchet MS</font>
+						<alignment>Left</alignment>
+						<borderStyle>None</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>74</top>
+							<left>8</left>
+							<right>171</right>
+							<bottom>88</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_issuecallslist</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>false</verticalGridLines>
+							<horizontalGridLines>false</horizontalGridLines>
+							<autoLoad>true</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>Tab1:1</group>
+					</general>
+					<appearance>
+						<index>28</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>3-D Sunken</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>189</top>
+							<left>12</left>
+							<right>428</right>
+							<bottom>329</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>callref</column>
+							</properties>
+							<name>Call Reference</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>status</column>
+							</properties>
+							<name>Status</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>cust_name</column>
+							</properties>
+							<name>Customer Name</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>2</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>2</sortColumn>
+					<sortDescending>true</sortDescending>
+					<headerHeight>16</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#00008b</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<sqlSource>syscache</sqlSource>
+							<table>opencall</table>
+							<listFilter>issueref = &apos;IR200603310002&apos;</listFilter>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_affectedcustomerslist</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>false</verticalGridLines>
+							<horizontalGridLines>false</horizontalGridLines>
+							<autoLoad>true</autoLoad>
+							<allowMultiSelect>false</allowMultiSelect>
+						</flags>
+						<group>Tab1:2</group>
+					</general>
+					<appearance>
+						<index>29</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>3-D Sunken</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>189</top>
+							<left>12</left>
+							<right>536</right>
+							<bottom>329</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>cust_id</column>
+							</properties>
+							<name>Customer ID</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>true</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>cust_name</column>
+							</properties>
+							<name>Customer Name</name>
+							<width>120</width>
+							<image>-1</image>
+							<dataColumn>1</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>-1</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>16</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#00008b</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>true</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+							<sqlSource>syscache</sqlSource>
+							<table>opencall</table>
+							<listFilter>issueref = &apos;IR200603310002&apos; GROUP BY cust_id</listFilter>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>btnAddCall_OnPressed</name>
+						<code>
+							<![CDATA[btnAddCall_OnPressed()
+{
+	//-- Create a new Add Calls to Dialog Object passing in the Issue Object 
+	//-- and a boolean value to indicate that the calls will be added to the issue object
+	var dlg = new AddCallsToIssueDialog();
+	
+	//-- This opens an Add Calls dialog and will add the selected calls to the supplied Issue Object 
+	//-- returning "IDOK" if calls were succesfully added or "IDCANCEL" if the addition failed or the 
+	//-- user cancelled the operation
+	if(dlg.Open() != IDOK)
+		return;
+		
+	if(dlg.selCount)
+	{
+		var arrPickedCalls = dlg.arrSelectedCallrefs;
+		
+		if(_swdoc.AddCallsToIssue(arrPickedCalls.toString()))
+		{ 
+			//-- This call will repopulate the Master Call drop down box with all calls that are linked to this issue,
+			//-- it will then enable or disable the drop down depending on whether the analyst has rights 
+			//-- to modify issues
+			ReloadRelatedDataLists();
+			
+			// If there is only one call now in the list then it must be the one we have just added so
+			// we will make this the master call....
+			// -- OR --
+			// If there is more than one call in the list but the mastercall record is not set then make
+			// the lowest numbered call the master call record
+			if((sl_issuecallslist.rowCount() == 1) || ((sl_issuecallslist.rowCount() > 1) && ((tb_mastercall.text == "") || (tb_mastercall.text == "<Undefined>"))))
+			{
+				_ete(tb_mastercall , sl_issuecallslist.GetItemText(0,0));
+				_ete(tb_mastercallro , sl_issuecallslist.GetItemText(0,0));
+				_swdoc.swissues.mastercallref = sl_issuecallslist.GetItemTextRaw(0,0);
+				bFormFieldChanged = true;
+			}		
+		}
+		
+		//-- This call will check the issue status and the analyst permissions and will enable or disable the 
+		//-- issue form buttons as required
+		UpdateBtnState();
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnRemoveCall_OnPressed</name>
+						<code>
+							<![CDATA[btnRemoveCall_OnPressed()
+{
+	//-- Set a control variable to determine if we are removing the master call, default it to false
+	var bRemovingMaterCall = false;
+	
+	var strcommasepCallsrefs = "";
+	
+	//-- Iterate through the list of calls associated to an issue
+	for(x=0; x<sl_issuecallslist.rowCount();x++)
+	{
+		//-- If the call in the list is selected
+		if(sl_issuecallslist.IsRowSelected(x))
+		{
+			//-- If commasepCallrefs is not empty we add a comma before accepting the next callref
+			if(strcommasepCallsrefs.length)
+				strcommasepCallsrefs += ",";
+			//-- Get the callref for the current row in the Issue Calls List	
+			var ItemText = sl_issuecallslist.GetItemText(x, 0) ; 
+			//-- If the callref matches the master call ref on the form e.g. "F0000001"="F0000001" then 
+			//-- we must be removing the master call and set the flag accordingly
+			
+			if(tb_mastercall.text == ItemText)
+				bRemovingMaterCall = true;
+
+			strcommasepCallsrefs += sl_issuecallslist.GetItemTextRaw(x, 0);
+		}	
+	}
+
+	//-- If there were Calls to be removed and the call to remove them was successful then continue
+	if(strcommasepCallsrefs.length && _swdoc.RemoveCalls(strcommasepCallsrefs))
+	{
+		ReloadRelatedDataLists();
+		
+		//-- This call will repopulate the Master Call drop down box with all calls that are linked to this issue,
+		//-- it will then enable or disable the drop down depending on whether the analyst has rights 
+		//-- to modify issues
+		
+		if(bRemovingMaterCall)
+		{
+			if(sl_issuecallslist.rowCount())
+			{
+				_ete(tb_mastercall , sl_issuecallslist.GetItemText(0,0));
+				_ete(tb_mastercallro , sl_issuecallslist.GetItemText(0,0));
+				
+				strCallref = sl_issuecallslist.GetItemTextRaw(0,0);
+				strCallref++;
+				strCallref--;
+				_swdoc.swissues.mastercallref = strCallref;
+				bFormFieldChanged = true;
+				
+				UpdateIssueData();
+				
+				bFormFieldChanged = false;
+			}
+			else
+			{
+				_swdoc.swissues.mastercallref = 0;
+				_ete(tb_mastercall , "");
+				_ete(tb_mastercallro , "");
+				bFormFieldChanged = true;
+				UpdateIssueData();
+				bFormFieldChanged = false;
+			}
+		}
+		
+		//-- This call will check the issue status and the analyst permissions and will enable or disable the 
+		//-- issue form buttons as required
+		UpdateBtnState();
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>(User Defined Functions)</name>
+						<code>
+							<![CDATA[function UpdateIssueData()
+{
+	//////////////////////////////////////////////////////////////////////////////////////////
+	// This function is used to create a new issue or to update an existing issue. 			//
+	// An issue will be created if no Issue reference is found or if an issue reference is	//
+	// found then that issue will be updated												//
+	//////////////////////////////////////////////////////////////////////////////////////////
+
+	//-- Validate that mandatory fields are completed, this triggers the OnPreValidate and OnValidate events
+	if(!_swdoc.ValidateFormData())
+		return false;
+		
+	//-- Get a helpdesk connection onbject
+	var con = new HelpdeskSession;
+	if(!con.Connect())
+	{
+		return false;
+	}
+
+	//-- If an issue is set in the record already then we will be updating an issue
+	if(_swdoc.swissues.issueref.length)
+	{
+		//-- Advise the server of the data update operation for it to start the transaction
+		if(con.BeginUpdateIssue(_swdoc.swissues.issueref))
+		{
+			//-- Send data to server
+			if(SendIssueChanges(con))
+			{
+				//-- Commit transaction data
+				if(!con.Commit())
+				{
+					MessageBox(con.GetLastErrorStr(), MB_ICONSTOP);
+					return false;
+				}
+				
+				return true;
+			}
+		}
+		else
+		{	
+			//-- report error
+			MessageBox(con.GetLastErrorStr(), MB_ICONSTOP);
+		}
+	}
+	else
+	{
+		//-- We need to create the issue
+		//-- Advise the server of the create operation to for it to start the transaction
+		if(con.BeginCreateIssue())
+		{
+			//-- send data to server
+			if(SendIssueChanges(con))
+			{	
+				//-- Commit transaction data
+				if(!con.Commit())
+				{
+					MessageBox(con.GetLastErrorStr(), MB_ICONSTOP);
+					return false;
+				}
+			
+				//-- Having created the new issue, we retrieve its properties using GetResultInfo() into
+				//-- the array arrResultInfo from which we can obtain the issue reference
+				var arrResultInfo = con.GetResultInfo();
+				
+				if(arrResultInfo && arrResultInfo.length)
+				{
+					//set the issue field value
+					_swdoc.swissues.issueref = arrResultInfo[0].issueref;
+					
+					//-- set the save mode boolean flag
+					_swdoc.bSaveMode = true;
+					return true;
+				}
+			}
+		}
+		else
+		{
+			//-- report error
+			MessageBox(con.GetLastErrorStr(), MB_ICONSTOP);
+		}
+	}
+	
+	return false;
+}
+
+function SendIssueChanges( con )
+{
+	///////////////////////////////////////////////////////////////////////////////////////
+	// This function sends the data from the summary and description fields plus any     //
+	// other modified issue form fields to the database.  Note: Although the data values //
+	// are sent to the database from this function, these values are not committed to 	 //
+	// the database here, the commit() call to save the data to the database is called 	 //
+	// from the UpdateIssueData() function                        						 //
+	///////////////////////////////////////////////////////////////////////////////////////
+	
+	//-- Collect description field data from the two elements tb_summary and tb_issuedescription content
+	var strTempDesc = tb_summary.text;
+	strTempDesc += "\r\n";
+	strTempDesc += tb_issuedescription.text;
+	if(_swdoc.swissues.description != strTempDesc)
+	{
+		_swdoc.swissues.description = strTempDesc;
+	}
+	
+	_swdoc.swissues.dd = dd.Name;
+	_swdoc.swissues.suppgroup = app.session.groupID;
+			
+	var bSendSuccess = true;
+
+	//-- Send each bound value in the swissues table that has been modified
+	if(rec = _swdoc.GetRecord("swissues"))
+	{
+		var nColCount = rec.GetCount();
+		for(x = 0; x < nColCount; x++)
+		{
+			if(!rec.IsModified(x))
+				continue;
+							
+			if(!con.SendValue("swissues." + rec.GetColumnName(x), rec.GetValue(x)))
+			{
+				bSendSuccess = false;
+				break;
+			}
+		}
+	}
+	
+	return bSendSuccess;
+}
+
+function ReloadRelatedDataLists()
+{
+	///////////////////////////////////////////////////////////////////////////////////
+	// This function is used to refresh the contents of the Issue Calls and Affected //
+	// Customers Sql Lists on the Calls and Affected Customers tabs					 //
+	///////////////////////////////////////////////////////////////////////////////////
+
+		//-- Empty the Issue Calls List
+		sl_issuecallslist.Reset();
+		//-- Empty the Affected Customers List
+		sl_affectedcustomerslist.Reset();
+		
+		//-- If there are calls associated to this issue then continue
+		if(_swdoc.swissues.issueref.length)
+		{
+			//-- Filter the associated issue calls list
+			_slf(sl_issuecallslist , "issueref = '" + _swdoc.swissues.issueref + "'");
+						
+			//-- Filter the affected customers list
+			_slf(sl_affectedcustomerslist , "issueref = '" + _swdoc.swissues.issueref + "' GROUP BY cust_id");
+		}
+}
+
+function UpdateBtnState()
+{
+	////////////////////////////////////////////////////////////////////////////////////
+	// This function checks the rights of the logged on analyst and the current state //
+	// of the issue and sets the availability of each of the buttons accordingly      //
+	////////////////////////////////////////////////////////////////////////////////////
+
+	//-- If analyst has rights to modify issues or if the issue is being created then
+	//-- enable the "Log Call and Add" button
+	if(!app.session.HaveRight(ANALYST_RIGHT_B_GROUP,ANALYST_RIGHT_B_CANMODIFYISSUES))
+	{
+		_een(btnAddCusomer , false);
+	}
+	else
+	{	
+		if((_swdoc.swissues.issueref.length) && (tb_mastercall.text != "") && (tb_mastercall.text != "<Undefined>"))
+			_een(btnAddCusomer , true)
+		else
+			_een(btnAddCusomer , false);
+	}
+	
+	//-- If analyst has rights to create issues or if the analyst is modifying
+	//-- an existing issue then show the "create issue" button which in the case
+	//-- of a modification will have the button text reading "Save Changes"
+	if(!app.session.HaveRight(ANALYST_RIGHT_B_GROUP,ANALYST_RIGHT_B_CANCREATEISSUES))
+	{
+		_een(btnCreateIssue , false);
+	}
+	else
+	{
+		if(_swdoc.swissues.issueref.length)
+		{
+			if(_swdoc.bFormFieldChanged)
+				_een(btnCreateIssue , true);
+			else
+				_een(btnCreateIssue , false);
+		}
+		else
+		{
+			if(tb_issuedescription.text.length > 0)
+				_een(btnCreateIssue , true);
+			else
+				_een(btnCreateIssue , false);
+		}
+	}
+	
+	//-- This sets the test on the Create Issue" button to "Save Changes" if changes
+	//-- have been made to the data and then enables it
+	if(_swdoc.swissues.issueref.length)
+	{
+		_ete(btnCreateIssue , "Save Changes");
+		
+		if(_swdoc.bFormFieldChanged)
+		{
+			_een(btnCreateIssue , true);
+		}
+	}
+	
+	//-- If the analyst has rights to close issues and the issue is created then show the close button
+	if(!app.session.HaveRight(ANALYST_RIGHT_B_GROUP,ANALYST_RIGHT_B_CANCLOSEISSUES))
+	{
+		_een(btnCloseIssue , false);
+	}
+	else
+	{
+		_een(btnCloseIssue , (_swdoc.swissues.issueref.length) ? true : false);
+	}
+
+	//--If the analyst has rights to modify issues and one or more calls associated 
+	//-- to the issue are selected then enable the "Remove Call" button
+	if(!app.session.HaveRight(ANALYST_RIGHT_B_GROUP,ANALYST_RIGHT_B_CANMODIFYISSUES))
+	{
+		_een(btnRemoveCall , false);
+	}
+	else
+	{
+		if(!_swdoc.swissues.issueref.length)
+		{
+			_een(btnRemoveCall , false);
+		}
+		else
+		{
+			var bEnable = false;
+			for(x=0;x < sl_issuecallslist.rowCount(); x++)
+			{
+				if(sl_issuecallslist.IsRowSelected(x))
+				{
+					bEnable = true;
+					break;
+				}
+			}
+			
+			_een(btnRemoveCall , bEnable);
+		}
+	}
+	
+	//-- If the analyst has rights to modify issues and the issue is fully created the
+	//-- "Add Call to Issue" button is enabled.
+	if(_swdoc.swissues.issueref.length 
+		&& app.session.HaveRight(ANALYST_RIGHT_B_GROUP,ANALYST_RIGHT_B_CANMODIFYISSUES))
+		_een(btnAddCall , true);
+	else
+		_een(btnAddCall , false);
+}
+
+function ManuallyAcceptLinkedIssueCalls()
+{
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	// -- New Code Added - DavidJH - 21.06.2005														  //
+	// This function is called from _swdoc.CloseIssue() as part of the process of closing an issue. // 
+	// This function has been added to check if any calls associated to this issue currently have the //
+	// status "unassigned" or "unaccepted in which case they should be implicitly accepted by the     //
+	// analyst carrying out the operation before we close the call(s).  This resolves the problem     //
+	// where an issue and its related calls would fail to be closed when any one or more calls have   //
+	// an "unassigned" or "unaccepted" status														  //
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	//-- Iterate through the list of calls associated to the issue
+	for(x=0; x<sl_issuecallslist.rowCount();x++)
+	{
+		//-- Get numeric callref from the current row in the Issue Calls List
+		var nCallRef = sl_issuecallslist.GetItemTextRaw(x, 0) ;
+		nCallRef++;
+		nCallRef--;
+		
+		//-- Get the call status string (e.g. "Unaccepted") for the current row in the Issue Calls List
+		var strCallStatus = sl_issuecallslist.GetItemTextRaw(x, 1) ;
+		
+		//-- If the call is currently unassigned or unaccepted then change the call status so that 
+		//-- the call is implicitly accepted by the logged on analyst closing the issue
+		
+		//-- NWJ - accept all calls that are not resolved or closed already
+		if((strCallStatus != 6) || (strCallStatus < 15 ))
+		{
+			var swHDSession = new HelpdeskSession;
+			
+			if(swHDSession.Connect()) 
+			{
+				swHDSession.AcceptCall(nCallRef);
+				swHDSession.Close();
+			}
+		} 
+	}
+}
+
+function CreateUpdateIssue()
+{	
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	// This function is called from the Create Issue button and controls the creation of a new    //
+	// issue or the update of an existing issue.  This function calls UpdateIssueData() to create //
+	// or update the issue data.  If the action was to create an Issue then following successful  //
+	// creation this function carries out updates to the form display title and buttons etc. to   //
+	// reflect that the issue has now been created.  Lastly the button states are refreshed to 	  //
+	// ensure that the correct buttons are displayed for the analyst							  //
+	////////////////////////////////////////////////////////////////////////////////////////////////
+
+	var bNewIssueCreation = (_swdoc.swissues.issueref.length == 0);
+	
+	//-- This call will save the issue details from the object
+	if(mainform.UpdateIssueData())
+	{
+		//-- If we have just created the issue then run this code to update the form title and buttons etc
+		if(bNewIssueCreation)
+		{
+			//-- Try to get an array of any callrefs associated to this issue
+			if(_swdoc._form["callrefs"])
+			{
+				var strCallrefsCommaString = _swdoc._form["callrefs"];
+				var arrCallrefs = strCallrefsCommaString.split(",");
+				
+				if(_swdoc.AddCallsToIssue(strCallrefsCommaString))
+				{
+					
+					var strCallref = new String();
+					strCallref = tb_mastercall.text;
+			
+					//-- Identify the numeric part of the call ref e.g. to get 12 from F0000012
+					var nCallref = strCallref.substr(1, strCallref.length-1);
+					nCallref++;
+					nCallref--;
+			
+					//--Set the master call ref value
+					_swdoc.swissues.mastercallref = nCallref;
+					
+					//-- 26.10.2005 - Set Issue owner to be the logged on analyst
+					_swdoc.swissues.owner = app.session.analystid;
+					
+					//-- Update the master call ref to be the one selected by the user during creation
+					//-- This code is required here because this update cannot occur until the issue
+					//-- has been created in the database
+										
+						//-- Get a helpdesk connection onbject
+							var con = new HelpdeskSession;
+							if(con.Connect())
+							{
+								if(con.BeginUpdateIssue(_swdoc.swissues.issueref))
+								{
+									//-- Send master call ref data value to server
+									if(con.SendNumber("swissues.mastercallref", _swdoc.swissues.mastercallref) && con.SendString("swissues.owner", _swdoc.swissues.owner))
+									{
+										//con.SendString("swissues.owner", _swdoc.swissues.owner);
+										//-- Commit transaction data
+										if(!con.Commit())
+										{
+											MessageBox(con.GetLastErrorStr(), MB_ICONSTOP);	
+										}
+									}
+								}
+								else
+								{	
+									//-- report error
+									MessageBox(con.GetLastErrorStr(), MB_ICONSTOP);
+								}
+							}
+					
+					ReloadRelatedDataLists();
+				}
+			}
+	
+	
+			//26.10.2005 - Updated to set issue owner to be the logged on analyst
+			//-- Get a helpdesk connection onbject
+				var con = new HelpdeskSession;
+				if(con.Connect())
+				{
+					if(con.BeginUpdateIssue(_swdoc.swissues.issueref))
+					{
+						//-- Send master call ref data value to server
+						if(con.SendString("swissues.owner", app.session.analystid))
+						{
+							//-- Commit transaction data
+							if(!con.Commit())
+							{
+								MessageBox(con.GetLastErrorStr(), MB_ICONSTOP);	
+							}
+						}
+					}
+					else
+					{	
+						//-- report error
+						MessageBox(con.GetLastErrorStr(), MB_ICONSTOP);
+					}
+				}
+			
+			//-- Create a _swdoc title
+			var  strTitle = "View/Edit Issue ";
+			//-- Add the issue reference to the title
+			strTitle += _swdoc.swissues.issueref;
+			//-- Set the form title
+			_swdoc.SetTitle(strTitle);
+		
+			//-- Change the text of the "Create" button to read "Save Issue" if the issue has been created
+			_ete(btnCreateIssue , "Save Changes");
+			//-- Change the Action Menu Item link to match the text change on the button
+			_emt(btnCreateIssue , "&Save Changes");
+			//-- Disable the button so that the Save button is not available until a change has been made
+			_een(btnCreateIssue , false);
+		}
+		
+		_swdoc.ResetModiedFlag("swissues");
+		//-- We have just saved the issue so we can reset the flag monitoring data field changes
+		_swdoc.bFormFieldChanged = false;
+		
+		
+		//-- This call will check the issue status and the analyst permissions and will enable or disable the 
+		//-- issue form buttons as required
+		mainform.UpdateBtnState();
+		return true;
+	}
+	
+	return false;
+}
+
+
+function GetCommaSepCallrefsString()
+{
+	//////////////////////////////////////////////////////////////////////////////
+	// This function creates a comma separated string of the calls related to   //
+	// this issue as listed in the Sql List on the calls tab on the Issue Form. //  
+	//////////////////////////////////////////////////////////////////////////////
+
+	var strCommaSepString = "";
+	for(var i=0; i< sl_issuecallslist.rowCount();i++)
+	{
+		strCommaSepString += sl_issuecallslist.GetItemTextRaw(i,0) + ",";
+	}
+	
+	if(strCommaSepString.length)
+	{
+		var strCallrefs = new String();
+		strCallrefs = strCommaSepString;
+		strCommaSepString = strCallrefs.substr(0, strCallrefs.length-1);
+	}
+	
+	return strCommaSepString;
+}
+
+function GetQuotedCommaSepCallrefsString(strText)
+{
+	//-- This function is used to place all call refs in a comma separated list in between quotes 
+	//-- so that this value can be used in an SQL "IN" statement e.g. , becomes ','
+	
+	//Declare and default the control variables
+	strInput = strText;
+	strOutput = "";
+	strReplacement = "','";
+	var strLength = strInput.length;
+	var i = 0;
+	var charValue = "";
+	
+	// Loop through each character in the supplied string	
+	while(i < strLength)
+	{
+		// Select the first character in the string
+		charValue = strInput.charAt(0);
+		
+		// If the character is a comma then add ',' to the output string, 
+		// else just add the existing character to the output string
+		if(charValue == ",")
+		{
+			strOutput += "','";
+		}
+		else
+		{
+			strOutput += charValue;
+		}
+		
+		// Remove the checked character from the input string 	
+		strInput = strInput.substr(1, strLength);
+		
+		// Increment the loop	
+		i++;
+	}
+	
+	return strOutput;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>OnFormLoaded</name>
+						<code>
+							<![CDATA[OnFormLoaded()
+{
+	//-- If there is an Issue Ref then reload the issue calls and affected customers sql lists
+	//-- and disable the create issue button, otherwise set the button and action menu text to "Create Issue"
+	if(_swdoc.swissues.issueref.length)
+	{
+		ReloadRelatedDataLists();
+		_een(btnCreateIssue , false);
+	}
+	else
+	{
+		//Set up the create button
+		_ete(btnCreateIssue , "Create Issue");
+		_emt(btnCreateIssue , "Create I&ssue");
+		
+		
+	}
+
+	
+	//-- If Analyst has rights to modify issues
+	if(!app.session.HaveRight(ANALYST_RIGHT_B_GROUP,ANALYST_RIGHT_B_CANMODIFYISSUES))
+	{	
+		//-- If the issue has been created
+		if(_swdoc.swissues.issueref.length)
+		{	
+			//-- Disable form controls
+			_een(tb_issuetype			, false);
+			_een(tb_mastercall 		, false);
+
+			_een(dt_starttime			, false);
+			_een(dt_resolvetime		, false);
+			_een(dt_resolvedtime 		, false);
+			
+			_een(tb_summary			, false);
+			_een(tb_issuedescription 	, false);
+			
+			_een(flg_markpublic 		, false);
+			
+			_een(lbl_starttime 		, false);
+			_een(lbl_resolveby 		, false);
+			_een(lbl_resolvedtime 	, false);
+			
+			_een(lbl_issuetype 		, false);
+			_een(lbl_mastercall		, false);
+			_een(btn_SetMasterCall 	, false);
+			
+			_een(lbl_summary	 		, false);
+			_een(lbl_description , false);
+		}
+	}
+	
+	//-- Disable the Remove Calls Button
+	
+		_een(btnRemoveCall , false);
+	
+	//-- Try to get an array of any callrefs associated to this issue
+		strTempCallrefsCommaString = "";
+		if(_swdoc._form["callrefs"])
+		{
+			strTempCallrefsCommaString = _swdoc._form["callrefs"];
+			var arrTempCallrefs = strTempCallrefsCommaString.split(",");
+			
+			_swdoc.PopulateFromCall(arrTempCallrefs[0]);
+			_swdoc.swissues.mastercallref = arrTempCallrefs[0];
+		}
+	
+	//This code is required to populate the issue calls and affected customers lists when initally creating an issue
+	//prior to the information being stored in the database.
+		if((!_swdoc.swissues.issueref.length) && (strTempCallrefsCommaString.length))
+		{
+			//-- Empty the Issue Calls List and affected customer lists
+				sl_issuecallslist.Reset();
+				sl_affectedcustomerslist.Reset(); 	
+					
+			//-- Filter the Calls List to show just the calls that are being associated to this issue
+				_slf(sl_issuecallslist , "callref IN (" + strTempCallrefsCommaString + ")");
+																		
+			//-- Filter the Affected Customers list to list just those customers who have raised the associated calls
+			//-- Note: Extended Code required below to carry out a "distinct" select	
+				var SqlRecordSetObj = new SqlQuery;
+				SqlRecordSetObj.Query("SELECT DISTINCT cust_id from opencall where callref IN (" + strTempCallrefsCommaString + ")","syscache");
+				var str_custids = "";
+				while(SqlRecordSetObj.Fetch())
+				{
+					str_custids += SqlRecordSetObj.GetValueAsString(0);
+					str_custids += "','";
+				}
+				
+				SqlRecordSetObj.Reset();
+				
+				if(str_custids.length)
+				{
+					str_custids = str_custids.substr(0, str_custids.length-3);
+					_slf(sl_affectedcustomerslist , "callref IN (" + strTempCallrefsCommaString + ") AND cust_id IN ('" + str_custids + "') GROUP BY cust_id");
+				}
+		}
+		
+	//-- Identify the Master Call Record and make it selected by default in the issue calls sql list
+		var strFormatedCallref = "";
+		if(_swdoc.swissues.mastercallref)
+		{
+			var strFormatedCallref = dd.tables.opencall.columns.callref.FormatValue(_swdoc.swissues.mastercallref);
+			
+			for(var i=0; i< sl_issuecallslist.rowCount(); i++)
+			{
+				if(sl_issuecallslist.GetItemText(i,0) == strFormatedCallref)
+				{
+					sl_issuecallslist.SetRowSelected(i);
+					break;
+				}
+			}
+		}
+	
+	//--*************** AWAITING BUG FIX F38822 - THIS CODE CAN THEN BE REMOVED ***********************--
+	//-- Reset Master Call fields if no calls are listed against this issue
+	//-- NOTE: This should only occur if a call that is linked to one Issue is then added to a second issue,
+	//-- 	   the call will be unlinked from the first issue but the master call ref for the first issue is not automatically 
+	//--	   reset.  This is used as a catch all to pick up when no calls are linked and to reset the master
+	//--       call field in swissues
+	
+		if(sl_issuecallslist.rowCount() == 0)
+			{
+				_ete(tb_mastercall , "");
+				_swdoc.swissues.mastercallref = "";
+				//mainform.CreateUpdateIssue();  Doing the update causes too many problems, need to revise
+			}
+	//--*************** AWAITING BUG FIX F38822 - THIS CODE CAN THEN BE REMOVED ***********************--
+	
+	//--More Master Call Checks
+	//Set the master call and master call read only fields
+		if(_swdoc.swissues.mastercallref)
+		{
+			_ete(tb_mastercall , dd.tables.opencall.columns.callref.FormatValue(_swdoc.swissues.mastercallref));
+			_ete(tb_mastercallro , dd.tables.opencall.columns.callref.FormatValue(_swdoc.swissues.mastercallref));
+		}
+		else
+		{
+			if(!strFormatedCallref.length == 0)
+			{
+				_ete(tb_mastercall , strFormatedCallref);
+				_ete(tb_mastercallro , strFormatedCallref);
+			}
+			else
+			{
+				_ete(tb_mastercall , "<Undefined>");
+				_ete(tb_mastercallro , "<Undefined>");
+			}
+		}
+	
+	//Enable the "Set Master Call" button if one or more calls are attached to the issue otherwise disable it
+		var bCallsAttached = (sl_issuecallslist.rowCount()) ? true : false;
+		_een(tb_mastercall , bCallsAttached);
+	
+	// If there are calls attached to the issue and the issue has been created 
+	// (not in the process of being created) then we will enable the Set Master Call button
+		//if((bCallsAttached) && (_swdoc.swissues.issueref.length))
+		if(bCallsAttached)
+		{
+			_een(btn_SetMasterCall , true);
+		}
+	
+	//-- This call will check the issue status and the analyst permissions and will enable or disable the 
+	//-- issue form buttons as neccessary
+		
+		UpdateBtnState();
+	
+		
+	//-- From the Description field (which contains the issue summary and description text) in swissues identify
+	//-- the summary and description and populate them into the tb_summary and tb_issuedescription form fields
+		
+		//--
+		//-- NWJ - 09.03.2006 - Think there is a problem here as description is coming back as a negative number
+		var strTemp = new String(_swdoc.swissues.description);
+		var nLoc = strTemp.indexOf("\n");
+		
+		if(nLoc >= 0 && nLoc < strTemp.length)
+		{
+			var strTitle = strTemp.substr(0,nLoc);
+			_ete(tb_summary , strTitle);
+	
+			var strprobText = strTemp.substr(nLoc+1, strTemp.length - nLoc+1);
+			_ete(tb_issuedescription , strprobText);
+		}
+		else
+		{
+			_ete(tb_issuedescription , strTemp);
+		}
+		
+		
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnCreateIssue_OnPressed</name>
+						<code>
+							<![CDATA[btnCreateIssue_OnPressed()
+{
+	mainform.CreateUpdateIssue();
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnAddCusomer_OnPressed</name>
+						<code>
+							<![CDATA[btnAddCusomer_OnPressed()
+{
+	//-- Check that the issue object is available
+	if(_swdoc.swissues.issueref.length)
+	{
+		//-- If the customer tree browser has been opened and the user has successfully added a customer
+		if(_swdoc.LogAndAddCustomerCall())
+		{
+			ReloadRelatedDataLists();
+		
+			//-- This call will check the issue status and the analyst permissions and will enable or disable the 
+			//-- issue form buttons as neccessary
+			UpdateBtnState();
+		}
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>tb_issuetype_OnValueChanged</name>
+						<code>
+							<![CDATA[tb_issuetype_OnValueChanged(strValue)
+{
+	//-- This call will check the issue status and the analyst permissions and will enable or disable the 
+	//-- issue form buttons as required
+	UpdateBtnState();
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>dt_resolvetime_OnValueChanged</name>
+						<code>
+							<![CDATA[dt_resolvetime_OnValueChanged(strValue)
+{
+	//-- This call will check the issue status and the analyst permissions and will enable or disable the 
+	//-- issue form buttons as required
+	UpdateBtnState();
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>dt_resolvedtime_OnValueChanged</name>
+						<code>
+							<![CDATA[dt_resolvedtime_OnValueChanged(strValue)
+{
+	//-- This call will check the issue status and the analyst permissions and will enable or disable the 
+	//-- issue form buttons as required
+	UpdateBtnState();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>tb_summary_OnValueChanged</name>
+						<code>
+							<![CDATA[tb_summary_OnValueChanged(strValue)
+{
+	//-- This call will check the issue status and the analyst permissions and will enable or disable the 
+	//-- issue form buttons as required
+	UpdateBtnState();
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>tb_issuedescription_OnValueChanged</name>
+						<code>
+							<![CDATA[tb_issuedescription_OnValueChanged(strValue)
+{
+	//-- This call will check the issue status and the analyst permissions and will enable or disable the 
+	//-- issue form buttons as required
+	UpdateBtnState();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>flg_markpublic_OnValueChanged</name>
+						<code>
+							<![CDATA[flg_markpublic_OnValueChanged(strValue)
+{
+	//-- This call will check the issue status and the analyst permissions and will enable or disable the 
+	//-- issue form buttons as required
+	UpdateBtnState();
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btnCloseIssue_OnPressed</name>
+						<code>
+							<![CDATA[btnCloseIssue_OnPressed()
+{
+	
+	//-- If Issue is successfully closed then close the form
+	if(_swdoc.CloseIssue())    //_swdoc.IssueObj.Close())
+	{	
+		_swdoc.CloseForm();
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>OnFieldValueChanged</name>
+						<code>
+							<![CDATA[OnFieldValueChanged(strName, strValue)
+{
+	//-- This value is set when a field value has been changed.
+	//-- We check this variable on from closing to see if there are any data changes that need to be saved.
+	_swdoc.bFormFieldChanged = true;
+	UpdateBtnState();
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_SetMasterCall_OnPressed</name>
+						<code>
+							<![CDATA[btn_SetMasterCall_OnPressed()
+{
+	//-- Loop through all calls linked to this issue
+	for(var i=0; i< sl_issuecallslist.rowCount(); i++)
+	{	
+		//-- If the row is selected
+		if(sl_issuecallslist.IsRowSelected(i))
+		{
+			//Set the master call field to the call ref of the selected call
+			_ete(tb_mastercall , sl_issuecallslist.GetItemText(i,0));
+			_ete(tb_mastercallro , sl_issuecallslist.GetItemText(i,0));
+			
+			var strCallref = new String();
+			strCallref = tb_mastercall.text;
+			
+			//-- Identify the numeric part of the call ref e.g. to get 12 from F0000012
+			var nCallref = strCallref.substr(1, strCallref.length-1);
+			nCallref++;
+			nCallref--;
+			
+			//--Set the master call ref value
+			_swdoc.swissues.mastercallref = nCallref;
+			
+			//-- Change flag to signal that a save is required to complete the change
+			_swdoc.bFormFieldChanged = true;
+			
+			//-- Update the Visibility of the buttons
+			UpdateBtnState()
+			break;
+		}
+	}
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_issuecallslist_OnItemDoubleClicked</name>
+						<code>
+							<![CDATA[sl_issuecallslist_OnItemDoubleClicked(nRow, nCol)
+{
+	//-- If the row number passed in is less than 0 or greater than the number of rows then quit
+	if(nRow <0 || nRow> sl_issuecallslist.rowCount())
+		return;
+		
+	//-- If the column number passed in is less than 0 or greater than the number of columns then quit	
+	if(nCol <0 || nCol> sl_issuecallslist.colCount)
+		return;
+		
+	//-- Get the numeric callref from the text version e.g. get "1" from "F0000001"	
+	//var nCallRef = FormatNumericCallref(sl_issuecallslist.GetItemText(nRow, 0)) ;
+	var nCallRef = 0;
+	var strCallRef = sl_issuecallslist.GetItemText(nRow, 0)
+	var strLeadChar = strCallRef.substr(0,1);
+	if(strLeadChar.toUpperCase() == "F")
+	{
+		var nCallRef = strCallRef.substr(1, strCallRef.length)
+		nCallRef++;
+		nCallRef--;
+	}
+	
+	
+	//-- Open the Call Details form with the given call reference
+	app.global.OpenCallDetailsView(nCallRef);
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_issuecallslist_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_issuecallslist_OnItemSelected(nRow)
+{
+	//-- When a call is selected from the the list of issue calls then enable the "Remove Call" button
+	_een(btnRemoveCall , true);
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_affectedcustomerslist_OnItemDoubleClicked</name>
+						<code>
+							<![CDATA[sl_affectedcustomerslist_OnItemDoubleClicked(nRow, nCol)
+{
+	var strCust = sl_affectedcustomerslist.GetItemText(nRow,0);
+	app.OpenFormForEdit('TfCustomer',strCust);
+
+
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

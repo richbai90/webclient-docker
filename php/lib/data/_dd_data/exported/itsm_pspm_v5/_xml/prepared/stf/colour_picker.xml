@@ -1,0 +1,805 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>colour_picker</name>
+			<title>Colour Picker</title>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>false</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var strColour = "";]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>150</width>
+				<height>149</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>cFFFFFF</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>0</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>15</top>
+							<left>17</left>
+							<right>40</right>
+							<bottom>38</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>c000000</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>1</index>
+						<backgroundColor>#000000</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>15</top>
+							<left>49</left>
+							<right>72</right>
+							<bottom>38</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>cFF0000</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>2</index>
+						<backgroundColor>#ff0000</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>15</top>
+							<left>81</left>
+							<right>104</right>
+							<bottom>38</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>c0000FF</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>3</index>
+						<backgroundColor>#0000ff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>47</top>
+							<left>17</left>
+							<right>40</right>
+							<bottom>70</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>cFFFF00</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>4</index>
+						<backgroundColor>#ffff00</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>47</top>
+							<left>49</left>
+							<right>72</right>
+							<bottom>70</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>c000080</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>5</index>
+						<backgroundColor>#000080</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>79</top>
+							<left>17</left>
+							<right>40</right>
+							<bottom>102</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>c800080</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>6</index>
+						<backgroundColor>#800080</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>47</top>
+							<left>81</left>
+							<right>104</right>
+							<bottom>70</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>c008080</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>7</index>
+						<backgroundColor>#008080</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>79</top>
+							<left>49</left>
+							<right>72</right>
+							<bottom>102</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>c00FFFF</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>8</index>
+						<backgroundColor>#00ffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>79</top>
+							<left>81</left>
+							<right>104</right>
+							<bottom>102</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>c00FF00</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>9</index>
+						<backgroundColor>#00ff00</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>15</top>
+							<left>113</left>
+							<right>136</right>
+							<bottom>38</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>cFF00FF</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>10</index>
+						<backgroundColor>#ff00ff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>47</top>
+							<left>113</left>
+							<right>136</right>
+							<bottom>70</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>c808000</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>11</index>
+						<backgroundColor>#808000</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>79</top>
+							<left>113</left>
+							<right>136</right>
+							<bottom>102</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>c008000</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>12</index>
+						<backgroundColor>#008000</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>111</top>
+							<left>17</left>
+							<right>40</right>
+							<bottom>134</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>c808080</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>13</index>
+						<backgroundColor>#808080</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>111</top>
+							<left>49</left>
+							<right>72</right>
+							<bottom>134</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>cC0C0C0</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>14</index>
+						<backgroundColor>#c0c0c0</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>111</top>
+							<left>81</left>
+							<right>104</right>
+							<bottom>134</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>c800000</name>
+						<type>Rectange</type>
+					</general>
+					<appearance>
+						<index>15</index>
+						<backgroundColor>#800000</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="0"/>
+						<borderStyle>Rectangle</borderStyle>
+						<fillStyle>Solid</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>111</top>
+							<left>113</left>
+							<right>136</right>
+							<bottom>134</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>0</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>cFFFFFF_OnLeftClick</name>
+						<code>
+							<![CDATA[cFFFFFF_OnLeftClick()
+{
+	_swdoc.strColour = "#FFFFFF";
+	_swdoc.CloseForm();	
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>c800000_OnLeftClick</name>
+						<code>
+							<![CDATA[c800000_OnLeftClick()
+{
+	_swdoc.strColour = "#800000";
+	_swdoc.CloseForm();
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>c000000_OnLeftClick</name>
+						<code>
+							<![CDATA[c000000_OnLeftClick()
+{
+	_swdoc.strColour = "#000000";
+	_swdoc.CloseForm();
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>c000080_OnLeftClick</name>
+						<code>
+							<![CDATA[c000080_OnLeftClick()
+{
+	_swdoc.strColour = "#000080";
+	_swdoc.CloseForm();
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>c0000FF_OnLeftClick</name>
+						<code>
+							<![CDATA[c0000FF_OnLeftClick()
+{
+	_swdoc.strColour = "#0000ff";
+	_swdoc.CloseForm();
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>c008000_OnLeftClick</name>
+						<code>
+							<![CDATA[c008000_OnLeftClick()
+{
+	_swdoc.strColour = "#008000";
+	_swdoc.CloseForm();
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>c008080_OnLeftClick</name>
+						<code>
+							<![CDATA[c008080_OnLeftClick()
+{
+	_swdoc.strColour = "#008080";
+	_swdoc.CloseForm();
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>c00FF00_OnLeftClick</name>
+						<code>
+							<![CDATA[c00FF00_OnLeftClick()
+{
+	_swdoc.strColour = "#00FF00";
+	_swdoc.CloseForm();
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>c00FFFF_OnLeftClick</name>
+						<code>
+							<![CDATA[c00FFFF_OnLeftClick()
+{
+	_swdoc.strColour = "#00FFFF";
+	_swdoc.CloseForm();
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>c800080_OnLeftClick</name>
+						<code>
+							<![CDATA[c800080_OnLeftClick()
+{
+	_swdoc.strColour = "#800080";
+	_swdoc.CloseForm();
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>c808000_OnLeftClick</name>
+						<code>
+							<![CDATA[c808000_OnLeftClick()
+{
+	_swdoc.strColour = "#808000";
+	_swdoc.CloseForm();
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>c808080_OnLeftClick</name>
+						<code>
+							<![CDATA[c808080_OnLeftClick()
+{
+	_swdoc.strColour = "#808080";
+	_swdoc.CloseForm();
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>cC0C0C0_OnLeftClick</name>
+						<code>
+							<![CDATA[cC0C0C0_OnLeftClick()
+{
+	_swdoc.strColour = "#C0C0C0";
+	_swdoc.CloseForm();
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>cFF0000_OnLeftClick</name>
+						<code>
+							<![CDATA[cFF0000_OnLeftClick()
+{
+	_swdoc.strColour = "#FF0000";
+	_swdoc.CloseForm();
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>cFF00FF_OnLeftClick</name>
+						<code>
+							<![CDATA[cFF00FF_OnLeftClick()
+{
+	_swdoc.strColour = "#FF00FF";
+	_swdoc.CloseForm();
+	return true;
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>cFFFF00_OnLeftClick</name>
+						<code>
+							<![CDATA[cFFFF00_OnLeftClick()
+{
+	_swdoc.strColour = "#FFFF00";
+	_swdoc.CloseForm();
+	return true;
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

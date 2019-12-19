@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SupportworksSchema version="1.1">
+	<Application name="webclient">
+		<Database name="sw_calendar">
+			<Tables>
+				<Table name="appointments">
+					<Column name="id" sqltype="INTEGER" unsigned="yes" primarykey="yes" auto_increment="yes"/>
+					<Column name="type" sqltype="VARCHAR" size="255" nullable="yes"/>
+					<Column name="start_time" sqltype="TIMESTAMP"/>
+					<Column name="end_time" sqltype="TIMESTAMP"/>
+					<Column name="subject" sqltype="VARCHAR" size="255" nullable="yes"/>
+					<Column name="description" sqltype="LONGVARCHAR" nullable="yes"/>
+					<Column name="show_time_as" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="main_record_id" sqltype="VARCHAR" size="255" nullable="yes"/>
+					<Column name="all_day_event" sqltype="TINYINT" nullable="yes"/>
+					<Column name="primary_calendar" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="primary_appointment" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="xml_details" sqltype="LONGVARCHAR" nullable="yes"/>
+					<Index name="start_time" cols="start_time" unique="no" seq="0" idxorder="asc"/>
+					<Index name="end_time" cols="end_time" unique="no" seq="0" idxorder="asc"/>
+				</Table>
+				<Table name="calendars">
+					<Column name="id" sqltype="INTEGER" unsigned="yes" primarykey="yes" auto_increment="yes"/>
+					<Column name="name" sqltype="VARCHAR" size="255" nullable="yes"/>
+					<Column name="type" sqltype="CHAR" size="8" nullable="yes"/>
+					<Column name="display_name" sqltype="VARCHAR" size="255" nullable="yes"/>
+					<Column name="table_name" sqltype="VARCHAR" size="255" nullable="yes"/>
+					<Column name="sun_start" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="sun_end" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="mon_start" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="mon_end" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="tue_start" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="tue_end" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="wed_start" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="wed_end" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="thu_start" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="thu_end" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="fri_start" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="fri_end" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="sat_start" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="sat_end" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="time_zone" sqltype="VARCHAR" size="64" nullable="yes"/>
+					<Column name="xml_details" sqltype="LONGVARCHAR" nullable="yes"/>
+					<Index name="table_name" cols="table_name" unique="no" seq="0" idxorder="asc"/>
+				</Table>
+				<Table name="npa_context">
+					<Column name="analyst" sqltype="VARCHAR" size="64"/>
+					<Column name="session_id" sqltype="VARCHAR" size="32"/>
+					<Column name="client_address" sqltype="VARCHAR" size="20"/>
+					<Column name="client_port" sqltype="INTEGER" unsigned="yes"/>
+					<Column name="client_conn_id" sqltype="INTEGER" unsigned="yes"/>
+					<Column name="flags" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+				</Table>
+				<Table name="npa_day_context">
+					<Column name="analyst" sqltype="VARCHAR" size="64"/>
+					<Column name="session_id" sqltype="VARCHAR" size="32"/>
+					<Column name="calendar" sqltype="INTEGER" unsigned="yes"/>
+					<Column name="start_time" sqltype="TIMESTAMP"/>
+					<Column name="end_time" sqltype="TIMESTAMP"/>
+					<Column name="client_address" sqltype="VARCHAR" size="20"/>
+					<Column name="client_port" sqltype="INTEGER" unsigned="yes"/>
+					<Column name="client_conn_id" sqltype="INTEGER" unsigned="yes"/>
+				</Table>
+				<Table name="npa_month_context">
+					<Column name="analyst" sqltype="VARCHAR" size="64"/>
+					<Column name="session_id" sqltype="VARCHAR" size="32"/>
+					<Column name="calendar" sqltype="INTEGER" unsigned="yes"/>
+					<Column name="start_date" sqltype="DATE"/>
+					<Column name="end_date" sqltype="DATE"/>
+					<Column name="client_address" sqltype="VARCHAR" size="20"/>
+					<Column name="client_port" sqltype="INTEGER" unsigned="yes"/>
+					<Column name="client_conn_id" sqltype="INTEGER" unsigned="yes"/>
+				</Table>
+				<Table name="reminders">
+					<Column name="id" sqltype="INTEGER" unsigned="yes" primarykey="yes" auto_increment="yes"/>
+					<Column name="calendar" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="appointment" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="fire_time" sqltype="TIMESTAMP"/>
+					<Column name="original_fire_time" sqltype="TIMESTAMP"/>
+					<Column name="xml_details" sqltype="LONGVARCHAR" nullable="yes"/>
+				</Table>
+				<Table name="rights">
+					<Column name="id" sqltype="INTEGER" unsigned="yes" primarykey="yes" auto_increment="yes"/>
+					<Column name="calendar" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="analyst" sqltype="VARCHAR" size="255" nullable="yes"/>
+					<Column name="rights" sqltype="CHAR" size="36" nullable="yes"/>
+					<Index name="analyst" cols="analyst" unique="no" seq="0" idxorder="asc"/>
+				</Table>
+				<Table name="variables">
+					<Column name="name" sqltype="VARCHAR" size="255" primarykey="yes"/>
+					<Column name="value" sqltype="VARCHAR" size="255" nullable="yes"/>
+				</Table>
+			</Tables>
+		</Database>
+		<Database name="sw_knowledgebase">
+			<Tables>
+				<Table name="kbcatalogs">
+					<Column name="CatalogID" sqltype="INTEGER" unsigned="yes" primarykey="yes" auto_increment="yes"/>
+					<Column name="CatalogParent" sqltype="INTEGER" unsigned="yes"/>
+					<Column name="CatalogName" sqltype="VARCHAR" size="64" nullable="yes"/>
+				</Table>
+				<Table name="kbchanges">
+					<Column name="DocRef" sqltype="VARCHAR" size="32"/>
+					<Column name="ChangeDate" sqltype="TIMESTAMP"/>
+					<Column name="ChangeByAnalystID" sqltype="VARCHAR" size="64" nullable="yes"/>
+					<Column name="ChangeByGroupID" sqltype="VARCHAR" size="160" nullable="yes"/>
+					<Column name="ChangeDesc" sqltype="VARCHAR" size="255" nullable="yes"/>
+				</Table>
+				<Table name="kbdocuments">
+					<Column name="DocRef" sqltype="VARCHAR" size="32" primarykey="yes"/>
+					<Column name="DocFlags" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="DocStatus" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="Catalog" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="DocDate" sqltype="TIMESTAMP"/>
+					<Column name="CallRef" sqltype="VARCHAR" size="32" nullable="yes"/>
+					<Column name="CallProbCode" sqltype="VARCHAR" size="64" nullable="yes"/>
+					<Column name="OtherRefs" sqltype="VARCHAR" size="255" nullable="yes"/>
+					<Column name="Author" sqltype="VARCHAR" size="64" nullable="yes"/>
+					<Column name="keywords" sqltype="VARCHAR" size="255" nullable="yes"/>
+					<Column name="Title" sqltype="VARCHAR" size="255" nullable="yes"/>
+					<Column name="Problem" sqltype="LONGVARCHAR" nullable="yes"/>
+					<Column name="Solution" sqltype="LONGVARCHAR" nullable="yes"/>
+					<Column name="Template" sqltype="VARCHAR" size="255" nullable="yes"/>
+					<Column name="SourcePath" sqltype="VARCHAR" size="255" nullable="yes"/>
+					<Column name="SourceDate" sqltype="TIMESTAMP"/>
+					<Column name="ExpiryDate" sqltype="TIMESTAMP"/>
+					<Column name="IsRetired" sqltype="SMALLINT" nullable="yes"/>
+					<Column name="OwnerAnalystID" sqltype="VARCHAR" size="64" nullable="yes"/>
+					<Column name="OwnerGroupID" sqltype="VARCHAR" size="160" nullable="yes"/>
+					<Column name="TimesAccessed" sqltype="INTEGER" unsigned="yes" nullable="yes"/>
+					<Column name="FlaggedForModification" sqltype="SMALLINT" nullable="yes"/>
+					<Index name="callref_index" cols="CallRef" unique="no" seq="0" idxorder="asc"/>
+					<Index name="Title" cols="Title,keywords,Problem,Solution,CallProbCode" unique="no" seq="0" idxorder="asc"/>
+				</Table>
+				<Table name="kbrelated">
+					<Column name="DocRef" sqltype="VARCHAR" size="32"/>
+					<Column name="RelatedDocRef" sqltype="VARCHAR" size="32"/>
+				</Table>
+				<Table name="kbsurvey">
+					<Column name="DocRef" sqltype="VARCHAR" size="32"/>
+					<Column name="AnalystID" sqltype="VARCHAR" size="64" nullable="yes"/>
+					<Column name="GroupID" sqltype="VARCHAR" size="160" nullable="yes"/>
+					<Column name="Usefulness" sqltype="SMALLINT" nullable="yes"/>
+				</Table>
+				<Table name="kbtemplates">
+					<Column name="Name" sqltype="VARCHAR" size="64" primarykey="yes"/>
+					<Column name="File" sqltype="VARCHAR" size="255" nullable="yes"/>
+				</Table>
+				<Table name="kbunpubcalls">
+					<Column name="CallRef" sqltype="INTEGER" unsigned="yes" primarykey="yes"/>
+					<Column name="AnalystID" sqltype="VARCHAR" size="64" nullable="yes"/>
+					<Column name="SubmitDate" sqltype="TIMESTAMP"/>
+				</Table>
+			</Tables>
+		</Database>
+	</Application>
+</SupportworksSchema>

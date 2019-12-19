@@ -1,0 +1,2111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>OLA Task</name>
+			<title>Log New Operational Task</title>
+			<callClass>OLA Task</callClass>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<showExtendedDetails>false</showExtendedDetails>
+				<showWorkflow>false</showWorkflow>
+				<showFileAttachments>true</showFileAttachments>
+				<showAffectedCustomers>false</showAffectedCustomers>
+				<showAffectedContacts>true</showAffectedContacts>
+				<showCustomHtmlTab>false</showCustomHtmlTab>
+				<showPartsUsedTab>false</showPartsUsedTab>
+				<allowLog>true</allowLog>
+				<allowLogAssign>false</allowLogAssign>
+				<allowLogAccept>false</allowLogAccept>
+				<allowLogClose>false</allowLogClose>
+				<allowLogAcceptTake>false</allowLogAcceptTake>
+				<showMassageBar>false</showMassageBar>
+				<showCloseDetails>false</showCloseDetails>
+				<useEmailDateToLogCall>false</useEmailDateToLogCall>
+				<hideToolbar>false</hideToolbar>
+				<hideMenubar>false</hideMenubar>
+				<hideFromMenu>true</hideFromMenu>
+				<affectedContactsTab>
+				</affectedContactsTab>
+				<extendedDetailsTable>
+					<title>Associated Information</title>
+				</extendedDetailsTable>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>opencall</name>
+				<type>Main Details Table</type>
+				<recordPicklist>Customer</recordPicklist>
+				<addRecordForm>Form.tfCustomer</addRecordForm>
+				<editRecordForm>Form.tfCustomer</editRecordForm>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+			<table>
+				<name>updatedb</name>
+				<type>Diary Updates Table</type>
+				<flags>0</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+			<action>
+				<name>Change Customer</name>
+				<id>9</id>
+				<attrib1>Customer</attrib1>
+				<displayName>Change Customer</displayName>
+			</action>
+			<action>
+				<name>Customer Properties</name>
+				<id>2</id>
+				<attrib1>Form.TfCustomer</attrib1>
+				<attrib2>&amp;[userdb.keysearch]</attrib2>
+				<displayName>Customer Properties</displayName>
+			</action>
+		</showMeItems>
+		<formActions>
+		</formActions>
+		<javascript>
+			<methods>
+				<method>
+					<name>OnCallLoggedOK</name>
+					<code>
+						<![CDATA[OnCallLoggedOK(nCallRef,
+                        dateRespondBy,
+                        dateFixBy,
+                        strCustName,
+                        strSla)
+{
+
+    //-- nwj 
+    //-- 15.03.2004
+    var httpserver = app.session.server + ":" + app.session.httpPort;
+    var intCallRef = app.g.callref_unpad(nCallRef);  
+
+	var pDoc = app.g.get_me_document("INCIDENT",opencall.bpm_parentcallref);
+    if(pDoc)
+    {
+    	var intCurSel = pDoc.mainform.sl_ots1.curSel;
+    	pDoc.mainform.sl_ots1.Refresh();
+    	pDoc.mainform.sl_ots1.SetRowSelected(intCurSel,true);
+    }
+
+	
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>(Globals)</name>
+					<code>
+						<![CDATA[var _swdoc = (IsObjectDefined("_bHtmlWebClient"))?top:_swdoc;
+
+var oRecIncident = null;
+var boolOLAImpactsParent = false;
+var strCIs = "";
+
+var boolChangeProfile = false;
+
+function MF()
+{
+	return mainform;
+}
+
+function EF()
+{
+	return extform;
+}
+
+function OC()
+{
+	return _swdoc.opencall;
+}
+
+function load_details()
+{
+	var strParams = "fksla="+_swdoc.oRecIncident.itsm_sladef;
+	if(_swdoc.strCIs!="" && _swdoc.strCIs!=undefined)
+		strParams += "&cikeys="+_swdoc.strCIs;
+
+	app._slf(_swdoc.MF().lb_oc_olad, strParams);
+	_swdoc.OC().priority = "";
+	_swdoc.OC().itsm_sladef = "";
+	app._ete(_swdoc.MF().flg_pauseparent, "0");
+}
+
+function handle_set_assignment(strSupportGroup)
+{
+
+}
+
+function handle_set_oladef(strNewOLD)
+{
+	var oRecOLD = app.g.get_record("itsmsp_slad_ola", strNewOLD);
+	if(oRecOLD)
+	{	
+		_swdoc.OC().priority = oRecOLD.fk_sla;	
+		app._een(_swdoc.MF().lb_oc_sla, true);	
+		app._een(_swdoc.MF().oc_impact,true);
+		app._een(_swdoc.MF().oc_urgency, true);
+		app._ete(_swdoc.MF().fld_desc, oRecOLD.descriptive);
+		
+		if(dd.GetGlobalParamAsNumber("Application Settings/OLA/UseMatrixPriority")==1)
+		{
+			var strSLA = app.itsm.get_sla_from_slad_matrix(strNewOLD, _swdoc.OC().itsm_impact_level, _swdoc.OC().itsm_urgency_level, 0);
+			if(strSLA!="")
+				_swdoc.OC().priority = strSLA;	
+		}
+		
+
+		if(_swdoc.OC().suppgroup != oRecOLD.fk_suppgroup)
+		{
+			if(_swdoc.OC().suppgroup!="" && oRecOLD.fk_suppgroup != '[All Support Groups]')
+			{
+				MessageBox("The assignment group has been changed to the group defined against the OLD.");
+			}
+			
+			if(oRecOLD.fk_suppgroup == '[All Support Groups]')
+			{
+				MessageBox("Please select the support group to assign this task to.");
+				_swdoc.OC().suppgroup = "";
+				_swdoc.OC().owner = "";
+				app._een(_swdoc.MF().tb_suppgroup, true);
+				app._een(_swdoc.MF().tb_suppowner, true);
+				app._ete(_swdoc.MF().tb_suppowner, "");
+			}else
+			{
+				_swdoc.OC().suppgroup = oRecOLD.fk_suppgroup;
+				_swdoc.OC().owner = oRecOLD.fk_aid;
+				app._ete(_swdoc.MF().tb_suppowner, "");
+				app._een(_swdoc.MF().tb_suppgroup, false);
+				app._een(_swdoc.MF().tb_suppowner, false);
+			}
+			_swdoc.UpdateFormFromData();
+		}
+
+		_swdoc.calc_priority();
+
+	}
+}
+
+function calc_priority()
+{
+	var utccalllogdate = new Date();
+	if(_swdoc.OC().priority=="False")
+		return;
+	var useSLA = app.g.get_sla_timeinfo(_swdoc.OC().priority,utccalllogdate);
+
+	var mcFixDate = new Date();
+	mcFixDate.setTime(_swdoc.oRecIncident.fixbyx * 1000);
+	
+	app._ete(_swdoc.MF().tb_ola_respby,useSLA.sla_tz_respbyx);
+	app._ete(_swdoc.MF().tb_ola_fixby, useSLA.sla_tz_fixbyx);		
+	
+	//-- if ola fix by is greater than parent sla fix by alert the analyst
+	_swdoc.boolOLAImpactsParent = (useSLA.sla_tz_fixbyx > app.g.fixepoch(new Number(_swdoc.oRecIncident.fixbyx)));
+	app._eva(_swdoc.MF().lb_impact,(_swdoc.boolOLAImpactsParent)?"2":"1");
+	
+	if (_swdoc.boolOLAImpactsParent)
+	{
+		MessageBox("Warning : The estimated OLA resolution date exceeds the resolution date of the parent SLA.");
+	}
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnFormLoading</name>
+					<code>
+						<![CDATA[OnFormLoading(strFormName, strCallclass)
+{
+	//-- can they raise an this type of call
+	if(app.itsm.can_create(strCallclass,true)==false) return false;
+
+
+	if(app.g.LOG_FROM_CALL==null)
+	{
+		MessageBox("A " + strCallclass + " can only be raised from an incident detail form.");
+		return false;
+	}
+	else
+	{
+		//-- store call object so we can load related info
+		
+		_swdoc.oRecIncident = app.g.LOG_FROM_CALL;//app.g.get_sys_record("opencall", app.g.LOG_FROM_CALL.callref);
+		opencall.bpm_parentcallref = _swdoc.oRecIncident.callref;
+		app.g.LOG_FROM_CALL=null;
+	}
+	
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnLogCall</name>
+					<code>
+						<![CDATA[OnLogCall()
+{
+	
+	_swdoc.OC().suppgroup = _swdoc.MF().tb_suppgroup.text;
+	_swdoc.OC().owner = _swdoc.MF().tb_suppowner.text;
+	return true;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnRecordValueChanged</name>
+					<code>
+						<![CDATA[OnRecordValueChanged(strTable, strColumn, strValue, strOldValue)
+{
+	// TODO: Add your event handler code here
+
+	if( (strColumn=="itsm_impact_level")||(strColumn=="itsm_urgency_level") )
+    {
+    	//-- if use incident assessment over ci
+    	if(dd.GetGlobalParamAsNumber("Application Settings/OLA/UseMatrixPriority")==0)
+    	{
+    		if(_swdoc.OC().itsm_sladef!="")
+    		{ 			
+    			var strSLA = app.itsm.get_sla_from_slad_matrix(_swdoc.OC().itsm_sladef, _swdoc.OC().itsm_impact_level, _swdoc.OC().itsm_urgency_level,0);
+    			if(strSLA!="")
+    			{
+    				if(strSLA!=_swdoc.OC().priority)
+    				{
+    					_swdoc.OC().priority = strSLA;
+    					_swdoc.calc_priority();
+  			  			_swdoc.UpdateFormFromData();
+    				}
+    			}
+    		}
+    	}
+    }
+	else if(strColumn=="probcode" && strTable == "opencall")
+    {
+		_swdoc.boolChangeProfile = true;
+  		mainform.SetTimer(4, 100);
+	}
+	else if(strColumn=="priority" && strTable == "opencall")
+    {
+    	if(_swdoc.boolChangeProfile)
+    	{
+			_swdoc.OC().priority = strOldValue;
+			_swdoc.UpdateFormFromData();
+			MessageBox("SLAs and Priorities are dependant on OLA Task, so cannot be set from the request profile.");
+   		}
+    }
+      
+  
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</configuration>
+	<layout>
+		<appearance>
+			<width>616</width>
+			<height>437</height>
+			<backgroundColor>#ffffff</backgroundColor>
+			<fillColour>#ffffff</fillColour>
+			<textColour >#000000</textColour >
+			<font  size="8">Arial</font>
+		</appearance>
+		<controls>
+			<control>
+				<general>
+					<name>tb_title</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>0</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="9">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>295</top>
+						<left>9</left>
+						<right>612</right>
+						<bottom>315</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.itsm_title</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<autoCompleteField>false</autoCompleteField>
+						<editUnlimitedText>false</editUnlimitedText>
+						<url>false</url>
+					</flags>
+					<textLineCount>4</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#808080</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>CaptionPanel5</name>
+					<type>CaptionBar</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>true</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>1</index>
+					<caption>Task Title and Description</caption>
+					<backgroundColor>#f1f1f1</backgroundColor>
+					<foregroundColor>#003366</foregroundColor>
+					<font  size="10" bold="1">Trebuchet (MS)</font>
+					<alignment>Left</alignment>
+					<fillStyle>Vertical Gradient</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>267</top>
+						<left>5</left>
+						<right>616</right>
+						<bottom>437</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>100</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<backgroundColor2>#d8d8d8</backgroundColor2>
+						<imageHSpace>10</imageHSpace>
+						<slope>12</slope>
+						<borderColor>#d3c9b6</borderColor>
+						<headerHeight>23</headerHeight>
+						<hasBorder>1</hasBorder>
+						<panelBorderColor>#d3c9b6</panelBorderColor>
+						<fillStyle>0</fillStyle>
+						<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+						<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						<image>&amp;[app.webroot]/clisupp/formimages/itsm/itsm_document.png</image>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>tb_updatetext</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>2</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="9">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>318</top>
+						<left>9</left>
+						<right>612</right>
+						<bottom>432</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>100</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>updatedb.updatetxt</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<autoCompleteField>false</autoCompleteField>
+						<editUnlimitedText>true</editUnlimitedText>
+						<url>false</url>
+					</flags>
+					<textLineCount>4</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#808080</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>CaptionPanel3</name>
+					<type>CaptionBar</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>true</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>3</index>
+					<caption>Options</caption>
+					<backgroundColor>#f1f1f1</backgroundColor>
+					<foregroundColor>#003366</foregroundColor>
+					<font  size="10" bold="1">Trebuchet (MS)</font>
+					<alignment>Left</alignment>
+					<fillStyle>Vertical Gradient</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>38</top>
+						<left>3</left>
+						<right>306</right>
+						<bottom>263</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<backgroundColor2>#d8d8d8</backgroundColor2>
+						<imageHSpace>10</imageHSpace>
+						<slope>12</slope>
+						<borderColor>#d3c9b6</borderColor>
+						<headerHeight>23</headerHeight>
+						<hasBorder>1</hasBorder>
+						<panelBorderColor>#d3c9b6</panelBorderColor>
+						<fillStyle>0</fillStyle>
+						<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+						<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						<image>&amp;[app.webroot]/clisupp/formimages/itsm/itsm_alarm.png</image>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<type>FieldName</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>4</index>
+					<caption>Priority</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>176</top>
+						<left>5</left>
+						<right>85</right>
+						<bottom>193</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.priority</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>false</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+						<defaultValue>[Use Customer SLA]</defaultValue>
+						<distinctTable>priority</distinctTable>
+						<distinctColumn>priority</distinctColumn>
+						<extraOptions>[Use Customer SLA]=&amp;[userdb.priority]^[Use Asset SLA]=&amp;[equipmnt.priority]^[Use Charge Centre SLA]=&amp;[costcent.priority]^[Use Profile SLA]=&amp;[_form.probcodesla]</extraOptions>
+						<sqlSource>swdata</sqlSource>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>lb_oc_sla</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>5</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>175</top>
+						<left>89</left>
+						<right>302</right>
+						<bottom>193</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.priority</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Distinct Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>true</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>true</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>true</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>true</comboAutoUpdate>
+						<comboNewValues>true</comboNewValues>
+						<pickListOrderDesc>true</pickListOrderDesc>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<defaultValue>[Automatically Set]</defaultValue>
+						<distinctTable>itsmsp_slad_priority</distinctTable>
+						<distinctColumn>fk_priority</distinctColumn>
+						<listFilter>_swc_fk_slad=&amp;[opencall.itsm_sladef]&amp;_swc_flg_sla=0</listFilter>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<sqlSource>swdata</sqlSource>
+						<borderColor>#c0c0c0</borderColor>
+						<storedQuery>generic.select</storedQuery>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>lbl_olaresdue</name>
+					<type>Text</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>6</index>
+					<caption>Respond by</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>197</top>
+						<left>5</left>
+						<right>85</right>
+						<bottom>215</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>lbl_olafixdue</name>
+					<type>Text</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>7</index>
+					<caption>Fix by</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>219</top>
+						<left>5</left>
+						<right>85</right>
+						<bottom>237</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>lbl_olaimpact</name>
+					<type>Text</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>8</index>
+					<caption>SLA Impact</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>241</top>
+						<left>5</left>
+						<right>85</right>
+						<bottom>259</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>flg_pauseparent</name>
+					<type>Field</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>9</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>None</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>182</top>
+						<left>676</left>
+						<right>864</right>
+						<bottom>199</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Form Flags</type>
+					<flags>
+						<invisible>true</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>true</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<borderColor>#d3c9b6</borderColor>
+						<image>#eeeeee</image>
+						<flagItems>Place master incident on hold^1|</flagItems>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>tb_ola_respby</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>10</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>197</top>
+						<left>89</left>
+						<right>302</right>
+						<bottom>215</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Date/Time Control</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>true</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<colorDateIndicator>false</colorDateIndicator>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<boundDateColumn>respondbyx</boundDateColumn>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<dateFormatMode>0</dateFormatMode>
+						<borderColor>#c0c0c0</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>tb_ola_fixby</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>11</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>219</top>
+						<left>89</left>
+						<right>302</right>
+						<bottom>237</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Date/Time Control</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>true</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<colorDateIndicator>false</colorDateIndicator>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<boundDateColumn>respondbyx</boundDateColumn>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<dateFormatMode>0</dateFormatMode>
+						<borderColor>#c0c0c0</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>lb_impact</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>12</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#333333</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>241</top>
+						<left>89</left>
+						<right>302</right>
+						<bottom>259</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Pick List (Numeric Mode)</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>true</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>false</comboNewValues>
+						<useDDPickList>false</useDDPickList>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<boundDateColumn>respondbyx</boundDateColumn>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<dateFormatMode>0</dateFormatMode>
+						<borderColor>#c0c0c0</borderColor>
+						<listItems>Within master SLA fix time^1|Breaches master SLA fix time^2|</listItems>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>tb_suppgroup</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>13</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>92</top>
+						<left>89</left>
+						<right>302</right>
+						<bottom>110</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.suppgroup</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>true</readOnly>
+						<mandatory>true</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>true</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<autoCompleteField>false</autoCompleteField>
+						<editUnlimitedText>false</editUnlimitedText>
+						<url>false</url>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<content>#eeeeee</content>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>tb_suppowner</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>14</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>109</top>
+						<left>89</left>
+						<right>302</right>
+						<bottom>127</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.owner</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Distinct Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>true</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>true</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>true</comboNewValues>
+						<pickListOrderDesc>false</pickListOrderDesc>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<content>#eeeeee</content>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+						<sqlSource>syscache</sqlSource>
+						<distinctTable>swanalysts</distinctTable>
+						<distinctColumn>AnalystID</distinctColumn>
+						<displayColumn>Name</displayColumn>
+						<dropdownButtonType>1</dropdownButtonType>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>lbl_assignto</name>
+					<type>Text</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>15</index>
+					<caption>Assign To</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>92</top>
+						<left>5</left>
+						<right>85</right>
+						<bottom>110</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>lb_oc_olad</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>16</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>70</top>
+						<left>89</left>
+						<right>302</right>
+						<bottom>88</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.itsm_sladef</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Distinct Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>true</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>true</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>true</comboAutoUpdate>
+						<comboNewValues>true</comboNewValues>
+						<pickListOrderDesc>true</pickListOrderDesc>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<distinctTable>itsmsp_slad_ola</distinctTable>
+						<distinctColumn>pk_ola_id</distinctColumn>
+						<listFilter>fksla=-1</listFilter>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<sqlSource>swdata</sqlSource>
+						<borderColor>#c0c0c0</borderColor>
+						<displayColumn>slad_ola</displayColumn>
+						<storedQuery>requests.filter_ola</storedQuery>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>lbl_olaid</name>
+					<type>Text</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>17</index>
+					<caption>OLA Name</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>70</top>
+						<left>5</left>
+						<right>85</right>
+						<bottom>88</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>tb_probprofile1</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>18</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#eaeaea</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>270</top>
+						<left>304</left>
+						<right>612</right>
+						<bottom>288</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.probcode</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>true</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>false</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<autoCompleteField>false</autoCompleteField>
+						<editUnlimitedText>false</editUnlimitedText>
+						<url>false</url>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<hintText>Click here to select a category for this task</hintText>
+						<activeTextColor>#eeeeee</activeTextColor>
+						<disabledBackgroundColor>#dddddd</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Text1</name>
+					<type>Text</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>19</index>
+					<caption>Task Category</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>270</top>
+						<left>211</left>
+						<right>300</right>
+						<bottom>288</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Field1</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>20</index>
+					<backgroundColor>#eeeeee</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>109</top>
+						<left>90</left>
+						<right>286</right>
+						<bottom>111</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<borderColor>#eeeeee</borderColor>
+						<image>#eeeeee</image>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>fld_hold_until</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>21</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>199</top>
+						<left>682</left>
+						<right>895</right>
+						<bottom>217</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Date/Time Control</type>
+					<flags>
+						<invisible>true</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>true</disabled>
+						<protected>true</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<colorDateIndicator>false</colorDateIndicator>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<borderColor>#d3c9b6</borderColor>
+						<image>#eeeeee</image>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<dateFormatMode>0</dateFormatMode>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>txt_hold_until</name>
+					<type>Text</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>22</index>
+					<caption>Hold Until</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>202</top>
+						<left>624</left>
+						<right>678</right>
+						<bottom>220</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<flags>
+						<invisible>true</invisible>
+						<skipTabStop>false</skipTabStop>
+						<disabled>true</disabled>
+						<protected>true</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<multiLine>false</multiLine>
+					</flags>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Text5</name>
+					<type>Text</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>23</index>
+					<caption>Impact</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>131</top>
+						<left>5</left>
+						<right>85</right>
+						<bottom>149</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>Text6</name>
+					<type>Text</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>false</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>24</index>
+					<caption>Urgency</caption>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Trebuchet MS</font>
+					<alignment>Right</alignment>
+					<borderStyle>None</borderStyle>
+					<fillStyle>Solid</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>153</top>
+						<left>5</left>
+						<right>85</right>
+						<bottom>171</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>0</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>oc_impact</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>25</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>131</top>
+						<left>89</left>
+						<right>302</right>
+						<bottom>149</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.itsm_impact_level</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Distinct Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>true</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>true</comboNewValues>
+						<pickListOrderDesc>false</pickListOrderDesc>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<defaultValue>Low</defaultValue>
+						<activeTextColor>#eeeeee</activeTextColor>
+						<listItems>None|Low|Medium|High|Critical|</listItems>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+						<sqlSource>swdata</sqlSource>
+						<distinctTable>itsm_impact_lvl</distinctTable>
+						<distinctColumn>pk_impact</distinctColumn>
+						<storedQuery>generic.select</storedQuery>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>oc_urgency</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>26</index>
+					<backgroundColor>#ffffff</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>153</top>
+						<left>90</left>
+						<right>303</right>
+						<bottom>171</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>50</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+					<binding>opencall.itsm_urgency_level</binding>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Distinct Pick List</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>false</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>true</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<comboAutoUpdate>false</comboAutoUpdate>
+						<comboNewValues>true</comboNewValues>
+						<pickListOrderDesc>false</pickListOrderDesc>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<defaultValue>Low</defaultValue>
+						<activeTextColor>#eeeeee</activeTextColor>
+						<listItems>None|Low|Medium|High|Extreme|</listItems>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+						<borderColor>#c0c0c0</borderColor>
+						<sqlSource>swdata</sqlSource>
+						<distinctTable>itsm_urgency_lvl</distinctTable>
+						<distinctColumn>pk_urgency</distinctColumn>
+						<storedQuery>generic.select</storedQuery>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>CaptionPanel4</name>
+					<type>CaptionBar</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>true</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>27</index>
+					<caption>Description</caption>
+					<backgroundColor>#f1f1f1</backgroundColor>
+					<foregroundColor>#003366</foregroundColor>
+					<font  size="10" bold="1">Trebuchet (MS)</font>
+					<alignment>Left</alignment>
+					<fillStyle>Vertical Gradient</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>38</top>
+						<left>313</left>
+						<right>616</right>
+						<bottom>263</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<backgroundColor2>#d8d8d8</backgroundColor2>
+						<imageHSpace>10</imageHSpace>
+						<slope>12</slope>
+						<borderColor>#d3c9b6</borderColor>
+						<headerHeight>23</headerHeight>
+						<hasBorder>1</hasBorder>
+						<panelBorderColor>#d3c9b6</panelBorderColor>
+						<fillStyle>0</fillStyle>
+						<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+						<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						<image>&amp;[app.webroot]/clisupp/formimages/itsm/itsm_alarm.png</image>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>fld_desc</name>
+					<type>Field</type>
+				</general>
+				<appearance>
+					<index>28</index>
+					<backgroundColor>#eeeeee</backgroundColor>
+					<foregroundColor>#000000</foregroundColor>
+					<font  size="8">Arial</font>
+					<borderStyle>Rectangle</borderStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>65</top>
+						<left>317</left>
+						<right>613</right>
+						<bottom>260</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>50</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<type>Text Edit</type>
+					<flags>
+						<invisible>false</invisible>
+						<readOnly>true</readOnly>
+						<mandatory>false</mandatory>
+						<mandatoryLabelBackground>false</mandatoryLabelBackground>
+						<mandatoryLabelText>false</mandatoryLabelText>
+						<allowNullValue>false</allowNullValue>
+						<skipTabStop>false</skipTabStop>
+						<disabled>true</disabled>
+						<protected>false</protected>
+						<noMacroExpand>false</noMacroExpand>
+						<readOnlyInit>false</readOnlyInit>
+						<autoCompleteField>false</autoCompleteField>
+						<editUnlimitedText>true</editUnlimitedText>
+						<url>false</url>
+					</flags>
+					<textLineCount>0</textLineCount>
+					<textInputFormat>Text</textInputFormat>
+					<properties>
+						<borderColor>#d3c9b6</borderColor>
+						<image>#eeeeee</image>
+						<disabledBackgroundColor>#eeeeee</disabledBackgroundColor>
+					</properties>
+				</controlInfo>
+			</control>
+			<control>
+				<general>
+					<name>CaptionPanel6</name>
+					<type>CaptionBar</type>
+					<flags>
+						<transparent>true</transparent>
+						<xpStyle>false</xpStyle>
+						<hasShadow>false</hasShadow>
+						<toolbarButtonStyle>false</toolbarButtonStyle>
+						<cache>false</cache>
+						<hasBorder>true</hasBorder>
+						<hasCheckbox>false</hasCheckbox>
+					</flags>
+				</general>
+				<appearance>
+					<index>29</index>
+					<caption>Log New Operational Task</caption>
+					<backgroundColor>#f1f1f1</backgroundColor>
+					<foregroundColor>#003366</foregroundColor>
+					<font  size="18"/>
+					<alignment>Left</alignment>
+					<fillStyle>Vertical Gradient</fillStyle>
+				</appearance>
+				<objectPlacement>
+					<position>
+						<top>4</top>
+						<left>3</left>
+						<right>616</right>
+						<bottom>34</bottom>
+					</position>
+					<scaling>
+						<top>0</top>
+						<left>0</left>
+						<right>100</right>
+						<bottom>0</bottom>
+					</scaling>
+				</objectPlacement>
+				<data>
+				</data>
+				<controlInfo>
+					<mouseOverCursor>Window Default</mouseOverCursor>
+					<properties>
+						<backgroundColor2>#d8d8d8</backgroundColor2>
+						<imageHSpace>10</imageHSpace>
+						<slope>12</slope>
+						<borderColor>#d3c9b6</borderColor>
+						<headerHeight>30</headerHeight>
+						<hasBorder>1</hasBorder>
+						<panelBorderColor>#d3c9b6</panelBorderColor>
+						<fillStyle>0</fillStyle>
+						<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+						<panelBackgroundColor2>#000000</panelBackgroundColor2>
+						<image>&amp;[app.webroot]/clisupp/formimages/itsm/itsm_alarm.png</image>
+					</properties>
+				</controlInfo>
+			</control>
+		</controls>
+		<formActions>
+		</formActions>
+		<javascript>
+			<methods>
+				<method>
+					<name>btn_remove_ci_OnPressed</name>
+					<code>
+						<![CDATA[btn_remove_ci_OnPressed()
+{
+
+
+   
+             
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>btn_assign_OnPressed</name>
+					<code>
+						<![CDATA[btn_assign_OnPressed()
+{
+    // TODO: Add your event code here
+    _swdoc.opencall.suppgroup = _swdoc.GetVariable("prefered_support");
+    MessageBox(_swdoc.opencall.suppgroup)
+    _swdoc.LogCall();        
+}
+
+]]>
+					</code>
+				</method>
+				<method>
+					<name>tb_suppowner_OnRightClick</name>
+					<code>
+						<![CDATA[tb_suppowner_OnRightClick()
+{
+	_swdoc.OC().suppgroup = "";
+	_swdoc.OC().owner = "";		
+	app._ete(tb_suppowner, "");
+	//-- filter olas that are defined for the master incident SLA
+	_swdoc.handle_set_assignment("");
+	
+	_swdoc.UpdateFormFromData();
+	return false;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>tb_suppowner_OnDropDown</name>
+					<code>
+						<![CDATA[tb_suppowner_OnDropDown()
+{
+	//-- pick analyst or group
+	var oTmp = app.g.pick_analystorgroup("Assign To");
+	if((oTmp)&&(oTmp.oGroup!=false))
+	{
+		//-- we have info
+		_swdoc.OC().suppgroup = oTmp.oGroup.id;
+		_swdoc.OC().owner = oTmp.oAnalyst.id;		
+		
+		_swdoc.handle_set_assignment(oTmp.oGroup.id)
+		_swdoc.UpdateFormFromData();
+	}
+	
+	return false;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>OnFormLoaded</name>
+					<code>
+						<![CDATA[OnFormLoaded(bDataReloaded)
+{
+	//-- load incident details into form fields..note have to do js for this as we cant bind two records from same table onto a form
+	app.g.load_form_fields(_swdoc.oRecIncident, mainform, "incident");
+	_swdoc.OC().itsm_impact_level = _swdoc.oRecIncident.itsm_impact_level;
+	_swdoc.OC().itsm_urgency_level = _swdoc.oRecIncident.itsm_urgency_level;
+	_swdoc.opencall.suppgroup = "";
+	opencall.owner = "";
+	
+	_swdoc.strCIs = app.cmdb.get_call_cis(_swdoc.oRecIncident.callref);
+
+	//-- filter olas that are defined for the master incident SLA
+	_swdoc.load_details();
+
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>lb_oc_olad_OnValueChanged</name>
+					<code>
+						<![CDATA[lb_oc_olad_OnValueChanged(strValue)
+{
+	_swdoc.handle_set_oladef(strValue);
+	_swdoc.UpdateFormFromData();
+
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>tb_suppgroup_OnLeftClick</name>
+					<code>
+						<![CDATA[tb_suppgroup_OnLeftClick()
+{
+//-- pick analyst or group
+	var oTmp = app.g.pick_analystorgroup("Assign To");
+	if((oTmp)&&(oTmp.oGroup!=false))
+	{
+		//-- we have info
+		_swdoc.OC().suppgroup = oTmp.oGroup.id;
+		_swdoc.OC().owner = oTmp.oAnalyst.id;		
+		
+		_swdoc.handle_set_assignment(oTmp.oGroup.id)
+		_swdoc.UpdateFormFromData();
+	}
+
+
+	return false;
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>flg_pauseparent_OnValueChanged</name>
+					<code>
+						<![CDATA[flg_pauseparent_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+
+	var	boolEnable = strValue==1;	
+	app._een(_swdoc.MF().fld_hold_until,boolEnable);
+	app._een(_swdoc.MF().txt_hold_until, boolEnable);
+	
+}]]>
+					</code>
+				</method>
+				<method>
+					<name>lb_oc_sla_OnValueChanged</name>
+					<code>
+						<![CDATA[lb_oc_sla_OnValueChanged(strValue)
+{
+	// TODO: Add your event handler code here
+	_swdoc.calc_priority();
+
+}]]>
+					</code>
+				</method>
+			</methods>
+		</javascript>
+	</layout>
+	<extendedLayout>
+		<appearance>
+			<width>804</width>
+			<height>600</height>
+			<backgroundColor>#ffffff</backgroundColor>
+			<fillColour>#ffffff</fillColour>
+			<textColour >#000000</textColour >
+			<font  size="8">Arial</font>
+		</appearance>
+		<controls>
+		</controls>
+		<formActions>
+		</formActions>
+		<javascript>
+			<methods>
+			</methods>
+		</javascript>
+	</extendedLayout>
+</espForm>

@@ -1,0 +1,13 @@
+<datatable dsn="syscache" keycol="callref" keyvar="in_callref" urlvars="callclass,status" onrowclick="" onrowdblclick="" action="" url="">
+	<columns>
+		<column id="callref" conversion="callref">Reference</column>
+		<column id="callclass" conversion="callclass">Type</column>
+		<column id="status" conversion="callstatus">Status</column>
+		<column id="logdatex" conversion="customerdate">Log Date</column>
+		<column id="owner" conversion="">Owner</column>
+		<column id="prob_text" conversion="nl2br">Original Description</column>
+	</columns>
+	<from>opencall</from>
+	<where>status &lt; 15 and  status != 6 and status != 4 and costcenter ='![PrepareForSql($GLOBALS['costcent_ccname'])]!'</where>
+	<orderby>logdatex desc</orderby>
+</datatable>

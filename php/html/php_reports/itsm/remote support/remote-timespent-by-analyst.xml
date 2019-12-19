@@ -1,0 +1,32 @@
+<report title="Timespent by Analyst" reportstyle="list" dsn="swdata" uid="" pwd="">
+	<columns>
+		<column dbname="aid" dbtable="updatedb" conversion="" level="1">Analyst</column>
+		<aggregate dbname="timespent" dbtable="updatedb" aggregate="1" aggFunction="Sum" graph="1" level="1" conversion="hhmmss">Time Spent</aggregate>
+		<column dbname="callref" dbtable="updatedb" conversion="callref" level="2">Callref</column>
+		<aggregate dbname="timespent" dbtable="updatedb" aggregate="1" aggFunction="Sum" graph="1" level="2" conversion="hhmmss">Time Spent</aggregate>
+		<column dbname="timespent" dbtable="updatedb" conversion="hhmmss" level="3">Time Spent</column>
+		<column dbname="updatetxt" dbtable="updatedb" conversion="nl2br" level="3">Update Text</column>
+	</columns>
+	<tables>
+		<table name="updatedb" type="master"/>
+		<table name="opencall"   type="related" join_type="" join="updatedb.callref = opencall.callref"/>
+	</tables>
+	<criteria>
+		<userinput type="daterange" binding="updatedb.updatetimex" int="1" op="=">
+			<prompt>Sessions completed on and between</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.fk_company_id" dsn="swdata" dbtable="opencall" keycol="fk_company_id" txtcol="companyname" filter=" where fk_company_id IS NOT NULL  and fk_company_id &lt;&gt;'' group by opencall.fk_company_id,opencall.companyname" int="0" op="=">
+			<prompt>Organisation</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.cust_id" dsn="swdata" dbtable="userdb" keycol="keysearch" txtcol="fullname" filter="" int="0" op="=">
+			<prompt>Customer</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="updatedb.groupid" dsn="swdata" dbtable="opencall" keycol="suppgroup" txtcol="suppgroup" filter=" group by opencall.suppgroup" int="0" op="=">
+			<prompt>Support Group</prompt>
+		</userinput>
+		<userinput type="dbpicklist" binding="opencall.owner" dsn="swdata" dbtable="opencall" keycol="owner" txtcol="owner" filter=" where opencall.owner IS NOT NULL and opencall.owner &lt;&gt;''  group by opencall.owner   " int="0" op="=">
+			<prompt>Analyst</prompt>
+		</userinput>
+		<static>updatedb.aaid='RemoteSupport'</static>
+	</criteria>
+</report>

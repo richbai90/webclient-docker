@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<espForm>
+	<configuration>
+		<settings>
+			<name>bti_standard_services</name>
+			<title>Standard Services</title>
+			<description>Services considered standard for any organization</description>
+			<printTemplates>
+			</printTemplates>
+			<options>
+				<allowResize>true</allowResize>
+				<showMenubar>false</showMenubar>
+				<showToolbar>true</showToolbar>
+				<showStatusBar>false</showStatusBar>
+			</options>
+		</settings>
+		<tables>
+			<table>
+				<name>config_itemi</name>
+				<type>Related Table</type>
+				<mainDetailsColumn>fk_service_id</mainDetailsColumn>
+				<flags>76</flags>
+				<assignments>
+				</assignments>
+			</table>
+		</tables>
+		<showMeItems>
+		</showMeItems>
+		<javascript>
+			<methods>
+			</methods>
+		</javascript>
+	</configuration>
+	<layouts>
+		<layout>
+			<appearance>
+				<width>535</width>
+				<height>239</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+				<control>
+					<general>
+						<name>CaptionPanel1</name>
+						<type>CaptionBar</type>
+						<flags>
+							<transparent>true</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>true</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>0</index>
+						<caption>Standard Services</caption>
+						<backgroundColor>#f1f1f1</backgroundColor>
+						<foregroundColor>#003366</foregroundColor>
+						<font  size="10" bold="1">Trebuchet (MS)</font>
+						<alignment>Left</alignment>
+						<fillStyle>Vertical Gradient</fillStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>3</top>
+							<left>1</left>
+							<right>534</right>
+							<bottom>238</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>0</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<backgroundColor2>#d8d8d8</backgroundColor2>
+							<imageHSpace>0</imageHSpace>
+							<slope>12</slope>
+							<borderColor>#d3c9b6</borderColor>
+							<headerHeight>23</headerHeight>
+							<hasBorder>1</hasBorder>
+							<panelBorderColor>#d3c9b6</panelBorderColor>
+							<fillStyle>0</fillStyle>
+							<panelBackgroundColor>#f2eedd</panelBackgroundColor>
+							<panelBackgroundColor2>#000000</panelBackgroundColor2>
+							<image>&amp;[app.webroot]/clisupp/formimages/itsm/fa-cog.png</image>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>sl_default_services</name>
+						<type>SqlTable</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>false</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>true</hasCheckbox>
+							<showHeader>true</showHeader>
+							<verticalGridLines>true</verticalGridLines>
+							<horizontalGridLines>true</horizontalGridLines>
+							<autoLoad>true</autoLoad>
+							<allowMultiSelect>true</allowMultiSelect>
+						</flags>
+					</general>
+					<appearance>
+						<index>1</index>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+						<borderStyle>Rectangle</borderStyle>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>10</left>
+							<right>524</right>
+							<bottom>225</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>50</left>
+							<right>100</right>
+							<bottom>100</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<columns>
+						<controlInfo>
+							<mouseOverCursor>Window Default</mouseOverCursor>
+							<type>Text Edit</type>
+							<flags>
+								<invisible>false</invisible>
+								<readOnly>false</readOnly>
+								<mandatory>false</mandatory>
+								<mandatoryLabelBackground>false</mandatoryLabelBackground>
+								<mandatoryLabelText>false</mandatoryLabelText>
+								<allowNullValue>false</allowNullValue>
+								<skipTabStop>false</skipTabStop>
+								<disabled>false</disabled>
+								<protected>false</protected>
+								<noMacroExpand>false</noMacroExpand>
+								<readOnlyInit>false</readOnlyInit>
+								<autoCompleteField>false</autoCompleteField>
+								<editUnlimitedText>false</editUnlimitedText>
+								<url>false</url>
+								<hidden>false</hidden>
+								<allowResize>false</allowResize>
+								<allowSort>true</allowSort>
+							</flags>
+							<textLineCount>0</textLineCount>
+							<textInputFormat>Text</textInputFormat>
+							<properties>
+								<column>fk_service_name</column>
+							</properties>
+							<name>Service</name>
+							<width>512</width>
+							<image>-1</image>
+							<dataColumn>0</dataColumn>
+						</controlInfo>
+					</columns>
+					<sortColumn>0</sortColumn>
+					<sortDescending>false</sortDescending>
+					<headerHeight>18</headerHeight>
+					<rowHeight>16</rowHeight>
+					<selectedColor>#00008b</selectedColor>
+					<selectedTextColor>#ffffff</selectedTextColor>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<properties>
+							<table>custom_standard_services</table>
+							<editRecordForm>Form.cmdb_popup_ci</editRecordForm>
+							<sqlSource>swdata</sqlSource>
+							<selectionMode>0</selectionMode>
+							<borderColor>#d3c9b6</borderColor>
+							<storedQuery>common.load_all</storedQuery>
+						</properties>
+					</controlInfo>
+				</control>
+				<control>
+					<general>
+						<name>btn_search_ci1</name>
+						<type>EventButton</type>
+						<flags>
+							<transparent>false</transparent>
+							<xpStyle>true</xpStyle>
+							<hasShadow>false</hasShadow>
+							<toolbarButtonStyle>false</toolbarButtonStyle>
+							<cache>false</cache>
+							<hasBorder>false</hasBorder>
+							<hasCheckbox>false</hasCheckbox>
+						</flags>
+					</general>
+					<appearance>
+						<index>2</index>
+						<caption>Add</caption>
+						<backgroundColor>#ffffff</backgroundColor>
+						<foregroundColor>#000000</foregroundColor>
+						<font  size="8">Arial</font>
+					</appearance>
+					<objectPlacement>
+						<position>
+							<top>40</top>
+							<left>346</left>
+							<right>402</right>
+							<bottom>58</bottom>
+						</position>
+						<scaling>
+							<top>0</top>
+							<left>100</left>
+							<right>100</right>
+							<bottom>0</bottom>
+						</scaling>
+					</objectPlacement>
+					<data>
+					</data>
+					<controlInfo>
+						<mouseOverCursor>Window Default</mouseOverCursor>
+						<flags>
+							<invisible>false</invisible>
+							<skipTabStop>false</skipTabStop>
+							<disabled>false</disabled>
+							<protected>false</protected>
+							<noMacroExpand>false</noMacroExpand>
+							<multiLine>false</multiLine>
+						</flags>
+						<properties>
+						</properties>
+					</controlInfo>
+				</control>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+					<method>
+						<name>sl_cust_cis1_OnHeaderItemClicked</name>
+						<code>
+							<![CDATA[sl_cust_cis1_OnHeaderItemClicked(strOrder, nCol)
+{
+	//sl_cust_cis1.Refresh();
+	_swdoc.load_cis();
+	//_swdoc.load_customer_items();
+	
+
+
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_cust_cis1_OnItemSelected</name>
+						<code>
+							<![CDATA[sl_cust_cis1_OnItemSelected(nRow)
+{
+	//-- NWJ
+	//-- 27.11.2006
+	//-- enable list menus if an item is selected	
+	var boolActive = (sl_cust_cis1.rowCount() > 0);
+	_een(mbtn_cci_views, boolActive);
+//_een(mbtn_cci_actions, boolActive);	
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>sl_cust_cis1_OnItemChecked</name>
+						<code>
+							<![CDATA[sl_cust_cis1_OnItemChecked(nRow, bChecked)
+{
+	 boolIncSLASetManually = true; //-- 105734
+	
+	var pk_ci_id = app.g.sl_getrawcolvalue(sl_cust_cis1, nRow, "pk_auto_id");	
+	var fk_ci_type = app.g.sl_getrawcolvalue(sl_cust_cis1, nRow, "ck_config_type");
+
+	var oList = EF().sl_configitems;
+	
+	var itemType = "Configuration Item";
+
+	if(fk_ci_type.indexOf("Service")>-1)
+	{
+		oList = EF().sl_services;
+		var itemType = "Service";
+	}
+
+	//MessageBox(pk_ci_id + " A:A " + nRow)
+	if(bChecked)
+	{
+		if(app.g.sl_findrow_byvalue(oList, pk_ci_id, 'pk_auto_id') > -1) return;
+
+		//MessageBox(pk_ci_id)
+		//-- TK Replace append Filter with Stored Query	
+		//app.g.sl_appendfilter(oList, pk_ci_id,'pk_auto_id');
+		if (itemType == "Configuration Item")
+		{
+			app.g.sl_kv_appendfilter(EF().sl_configitems, pk_ci_id,'pk_auto_id');
+			EF().sl_configitems.Refresh();
+			//ES - F0111753 - set Process based on value set in Configuration Item and Configuration Type
+			var intCIID = app.g.sl_getrawcolvalue(sl_cust_cis1, nRow, "pk_auto_id");
+			var dbValue1 = new SqlQuery;
+			dbValue1.InvokeStoredQuery("cmdb/get.itemi_fkworkflowid","pk_auto_id="+intCIID);
+			if(dbValue1.Fetch())
+			{
+				var strWorkflowId = app.g.get_field(dbValue1,"fk_workflow_id");
+				//Get fk_workflow_id from config_itemi if not blank
+				if (strWorkflowId!="")
+				{
+					if (_swdoc.bpm_workflow.pk_workflow_id=="")
+					{
+						_swdoc.bpm_workflow.pk_workflow_id = strWorkflowId;
+						_swdoc.UpdateFormFromData();
+					}
+					else if (_swdoc.bpm_workflow.pk_workflow_id!="")
+					{
+						if (_swdoc.bpm_workflow.pk_workflow_id!=strWorkflowId)
+						{
+							var msgProcess = MessageBox("The default Incident Process for the selected item is [" + arrWorkflowId[y] + "]. Would you like to apply this change?",MB_YESNO|MB_ICONQUESTION);
+ 							if (msgProcess==6)
+							{
+								_swdoc.bpm_workflow.pk_workflow_id = strWorkflowId;
+								_swdoc.UpdateFormFromData();
+							}
+						}
+					}
+				}	
+				//Get fk_workflow_id from config_typei if blank in config_itemi		
+				else if (strWorkflowId=="")
+				{
+					var dbValue2 = new SqlQuery;
+					dbValue2.InvokeStoredQuery("cmdb/get.typei_fkworkflowid","pk_auto_id="+intCIID);
+					if (dbValue2.Fetch())
+					{
+						var strTypeWorkflowId = app.g.get_field(dbValue2,"fk_workflow_id");
+						if (strTypeWorkflowId!="")
+						{
+							if (_swdoc.bpm_workflow.pk_workflow_id=="")
+							{
+								_swdoc.bpm_workflow.pk_workflow_id = strTypeWorkflowId;
+								_swdoc.UpdateFormFromData();
+							}
+							else if (_swdoc.bpm_workflow.pk_workflow_id!="")
+							{
+								var msgProcessType = MessageBox("The default Incident Process for the selected item is [" + arrWorkflowId[y] + "]. Would you like to apply this change?",MB_YESNO|MB_ICONQUESTION);
+ 								if (msgProcessType==6)
+								{
+									_swdoc.bpm_workflow.pk_workflow_id = strTypeWorkflowId;
+									_swdoc.UpdateFormFromData();
+								}
+							}
+						}
+					}
+				} //END - F0111753
+			}	
+		}else if (itemType == "Service")
+		{
+  			app.g.sl_kv_appendfilter(EF().sl_services, pk_ci_id,'pk_auto_id');
+  			EF().sl_services.Refresh();
+  			
+  			//ES - F0111753 - set Process based on value set in Service
+			var intCIID = app.g.sl_getrawcolvalue(sl_cust_cis1, nRow, "pk_auto_id");
+			var dbValue3 = new SqlQuery;
+			dbValue3.InvokeStoredQuery("cmdb/get.itemi_fkworkflowid","pk_auto_id="+intCIID);
+			if(dbValue3.Fetch())
+			{
+				var strServiceWorkflowId = app.g.get_field(dbValue3,"fk_workflow_id");
+				//Get fk_workflow_id from config_itemi for service item
+				if (strServiceWorkflowId!="")
+				{
+					if (_swdoc.bpm_workflow.pk_workflow_id=="")
+					{
+						_swdoc.bpm_workflow.pk_workflow_id = strServiceWorkflowId;
+						_swdoc.UpdateFormFromData();
+					}
+					else if (_swdoc.bpm_workflow.pk_workflow_id!="")
+					{
+						if (_swdoc.bpm_workflow.pk_workflow_id!=strServiceWorkflowId)
+						{
+							var msgProcessService = MessageBox("The selected item recommends the Process [" + strServiceWorkflowId + "] for this Incident. Would you like to apply this change?",MB_YESNO|MB_ICONQUESTION);
+ 							if (msgProcessService==6)
+							{
+								_swdoc.bpm_workflow.pk_workflow_id = strServiceWorkflowId;
+								_swdoc.UpdateFormFromData();
+							}
+						}
+					}
+				}			
+			} //END - F0111753
+  		}
+		//-- NWJ - determine who the preferred support is
+ 		_swdoc.determine_prefered_support(true);	
+
+		//-- nwj - 15.07.2008 - check ci contract
+		app.cfg.process_call_contract_check(pk_ci_id, true,_swdoc);
+		
+		// -- SG, 02/07/2012, F0103324
+		// Create new array to hold CI and Bespoke Terms info
+		bespokeTermsProcessing(pk_ci_id);
+		// -- END OF BESPOKE PROCESSING
+	}
+	else
+	{
+			var intRowPos = app.g.sl_findrow_byvalue(oList, pk_ci_id, 'pk_auto_id');
+			if(intRowPos>-1)
+			{
+				oList.RemoveRow(intRowPos);		
+		
+				//-- 29.04.2008 - 2.2.0 if this ci that has been removed was used to set the pref supp group then change it
+				if(_swdoc.intAssessmentCI == pk_ci_id)
+				{
+					OC().itsm_sladef = 0;
+					OC().itsm_slaname = "[Use Customer SLA]";
+					OC().priority = "[Use Customer Priority]";
+					OC().itsm_prefered_suppgroup = "";
+					OC().itsm_prefered_text = "";
+
+					_eva(MF().lb_oc_slad1, 0);
+					_ete(MF().lb_oc_slad1, 0);
+					_een(MF().lbl_oc_priority, false);
+					_een(MF().lb_oc_sla, false);
+
+					_swdoc.UpdateFormFromData();
+				}
+			
+				_swdoc.determine_prefered_support(true);
+				//_swdoc.check_ci_assessment();
+			}
+	}
+
+	app.g.setSLAFromRules(_swdoc.strSLACallClass, _swdoc);
+	
+}]]>
+						</code>
+					</method>
+					<method>
+						<name>btn_search_ci1_OnPressed</name>
+						<code>
+							<![CDATA[btn_search_ci1_OnPressed()
+{
+		var strURL = "searchmode=1&multiselect=1";
+		var objFormDoc = itsm;
+		app.g.popup("search_service",strURL,function(aForm)
+		{
+			//-- capture selected service keys
+			if (aForm)
+			{
+				if (IsObjectDefined("_bHtmlWebClient"))
+				{
+					var _swdoc = top;
+					var strSelectedkeys = aForm._swdoc.strSelectedKeys;
+					if (aForm._swdoc.strSelectedKeys == "")
+					{
+						return false;
+					}
+				}
+				else
+				{
+					var strSelectedkeys = aForm.document.strSelectedKeys;
+					if (aForm.document.strSelectedKeys == "")
+					{
+						return false;
+					}
+				}
+				var arrSelectedkeys = strSelectedkeys.split(",");
+				
+				//-- get already subscribed keys
+				var strSubscribed = "";
+				var oDefault = app.g.get_sqrecordset("service/get_default_services.list");		
+				
+				var intSubscriptionCounter = 0;
+				var arrDefaultKeys = [];
+				var arrDefaultPKs = [];
+				while (oDefault.Fetch())
+				{
+					arrDefaultKeys[intDefaultCounter] = app.g.get_field(oDefault,"FK_SERVICE_ID");
+					arrDefaultPKs.push(app.g.get_field(oDefault, "PK_AUTO_ID"));
+					intDefaultCounter++;
+				}
+				//-- for each selected app.service... check if already subscribed to service
+				var boolAlert = false;
+				var boolDefault = false;
+				var strNoSLAs = "";
+				for (var i = 0, len1 = arrSelectedkeys.length; i < len1; i++)
+				{
+					boolDefault = false;
+					//-- for each Subscribed app.service...
+					for (var j = 0, len2 = arrDefaultKeys.length; j < len2; j++)
+					{
+						if (arrSelectedkeys[i] == arrDefaultKeys[j])
+						{
+							boolDefault = true;
+							//-- already a default service so skip to next service
+							break;
+						}
+							
+					}
+					if (!boolDefault)
+					{
+						//-- load service record
+						var oService = app.g.get_record("SC_FOLIO", arrSelectedkeys[i]);
+						
+						//-- Check that service has at least one associated SLA. 
+						if (!objFormDoc.service_has_sla(arrSelectedkeys[i]))
+						{
+							if(strNoSLAs!="")strNoSLAs+="\n";
+							strNoSLAs+=oService.vsb_title;
+							boolAlert = true;
+						}
+						else //-- Add to default list
+						{
+							app.g.submitsqs("service/insert_default_service", "sc_id=" + oService.fk_cmdb_id + "&service_name=" + oService.service_name);
+						}
+					}
+				}
+				if (boolAlert)
+				{
+					MessageBox("Please associate service levels that the following services can be offered at before creating subscriptions:\n\n" + strNoSLAs);
+				}
+			}
+			else
+			{
+				return false;
+			}
+			sl_default_services.Refresh();
+		});
+}]]>
+						</code>
+					</method>
+				</methods>
+			</javascript>
+		</layout>
+		<layout>
+			<appearance>
+				<width>360</width>
+				<height>220</height>
+				<backgroundColor>#ffffff</backgroundColor>
+				<fillColour>#ffffff</fillColour>
+				<textColour >#000000</textColour >
+				<font  size="8">Arial</font>
+			</appearance>
+			<controls>
+			</controls>
+			<formActions>
+			</formActions>
+			<javascript>
+				<methods>
+				</methods>
+			</javascript>
+		</layout>
+	</layouts>
+</espForm>

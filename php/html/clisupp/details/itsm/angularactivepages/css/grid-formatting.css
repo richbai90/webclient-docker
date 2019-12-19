@@ -1,0 +1,32 @@
+.row-top-buffer { margin-top:20px; }
+
+/*--- Spinner Styles ---*/
+#swspin {
+    -webkit-animation: rotation 1500ms infinite linear;
+    -moz-animation: rotation 1500ms infinite linear;
+}
+@-webkit-keyframes rotation {
+    from {-webkit-transform: rotate(0deg);}
+    to   {-webkit-transform: rotate(359deg);}
+}
+
+@-moz-keyframes rotation {
+    from {-moz-transform: rotate(0deg);}
+    to   {-moz-transform: rotate(359deg);}
+}
+
+.swspinner {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  margin: 0 auto;
+  padding: 20px 0px 100px 0px;
+}
+.swspinner p {
+  margin: 15px 0px 20px -2px;
+  font-weight: bold;
+}
+.swspinner img {
+  max-height: 50px;
+}
+/*--- End Of Spinner Styles ---*/

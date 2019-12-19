@@ -1,0 +1,655 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<link rel="stylesheet" href="form.canvas.css" type="text/css" />
+<style>
+	body
+	{
+		overflow:hidden;
+	}
+</style>
+
+<script src='../js/jquery-1.11.1.min.js'></script>
+<script>
+
+	var _top = this;
+	var _swform = null;
+	var _swdoc = top;
+	
+	//-- pointers to app items
+	var app = top.info.__app;
+	var jqDoc = null;
+	var jqTopDoc = null;
+	var dd = app.dd;
+
+	document.PassedInFilter = "";
+
+	function _onshow()
+	{
+		document.body.style.display="";
+		if(_swform==null)
+		{
+			_load_form_canvas();
+
+		}
+		_resize_form();
+		app.toolbar_item_dore(top._formtype, "swtasks" , true, top.document);
+	}
+
+	var iBodyWidth = 0;
+	var iBodyHeight = 0;
+	function _resize_form()
+	{
+		if(iBodyWidth!=document.body.offsetWidth || iBodyHeight!= document.body.offsetHeight)
+		{
+			iBodyWidth==document.body.offsetWidth;
+			iBodyHeight= document.body.offsetHeight;
+
+			if(document.getElementById("sl_browse")!=null)
+			{
+
+				if(!app.isIE)
+				{
+					var intAdjust = (app.isSafari)?7:2;
+					document.getElementById("sl_browse").style.height = document.body.clientHeight - intAdjust;
+					document.getElementById("sl_browse").style.width = document.body.clientWidth -2;
+				}
+				else
+				{
+					document.getElementById("sl_browse").style.height = document.body.offsetHeight - 2;
+					document.getElementById("sl_browse").style.width = document.body.clientWidth;
+				}			
+				sl_browse._align();
+			}
+		}
+	}
+
+	function _onhide()
+	{
+		app.toolbar_item_dore(top._formtype, "swtasks" , false, top.document);
+	}
+
+	function _setup_menuitems()
+	{
+		app.toolbarmenu_item_disable("wfnewitem",true,top.document);
+		app.toolbarmenu_item_disable("wfnewlist",false,top.document);
+		app.toolbarmenu_item_disable("wfaddtemplate",false,top.document);
+		app.toolbarmenu_item_disable("wfaddlist",false,top.document);
+		app.toolbarmenu_item_disable("wfdelete",true,top.document);
+		app.toolbarmenu_item_disable("wfrename",true,top.document);
+		app.toolbarmenu_item_disable("wftoggle",true,top.document);
+		app.toolbarmenu_item_disable("wfup",true,top.document);
+		app.toolbarmenu_item_disable("wfdown",true,top.document);
+		app.toolbarmenu_item_disable("wfm_complete",true,top.document);
+	}
+
+	function _load_form_canvas()
+	{
+		if(top._formtype=="cdf")
+		{
+			_swform = top._swdoc._load_alt_sysform("_sys_workflowtable","workflow","workflow");
+		}
+		else
+		{
+			_swform = top._swdoc._load_alt_sysform("_sys_lcf_workflowtable","workflow","workflow");
+		}
+
+		if(_swform)
+		{
+			for(strID in _swform)
+			{
+				try
+				{
+					_top[strID] = _swform[strID];
+					document[strID] = _swform[strID];					
+				}
+				catch (e)
+				{
+				}
+			}
+
+			_swform._draw();
+
+			sl_browse._expandercol = "parentgroup";
+			sl_browse._expandercolseq = "parentgroupsequence";
+
+			_resize_form();
+
+			//-- if call detail filter it
+			if(top._formtype=="lcf")
+			{
+				//-- 28.02.2011 - use php service to get table data - when working with tempdb
+				sl_browse._srcType = 'php';
+				sl_browse._phpSrc = "phpquery/get_tempworkflow_sqllist.php";
+				sl_browse._phpParams = new Array();
+				sl_browse._phpParams['_temptable'] = top.document._tempworkflowtable;
+
+				sl_browse.source = 'sw_tempdb';
+				sl_browse.table = top.document._tempworkflowtable;
+				document.PassedInFilter = "";
+			}
+			else
+			{
+				//-- cdf form
+				//-- 31.10.2011 - use php service to get table data
+				sl_browse._srcType = 'php';
+				sl_browse._phpSrc = "phpquery/get_calldetailtasks_sqllist.php";
+				sl_browse._phpParams = new Array();
+				sl_browse._phpParams['_callref'] = top.document.opencall.callref;
+				document.PassedInFilter = "";
+
+				//document.PassedInFilter = "callref = " + top.document.opencall.callref;
+			}
+
+			setTimeout("_filter_workflow_list()",1);
+		}
+	}
+
+	function _filter_workflow_list()
+	{
+		_lastExpRow = null;
+
+		if(top._formtype!="lcf")
+		{
+			_swform.sl_browse.sortDescending = false;
+			_swform.sl_browse._filter(document.PassedInFilter)
+		}
+		else
+		{
+			_swform.sl_browse._fetchdata();
+		}
+
+		_setup_menuitems();
+	}
+
+	//-- highlight
+	var _lastItemRow = null;
+	var _lastExpRow = null;
+	var _lastExpRowBG = "";
+	var _currentGroupFlags = -1;
+	var _currentGroup = "";
+	var _currentGroupTaskCount = 0;
+	function sl_browse_OnExpanderClicked(eleRow)
+	{
+		//- -unhilite last item row
+		sl_browse.SetRowSelected(sl_browse.curSel,false);
+
+		var useCell = (eleRow.childNodes[1])?1:0; //-- 1st cell may be hidden
+		if(_lastExpRow!=null)
+		{
+			_lastExpRow.childNodes[useCell].style.backgroundColor = _lastExpRowBG;
+		}
+		else
+		{
+			_lastExpRowBG = eleRow.childNodes[useCell].style.backgroundColor;
+		}
+		eleRow.childNodes[useCell].style.backgroundColor = "#efefef";
+		_lastExpRow = eleRow;
+		_lastItemRow = null;
+
+		//-- enable add item menus
+		app.toolbarmenu_item_disable("wfnewitem",false,top.document);
+		app.toolbarmenu_item_disable("wfdelete",false,top.document);
+		app.toolbarmenu_item_disable("wfrename",false,top.document);
+		app.toolbarmenu_item_disable("wftoggle",false,top.document);
+
+
+		//-- disable complete item
+		app.toolbarmenu_item_disable("wfm_complete",true,top.document);
+
+		//-- disable add new item if all items in worklist are completed - 24.05.2011
+		var boolCompletedAllItems = sl_workflowlist_items_completed(eleRow);
+		app.toolbarmenu_item_disable("wfnewitem",boolCompletedAllItems,top.document);
+	
+		_currentGroup = eleRow.getAttribute("parentgroup");
+		_currentGroupSeq = eleRow.getAttribute("parentgroupsequence");
+		_currentGroupTaskCount = eleRow.getAttribute("itemcount");
+		_currentGroupFlags = eleRow.getAttribute("flags");
+
+		var iLastRowGrpSeq = _get_nextnew_pgs()-1;
+		//-- check if can move up or down
+		var bDisableUp = (_currentGroupSeq>0 && eleRow.rowIndex>0)?false:true;
+		var bDisableDown = (_currentGroupSeq<iLastRowGrpSeq)?false:true;	
+
+		app.toolbarmenu_item_disable("wfup",bDisableUp,top.document);
+		app.toolbarmenu_item_disable("wfdown",bDisableDown,top.document);
+
+	}
+
+	//-- return true if work items is a worklist are all completed
+	function sl_workflowlist_items_completed(worklistRow)
+	{
+		var ret = false;
+		var eleRow = worklistRow.nextSibling;
+		while(eleRow.getAttribute("type")!="expander")
+		{
+			var iStatus = sl_browse.GetItemTextRaw(eleRow.rowIndex+1,"status");	
+			if(iStatus!="")
+			{
+				if(iStatus!=16 ) 
+				{
+					return false;
+				}
+				else
+				{
+					ret = true;
+				}
+			}
+			eleRow = eleRow.nextSibling;
+
+			if(eleRow==null)break;
+			if(eleRow.getAttribute("type")=="expander") break;
+		}
+
+
+		return ret;
+
+	}
+
+	function sl_browse_OnItemSelected(nRow,eleRow)
+	{
+		//-- remove group highlight
+		if(_lastExpRow!=null)
+		{
+			var useCell = (_lastExpRow.childNodes[1])?1:0; //-- 1st cell may be hidden
+			_lastExpRow.childNodes[useCell].style.backgroundColor = _lastExpRowBG;
+			_lastExpRow = null;
+		}
+		
+		//-- store row pointer
+		_lastItemRow = eleRow;
+		//-- work out groups count
+
+		while(eleRow.getAttribute("type")!="expander")
+		{
+			eleRow = eleRow.previousSibling;
+			if(eleRow==null)
+			{
+				alert("There is a technical problem with the workflow table [unable to find expander]. Please contact your Administrator.");
+			}
+		}
+		_currentGroup = eleRow.getAttribute("parentgroup");
+		_currentGroupSeq = eleRow.getAttribute("parentgroupsequence");
+		_currentGroupTaskCount = eleRow.getAttribute("itemcount");
+		_currentGroupFlags = eleRow.getAttribute("flags");
+
+
+		app.toolbarmenu_item_disable("wfnewitem",true,top.document);
+		app.toolbarmenu_item_disable("wfnewlist",false,top.document);
+		app.toolbarmenu_item_disable("wfaddtemplate",false,top.document);
+		app.toolbarmenu_item_disable("wfaddlist",false,top.document);
+		app.toolbarmenu_item_disable("wfdelete",false,top.document);
+		app.toolbarmenu_item_disable("wfrename",false,top.document);
+		app.toolbarmenu_item_disable("wftoggle",false,top.document);
+		app.toolbarmenu_item_disable("wfup",true,top.document);
+		app.toolbarmenu_item_disable("wfdown",true,top.document);
+
+		//-- call detail items		
+		if(top._formtype=="cdf")
+		{
+			var iStatus = sl_browse.GetItemTextRaw(sl_browse.curSel,"status");	
+			if(iStatus==2 || iStatus==3)
+			{
+				//-- enable
+				app.toolbarmenu_item_disable("wfm_complete",false,top.document);
+			}
+			else
+			{
+				//-- disable
+				app.toolbarmenu_item_disable("wfm_complete",true,top.document);
+			}
+		}
+
+	
+		//-- check if can move up or down
+		var iPos = sl_browse.GetItemTextRaw(sl_browse.curSel,"taskid");
+
+		var bDisableUp = (iPos==1)?true:false;
+		var bDisableDown = (iPos==_currentGroupTaskCount)?true:false;	
+		app.toolbarmenu_item_disable("wfup",bDisableUp,top.document);
+		app.toolbarmenu_item_disable("wfdown",bDisableDown,top.document);
+	}
+
+	function sl_browse_OnItemDoubleClicked(nRow,nCol)
+	{
+		//-- call webclient method to open system form
+		var iKey = sl_browse.GetItemTextRaw(sl_browse.curSel,"taskid");
+		if(iKey!="")
+		{ 
+			var callBackOnFormClose = function()
+			{
+				var iCurRow = sl_browse.curSel;
+				_filter_workflow_list();
+				sl_browse.SetRowSelected(iCurRow);
+			
+			}
+		
+			if(top._formtype=="cdf")
+			{
+				var iStatus = sl_browse.GetItemTextRaw(sl_browse.curSel,"status");	
+				var iCallref = sl_browse.GetItemTextRaw(sl_browse.curSel,"callref");
+				var strParams = "callref=" + iCallref;
+				var strForm = (iStatus==16)?"_sys_calltask_completed":"_sys_calltask";
+				app.OpenWebClientForm(strForm,iKey,strParams,true,"workflow",window,callBackOnFormClose);
+			}
+			else
+			{
+				var strParentGroup = sl_browse.GetItemTextRaw(sl_browse.curSel,"parentgroup");
+				var strParams = "_table="+top.document._tempworkflowtable+"&parentgroup=" + strParentGroup;
+				app.OpenWebClientForm("_sys_new_calltask",iKey,strParams,true,"workflow",window,callBackOnFormClose);
+			}
+		}
+		return false;
+	}
+
+	function _complete_item()
+	{
+		var iStatus = sl_browse.GetItemTextRaw(sl_browse.curSel,"status");	
+		if(iStatus!=16 && iStatus!="")
+		{
+			var iCallref = sl_browse.GetItemTextRaw(sl_browse.curSel,"callref");
+			var iTaskID = sl_browse.GetItemTextRaw(sl_browse.curSel,"taskid");	
+			app._completetaskform(iTaskID, iCallref,window);
+			var iCurRow = sl_browse.curSel;
+			_filter_workflow_list();
+			sl_browse.SetRowSelected(iCurRow);
+
+		}
+	}
+
+	//-- rename selected worklist or item
+	function _rename_worklist()
+	{
+		var eleRow = _lastExpRow;
+		if(eleRow==null)
+		{
+			eleRow = _lastItemRow;
+			while(eleRow.getAttribute("type")!="expander")
+			{
+				eleRow = eleRow.previousSibling;
+				if(eleRow==null)
+				{
+					alert("There is a technical problem with the workflow table [unable to find expander]. Please contact your Administrator.");
+					return;
+				}
+			}
+		}
+
+		var strCurrentName = eleRow.getAttribute("parentgroup");
+		var strNewName = prompt("Please enter the new name of the worklist:",strCurrentName);
+		if(strNewName!="" && strNewName!=null && strNewName!=undefined)
+		{
+			
+			//-- check does not already exist
+			if(_worklist_exists(strNewName))
+			{
+				alert("A worklist of the same name already exists. Please enter a different name.");
+				return;
+			}
+
+
+			if(top._formtype=="lcf")
+			{
+				var strParams = "&dsn=sw_tempdb&_table=" + top.document._tempworkflowtable + "&_worklistname=" + strCurrentName + "&_newname=" + strNewName;
+			}
+			else
+			{
+				var strParams = "&dsn=sw_systemdb&_table=calltasks&_worklistname=" + strCurrentName + "&_newname=" + strNewName;
+			}
+			var strURL = app.webroot + "/webclient/service/workflow/rename_worklist.php";
+			var res = app.get_http(strURL, "swsessionid=" + app._swsessionid + "&"+ strParams, true, false,  null, null);
+			if(res=="ok")
+			{
+				var iCurRow = sl_browse.curSel;
+				_filter_workflow_list();
+				sl_browse.SetRowSelected(iCurRow);
+			}
+			else
+			{
+				alert("The system was not able to rename the Worklist. Please contact your Administrator.");
+			}
+
+		}
+	}
+
+	//-- check if a worklist name already exists in list returns t/f
+	function _worklist_exists(strName)
+	{
+		var ret = false;
+		if(sl_browse._datatable!=null)
+		{
+			var arrRows = sl_browse._datatable.rows;
+			for(var x=0;x<arrRows.length;x++)
+			{
+				if(arrRows[x].getAttribute!=null)
+				{
+					if(arrRows[x].getAttribute("type")=="expander")
+					{
+						var strCheckName = arrRows[x].getAttribute("parentgroup").toLowerCase();
+						if(strCheckName==strName.toLowerCase()) return arrRows[x];
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	function _get_nextnew_pgs()
+	{
+		var pgs = -1;
+		if(sl_browse._datatable!=null)
+		{
+			var arrRows = sl_browse._datatable.rows;
+			for(var x=0;x<arrRows.length;x++)
+			{
+				if(arrRows[x].getAttribute!=null)
+				{
+					if(arrRows[x].getAttribute("type")=="expander")
+					{
+						pgs = arrRows[x].getAttribute("parentgroupsequence");
+					}
+				}
+			}
+		}
+		pgs++;
+		return pgs;
+
+	}
+
+	//-- create new worklist
+	function _create_new_worklist()
+	{
+		var strName = prompt("Please enter the name of the new worklist:","");
+		if(strName=="" || strName==null || strName==undefined) return;
+
+		//-- check does not already exist
+		if(_worklist_exists(strName))
+		{
+			alert("A worklist of the same name already exists. Please enter a different name.");
+			return;
+		}
+
+
+		//-- get parent sequence id
+		var iPGS = _get_nextnew_pgs();
+
+		if(top._formtype=="lcf")
+		{
+			//-- insert new worklist in temp workflow table
+			var strParams = "_type=list&_table=" + top.document._tempworkflowtable + "&_worklistname=" + strName + "&_pgs=" + iPGS;
+			var strURL = app.webroot + "/webclient/service/workflow/create_temp_workitem.php";
+			var res = app.get_http(strURL, "swsessionid=" + app._swsessionid + "&"+ strParams, true, false,  null, null);
+		}
+		else
+		{
+
+		}
+
+		if(res=="ok")
+		{
+			_filter_workflow_list();
+		}
+		else
+		{
+			alert("The system was not able to create the Worklist. Please contact your Administrator.");
+		}
+	}
+
+	//-- create new work item
+	function _create_new_workitem()
+	{
+		var strParams = "&_groupflag="+_currentGroupFlags+"&_nexttaskid="+ (++_currentGroupTaskCount) +"&_table=" + top.document._tempworkflowtable + "&_parentgroup=" + _currentGroup + "&_pgs=" + _currentGroupSeq;
+		if(top._formtype=="cdf")
+		{
+			var iCallref = top.document.opencall.callref;
+			strParams += "&_callref=" + iCallref;
+		}
+		app.OpenWebClientForm("_sys_new_calltask","",strParams,true,"workflow",window,function(oForm)
+		{
+			var iCurRow = sl_browse.curSel;
+			_filter_workflow_list();
+			sl_browse.SetRowSelected(iCurRow);
+		});
+		
+	}
+
+	//-- delete a worklsit or item
+	function _delete_worklist_or_item()
+	{
+		var strTaskID = "";
+		if(_lastItemRow != null)
+		{
+			strTaskID = sl_browse.GetItemTextRaw(sl_browse.curSel,"taskid");
+		}
+
+		if(top._formtype=="lcf")
+		{
+			//-- delte worklist or item in temp workflow table
+			var strParams = "_type=list&_table=" + top.document._tempworkflowtable + "&_worklistname=" + _currentGroup + "&_taskid=" + strTaskID;
+			var strURL = app.webroot + "/webclient/service/workflow/delete_temp_workitem.php";
+			var res = app.get_http(strURL, "swsessionid=" + app._swsessionid + "&"+ strParams, true, false,  null, null);
+			if(res=="ok")
+			{
+				var iCurRow = sl_browse.curSel;
+				_filter_workflow_list();
+				sl_browse.SetRowSelected(iCurRow);
+			}
+		}	
+	}
+
+	function _move_worklist_or_item(strDir)
+	{
+		var strURL = app.webroot + "/webclient/service/workflow/move_worklistposition.php";
+		var strTaskID = "";
+		if(_lastItemRow != null)
+		{
+			//-- moving task
+			var strURL = app.webroot + "/webclient/service/workflow/move_workitemposition.php";
+			strTaskID = sl_browse.GetItemTextRaw(sl_browse.curSel,"taskid");
+		}
+
+		//-- insert new worklist in temp workflow table
+		var strParams = "_dir="+strDir+"&_table=" + top.document._tempworkflowtable + "&_worklistname=" + _currentGroup + "&_pgs="+_currentGroupSeq+"&_taskid=" + strTaskID;	
+		var res = app.get_http(strURL, "swsessionid=" + app._swsessionid + "&"+ strParams, true, false,  null, null);
+		if(res=="ok")
+		{
+			_filter_workflow_list();
+		}
+
+	}
+
+	//-- get worklist and set sequence to open or sequential
+	function _toggle_worklist_sequence()
+	{
+		if(_currentGroup!="")
+		{
+			//-- modify sequence
+			var strParams = "_type=list&_table=" + top.document._tempworkflowtable + "&_worklistname=" + _currentGroup +"&_flags=" + _currentGroupFlags;
+
+			var strURL = app.webroot + "/webclient/service/workflow/set_worklist_sequence.php";
+			var res = app.get_http(strURL, "swsessionid=" + app._swsessionid + "&"+ strParams, true, false,  null, null);
+			if(res=="ok")
+			{
+				var iCurRow = sl_browse.curSel;
+				_filter_workflow_list();
+				sl_browse.SetRowSelected(iCurRow);
+			}
+		}
+	}
+
+	//- -add existing worklist
+	function _add_existing_worklist()
+	{
+		app.OpenWebClientForm("_sys_pickworkflow_list","","",true,"workflow",window,function(oForm)
+		{
+			if(oForm.document._worklistname=="")return;
+
+			_onselected_existing_template(oForm.document._templatename,oForm.document._worklistname);
+
+		});
+	}
+
+	//-- add existing template to workflow - can be used for lcf or cdf
+	function _add_existing_template()
+	{
+		app.OpenWebClientForm("_sys_pickworkflow","","",true,"workflow",window,function(oForm)
+		{
+			if(oForm.document._templatename=="")return;
+
+			_onselected_existing_template(oForm.document._templatename,"");
+		
+		});
+	}
+
+	function _onselected_existing_template(strTemplateName,strWorklist)
+	{
+		if(top._formtype=="lcf")
+		{
+			//-- params
+			var strParams = "_table=" + top.document._tempworkflowtable + "&_templatename=" + strTemplateName+"&_worklistname="+strWorklist;
+			//-- call service
+			var strURL = app.webroot + "/webclient/service/workflow/add_workflow_template.php";
+			var res = app.get_http(strURL, "swsessionid=" + app._swsessionid + "&"+ strParams, true, false,  null, null);
+			if(res=="ok")
+			{
+				_filter_workflow_list();
+			}
+		}
+		else
+		{
+			//-- call detail is done in a very different way (not sure why)
+		}
+	}
+
+	function _handle_drag_drop(ev)
+	{
+		app.stopEvent(ev);
+		return false;
+	}
+
+	function onloadEvents()
+	{
+	
+		jqDoc = $(document); //-- so can use jquery		
+		jqTopDoc = top.jqDoc;
+		
+		//-- add browser class to body
+		if(top.app.browserClassName!="")
+		{
+			jqDoc.find("body").addClass(top.app.browserClassName);
+		}
+	}
+
+
+</script>
+
+
+<!-- main js -->
+<script src='js/min/swjs.classes.js'></script>
+<body onload="onloadEvents()" style='display:none;overflow:hidden;background-color:#efefef;' oncontextmenu="return false;" ondrop="return _handle_drag_drop(event);" ondragover="return _handle_drag_drop(event);" ondragenter="return _handle_drag_drop(event);">
+<div id='space' style='z-Index:0;position:absolute;height:100%;width:1px;'></div>
+</body>
+</html>

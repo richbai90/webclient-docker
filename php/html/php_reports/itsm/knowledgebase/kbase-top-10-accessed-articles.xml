@@ -1,0 +1,19 @@
+<report title="10 Most Accessed Articles" reportstyle="list" dsn="swdata" uid="" pwd="" distinct="1">
+	<columns>
+		<column dbname="docref" dbtable="swkb_articles" level="1">Reference</column>
+		<column dbname="title" dbtable="swkb_articles"  level="1">Title</column>
+		<column dbname="docdatex" dbtable="swkb_articles"  conversion="analystdate"  level="1">Created On</column>
+		<column dbname="owneranalystid" dbtable="swkb_articles"  level="1">Owner</column>
+		<column dbname="perc_problemfixed" dbtable="swkb_articles"  level="1">Fixed Problem %</column>
+		<column dbname="perc_relevant" dbtable="swkb_articles"  level="1">Relevant %</column>
+		<column dbname="timesaccessed" dbtable="swkb_articles"  level="1"># Times Accessed</column>
+	</columns>
+	<tables>
+		<table name="swkb_articles" type="master"/>
+	</tables>
+	<criteria>
+		<numberofrecords>10</numberofrecords>
+		<order dbname="timesaccessed" dbtable="swkb_articles" order="desc"></order>
+		<static></static>
+	</criteria>
+</report>

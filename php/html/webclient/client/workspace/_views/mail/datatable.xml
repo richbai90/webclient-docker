@@ -1,0 +1,26 @@
+<espcontrol id='email' >
+	<xmlmc service="mail" method="getMessageList">
+		<mailbox>mailboxtable</mailbox>
+		<folderId>mailboxfolderid</folderId>
+		<rowOffset>limitoffset</rowOffset>
+		<rowLimit>limitrowsperpage</rowLimit>
+	</xmlmc>
+	<xmlmcRecordPath>data.message</xmlmcRecordPath>
+	<keycolumn>messageId</keycolumn>
+	<sqlparams>
+		<mailboxtable/>
+		<mailboxfolderid/>
+		<orderby/>
+		<orderdir/>
+		<limitrowsperpage/>
+		<limitoffset/>
+	</sqlparams>
+	<ondataloadedjs></ondataloadedjs>
+	<datatable draganddrop='1'>
+		<rowsperpage>50</rowsperpage>
+		<header>priority,status,attachmentCount,recipientName,senderName,subject,size,timeReceived</header>
+		<headertitle>CSS:email-priority,CSS:email-status,CSS:email-attachment,To,From,Subject,Size,Date Received</headertitle>
+		<columnwidth>28,28,28,200,200,400,100,150</columnwidth>
+		<columnalignment>left, left, left,left, left, left</columnalignment>
+	</datatable>
+</espcontrol>
